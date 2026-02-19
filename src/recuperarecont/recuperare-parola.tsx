@@ -10,19 +10,6 @@ const MailIcon = () => (
     </svg>
 );
 
-const LockOpenIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" />
-        <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-    </svg>
-);
-
-const ShieldIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2L3 6v6c0 5.25 3.75 10.15 9 11.25C18.25 22.15 22 17.25 22 12V6l-9-4z" />
-    </svg>
-);
-
 const InfoIcon = () => (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="info-box-icon">
         <circle cx="12" cy="12" r="10" />
@@ -62,10 +49,6 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({ onBack, onSu
 
             <div className="recovery-wrapper">
                 <div className="recovery-card">
-
-                    <div className="icon-badge">
-                        <LockOpenIcon />
-                    </div>
 
                     <div className="recovery-header">
                         <h1 className="recovery-title">Recuperare parolă</h1>
@@ -205,10 +188,6 @@ export const VerifyCodePage: React.FC<VerifyCodeProps> = ({
 
             <div className="recovery-wrapper">
                 <div className="recovery-card">
-
-                    <div className="icon-badge">
-                        <ShieldIcon />
-                    </div>
 
                     <div className="recovery-header">
                         <h1 className="recovery-title">Verifică email-ul</h1>
