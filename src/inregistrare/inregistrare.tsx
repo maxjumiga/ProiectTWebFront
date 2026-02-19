@@ -199,16 +199,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
                             )}
                         </div>
 
-                        {/* Show password checkbox */}
-                        <label className="show-password-row">
-                            <input
-                                type="checkbox"
-                                checked={showPassword}
-                                onChange={(e) => setShowPassword(e.target.checked)}
-                            />
-                            <span className="show-password-label">Afișează parola</span>
-                        </label>
-
                         <button className="submit-btn" type="submit" disabled={!isValid}>
                             Înregistrare
                         </button>

@@ -247,15 +247,18 @@ body::after {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 18px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    gap: 12px;
 }
 
 .footer-link {
     font-size: 13px;
-    color: var(--text-secondary);
+    color: var(--accent);
+    font-weight: 600;
     text-decoration: none;
     transition: color 0.2s ease;
-    font-weight: 400;
     cursor: pointer;
     background: none;
     border: none;
@@ -264,14 +267,55 @@ body::after {
 }
 
 .footer-link:hover {
-    color: var(--accent);
+    color: #4f46e5;
 }
 
 .footer-link.register {
     color: var(--accent);
     font-weight: 600;
+    margin-right: 25px;
+    margin-left: 10px;
 }
 
 .footer-link.register:hover {
     color: #4f46e5;
+}
+
+.footer-link.muted {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 12.5px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin-left: 25px;
+}
+
+.footer-link.muted:hover {
+    color: var(--text-secondary);
+}
+
+/* Input with right padding for eye icon */
+.form-input.has-eye {
+    padding-right: 42px;
+}
+
+/* Eye toggle button */
+.eye-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    transition: color 0.2s;
+}
+
+.eye-btn:hover {
+    color: var(--accent);
 }
