@@ -1,4 +1,4 @@
-import { OnboardingData } from "../types/onboarding";
+import type { OnboardingData } from "../types/onboarding";
 
 export function calculateBMR(data: OnboardingData): number {
     const { weight, height, age, gender } = data;
