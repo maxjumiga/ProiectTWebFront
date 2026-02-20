@@ -1,44 +1,51 @@
-import type { OnboardingData } from "../types/onboarding";
+import type { Gender, Goal } from '../types/onboarding';
 
-export function calculateBMR(data: OnboardingData): number {
-    const { weight, height, age, gender } = data;
-
-    if (!weight || !height || !age) return 0;
-
-    if (gender === "male") {
-        return 10 * weight + 6.25 * height - 5 * age + 5;
-    }
-
-    return 10 * weight + 6.25 * height - 5 * age - 161;
+export function calcBMI(weightKg: number, heightCm: number): number {
+    const heightM = heightCm / 100;
+    return parseFloat((weightKg / (heightM * heightM)).toFixed(1));
 }
 
-export function calculateCalories(
-    bmr: number,
-    activity: string,
-    goal: string
+export function bmiCategory(bmi: number): string {
+    if (bmi < 18.5) return 'Underweight';
+    if (bmi < 25) return 'Normal weight';
+    if (bmi < 30) return 'Overweight';
+    return 'Obese';
+}
+
+/** Mifflin-St Jeor BMR */
+export function calcBMR(
+    weightKg: number,
+    heightCm: number,
+    age: number,
+    gender: Gender
 ): number {
-    const multipliers: Record<string, number> = {
-        sedentary: 1.2,
-        light: 1.375,
-        moderate: 1.55,
-        very: 1.725,
-        athlete: 1.9,
-    };
-
-    let calories = bmr * (multipliers[activity] ?? 1);
-
-    if (goal === "lose") calories -= 500;
-    if (goal === "build") calories += 300;
-
-    return Math.round(calories);
+    const base = 10 * weightKg + 6.25 * heightCm - 5 * age;
+    return gender === 'female' ? base - 161 : base + 5;
 }
 
-export function calculateProtein(weight: number, goal: string): number {
-    const multipliers: Record<string, number> = {
-        lose: 2.2,
-        build: 2.0,
-        maintain: 1.8,
-    };
+/** TDEE with moderate activity (1.55 multiplier) */
+export function calcTDEE(bmr: number): number {
+    return Math.round(bmr * 1.55);
+}
 
-    return Math.round(weight * (multipliers[goal] ?? 1.8));
+export function goalCalories(tdee: number, goal: Goal): number {
+    if (goal === 'lose') return tdee - 500;
+    if (goal === 'gain') return tdee + 300;
+    return tdee;
+}
+
+export function goalLabel(goal: Goal): string {
+    const labels: Record<Goal, string> = {
+        lose: 'Lose Weight',
+        maintain: 'Maintain Weight',
+        gain: 'Gain Muscle',
+    };
+    return labels[goal];
+}
+
+export function heightDisplay(cm: number): string {
+    const totalInches = cm / 2.54;
+    const ft = Math.floor(totalInches / 12);
+    const inches = Math.round(totalInches % 12);
+    return `${ft}'${inches}" (${cm} cm)`;
 }
