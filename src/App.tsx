@@ -3,8 +3,9 @@ import './App.css'
 import LoginPage from "./autentificare/autentificare";
 import RegisterPage from "./inregistrare/inregistrare";
 import { ForgotPasswordPage, VerifyCodePage } from "./recuperarecont/recuperare-parola";
+import Dashboard from "./main/main_page";
 
-type Page = "login" | "register" | "forgot" | "verify";
+type Page = "login" | "register" | "forgot" | "verify" | "dashboard";
 
 function App() {
     const [page, setPage] = useState<Page>("login");
@@ -37,6 +38,14 @@ function App() {
             onResend={() => console.log("Cod retrimis")}
         />
     );
+
+    if (page === "dashboard") return (
+        <Dashboard
+            username="Ion"
+            onLogout={() => setPage("login")}
+        />
+    );
+
     return (
         <LoginPage
             onBack={() => console.log("Înapoi")}
@@ -44,6 +53,7 @@ function App() {
             onForgotPassword={() => setPage("forgot")}
             onSubmit={(email, password) => {
                 console.log("Login:", email, password);
+                setPage("dashboard"); // ← navighezi la dashboard
             }}
         />
     );
