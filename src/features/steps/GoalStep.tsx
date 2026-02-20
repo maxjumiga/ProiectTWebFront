@@ -53,7 +53,7 @@ export default function GoalStep({ value, onChange, onNext, onBack }: Props) {
                             <motion.span
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
-                                className="w-6 h-6 rounded-full bg-lime-400 flex items-center justify-center text-black text-xs font-bold flex-shrink-0"
+                                className="w-6 h-6 rounded-full bg-lime-400 flex items-center justify-center text-black text-xs font-bold shrink-0"
                             >
                                 ✓
                             </motion.span>
@@ -72,7 +72,7 @@ export default function GoalStep({ value, onChange, onNext, onBack }: Props) {
                 <button
                     onClick={onNext}
                     disabled={!value}
-                    className="flex-2 flex-grow py-4 rounded-2xl bg-lime-400 text-black font-semibold disabled:opacity-30 disabled:cursor-not-allowed hover:shadow-[0_0_30px_rgba(163,230,53,0.4)] transition-shadow"
+                    className="flex-2 grow py-4 rounded-2xl bg-lime-400 text-black font-semibold disabled:opacity-30 disabled:cursor-not-allowed hover:shadow-[0_0_30px_rgba(163,230,53,0.4)] transition-shadow"
                 >
                     Continue →
                 </button>

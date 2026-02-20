@@ -112,7 +112,7 @@ export default function HeightStep({ value, onChange, onNext, onBack }: Props) {
                 <button
                     onClick={onNext}
                     disabled={!isValid}
-                    className="flex-2 flex-grow py-4 rounded-2xl bg-lime-400 text-black font-semibold disabled:opacity-30 disabled:cursor-not-allowed hover:shadow-[0_0_30px_rgba(163,230,53,0.4)] transition-shadow"
+                    className="flex-2 grow py-4 rounded-2xl bg-lime-400 text-black font-semibold disabled:opacity-30 disabled:cursor-not-allowed hover:shadow-[0_0_30px_rgba(163,230,53,0.4)] transition-shadow"
                 >
                     Continue →
                 </button>

@@ -53,7 +53,7 @@ export default function Dashboard({ data }: Props) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            className={`bg-gradient-to-br ${c.color} border border-zinc-800 rounded-2xl p-5`}
+                            className={`bg-linear-to-br ${c.color} border border-zinc-800 rounded-2xl p-5`}
                         >
                             <p className="text-2xl mb-3">{c.icon}</p>
                             <p className="text-zinc-400 text-xs uppercase tracking-widest">{c.label}</p>
