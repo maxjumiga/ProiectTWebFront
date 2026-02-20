@@ -3,10 +3,10 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
 import UserManagement from './pages/UserManagement';
+import GestionareAlimente from './pages/GestionareAlimente';
 import './index.css';
 
 export default function App() {
-  console.log('[App] Rendering...');
   return (
     <BrowserRouter>
       <div className="app-shell">
@@ -18,6 +18,7 @@ export default function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/utilizatori" element={<UserManagement />} />
+              <Route path="/alimente" element={<GestionareAlimente />} />
             </Routes>
           </main>
         </div>
