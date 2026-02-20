@@ -28,11 +28,14 @@ body {
     background-color: var(--bg);
     color: var(--text-primary);
     min-height: 100vh;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    margin: 0;
+    padding: 0;
 }
 
 body::before {
