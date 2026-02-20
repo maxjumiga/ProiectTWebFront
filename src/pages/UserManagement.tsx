@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { mockUsers } from '../data/mockData';
 import type { User, Role, Status } from '../types';
+import CustomSelect from '../components/CustomSelect';
 import './UserManagement.css';
 
 function generateId() {
@@ -14,11 +15,33 @@ const emptyForm = (): Omit<User, 'id' | 'joinedAt'> => ({
     status: 'activ',
 });
 
+// ── Option lists ──────────────────────────────────────────────────
+const roleFilterOptions = [
+    { value: 'all', label: 'Toate rolurile' },
+    { value: 'admin', label: 'Admin' },
+    { value: 'user', label: 'Utilizator' },
+];
+const statusFilterOptions = [
+    { value: 'all', label: 'Toate statusurile' },
+    { value: 'activ', label: 'Activ' },
+    { value: 'inactiv', label: 'Inactiv' },
+];
+const roleOptions = [
+    { value: 'user', label: 'Utilizator' },
+    { value: 'admin', label: 'Admin' },
+];
+const statusOptions = [
+    { value: 'activ', label: 'Activ' },
+    { value: 'inactiv', label: 'Inactiv' },
+];
+const roleColorMap: Record<string, string> = { admin: 'admin', user: 'user' };
+const statusColorMap: Record<string, string> = { activ: 'activ', inactiv: 'inactiv' };
+
 export default function UserManagement() {
     const [users, setUsers] = useState<User[]>(mockUsers);
     const [search, setSearch] = useState('');
-    const [filterRole, setFilterRole] = useState<'all' | Role>('all');
-    const [filterStatus, setFilterStatus] = useState<'all' | Status>('all');
+    const [filterRole, setFilterRole] = useState<string>('all');
+    const [filterStatus, setFilterStatus] = useState<string>('all');
 
     // Modal state
     const [showModal, setShowModal] = useState(false);
@@ -69,11 +92,11 @@ export default function UserManagement() {
     }
 
     /* ── inline role / status change ── */
-    function changeRole(id: string, role: Role) {
-        setUsers(prev => prev.map(u => u.id === id ? { ...u, role } : u));
+    function changeRole(id: string, role: string) {
+        setUsers(prev => prev.map(u => u.id === id ? { ...u, role: role as Role } : u));
     }
-    function changeStatus(id: string, status: Status) {
-        setUsers(prev => prev.map(u => u.id === id ? { ...u, status } : u));
+    function changeStatus(id: string, status: string) {
+        setUsers(prev => prev.map(u => u.id === id ? { ...u, status: status as Status } : u));
     }
 
     return (
@@ -99,16 +122,18 @@ export default function UserManagement() {
                 </div>
 
                 <div className="um-filters">
-                    <select className="um-select" value={filterRole} onChange={e => setFilterRole(e.target.value as any)}>
-                        <option value="all">Toate rolurile</option>
-                        <option value="admin">Admin</option>
-                        <option value="user">Utilizator</option>
-                    </select>
-                    <select className="um-select" value={filterStatus} onChange={e => setFilterStatus(e.target.value as any)}>
-                        <option value="all">Toate statusurile</option>
-                        <option value="activ">Activ</option>
-                        <option value="inactiv">Inactiv</option>
-                    </select>
+                    <CustomSelect
+                        value={filterRole}
+                        onChange={setFilterRole}
+                        options={roleFilterOptions}
+                        variant="default"
+                    />
+                    <CustomSelect
+                        value={filterStatus}
+                        onChange={setFilterStatus}
+                        options={statusFilterOptions}
+                        variant="default"
+                    />
                 </div>
 
                 <button className="btn-primary" onClick={() => { setShowModal(true); setForm(emptyForm()); setFormError(''); }}>
@@ -162,24 +187,22 @@ export default function UserManagement() {
                                             </div>
                                         </td>
                                         <td>
-                                            <select
-                                                className={`inline-select inline-select--${u.role}`}
+                                            <CustomSelect
                                                 value={u.role}
-                                                onChange={e => changeRole(u.id, e.target.value as Role)}
-                                            >
-                                                <option value="admin">Admin</option>
-                                                <option value="user">Utilizator</option>
-                                            </select>
+                                                onChange={val => changeRole(u.id, val)}
+                                                options={roleOptions}
+                                                variant="inline"
+                                                colorMap={roleColorMap}
+                                            />
                                         </td>
                                         <td>
-                                            <select
-                                                className={`inline-select inline-select--${u.status}`}
+                                            <CustomSelect
                                                 value={u.status}
-                                                onChange={e => changeStatus(u.id, e.target.value as Status)}
-                                            >
-                                                <option value="activ">Activ</option>
-                                                <option value="inactiv">Inactiv</option>
-                                            </select>
+                                                onChange={val => changeStatus(u.id, val)}
+                                                options={statusOptions}
+                                                variant="inline"
+                                                colorMap={statusColorMap}
+                                            />
                                         </td>
                                         <td className="date-cell">{new Date(u.joinedAt).toLocaleDateString('ro-RO')}</td>
                                         <td>
@@ -239,17 +262,23 @@ export default function UserManagement() {
                             <div className="form-row">
                                 <div className="form-group">
                                     <label>Rol</label>
-                                    <select className="form-input" value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value as Role }))}>
-                                        <option value="user">Utilizator</option>
-                                        <option value="admin">Admin</option>
-                                    </select>
+                                    <CustomSelect
+                                        value={form.role}
+                                        onChange={val => setForm(f => ({ ...f, role: val as Role }))}
+                                        options={roleOptions}
+                                        variant="form"
+                                        colorMap={roleColorMap}
+                                    />
                                 </div>
                                 <div className="form-group">
                                     <label>Status</label>
-                                    <select className="form-input" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value as Status }))}>
-                                        <option value="activ">Activ</option>
-                                        <option value="inactiv">Inactiv</option>
-                                    </select>
+                                    <CustomSelect
+                                        value={form.status}
+                                        onChange={val => setForm(f => ({ ...f, status: val as Status }))}
+                                        options={statusOptions}
+                                        variant="form"
+                                        colorMap={statusColorMap}
+                                    />
                                 </div>
                             </div>
                         </div>
