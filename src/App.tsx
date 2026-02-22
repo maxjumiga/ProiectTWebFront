@@ -4,6 +4,7 @@ import LoginPage from "./autentificare/autentificare";
 import RegisterPage from "./inregistrare/inregistrare";
 import { ForgotPasswordPage, VerifyCodePage } from "./recuperarecont/recuperare-parola";
 import Dashboard from "./main/main_page";
+import ProfilePage from "./profile/profil";
 import { useState } from 'react'
 
 function App() {
@@ -59,6 +60,16 @@ function App() {
                 <Dashboard
                     username="Ion"
                     onLogout={() => navigate("/login")}
+                    onProfile={() => navigate("/profile")}  // ← asta lipsea probabil
+                />
+            } />
+
+            <Route path="/profile" element={
+                <ProfilePage
+                    username="Ion Popescu"
+                    email="ion.popescu@gmail.com"
+                    onLogout={() => navigate("/login")}
+                    onDashboard={() => navigate("/dashboard")}
                 />
             } />
         </Routes>
