@@ -70,19 +70,10 @@ body {
 .db-logo {
     width: 50px;
     height: 50px;
-    border-radius: 15px;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    color: #fff;
-    box-shadow: 0 6px 18px rgba(99,102,241,0.5);
-    margin-bottom: 30px;
-    flex-shrink: 0;
-    user-select: none;
+    background-image: url("../assets/logo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .db-nav {
