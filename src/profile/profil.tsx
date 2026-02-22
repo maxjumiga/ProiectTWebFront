@@ -125,6 +125,7 @@ interface ProfilePageProps {
     email?: string;
     onLogout?: () => void;
     onDashboard?: () => void;
+    onSettings?: () => void;
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -134,6 +135,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                                                      email = "ion.popescu@gmail.com",
                                                      onLogout,
                                                      onDashboard,
+                                                     onSettings,
                                                  }) => {
     const [twoFA, setTwoFA] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -163,7 +165,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                     <button className="db-nav-btn active" title="Profil">
                         <UserIcon />
                     </button>
-                    <button className="db-nav-btn" title="Setări">
+                    <button className="db-nav-btn" onClick={onSettings} title="Setări">
                         <SettingsIcon />
                     </button>
                 </nav>

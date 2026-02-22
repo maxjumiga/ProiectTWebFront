@@ -164,9 +164,10 @@ const bmiBarPos = (bmi: number) => `${Math.min(Math.max((bmi - 15) / 25, 0), 1) 
 interface DashboardProps {
     username?: string;
     onProfile?: () => void;
+    onSettings?: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile }) => {
+const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSettings }) => {
     const [waterMl, setWaterMl] = useState(1200);
     const [height,  setHeight]  = useState(170);
     const [weight,  setWeight]  = useState(72);
@@ -196,7 +197,7 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile }) =>
                     <button className="db-nav-btn active" title="Acasă"><IconHome /></button>
                     <button className="db-nav-btn" title="Programări"><IconCal /></button>
                     <button className="db-nav-btn" onClick={onProfile} title="Profil"><UserIcon /></button>
-                    <button className="db-nav-btn" title="Setări"><IconSettings /></button>
+                    <button className="db-nav-btn" onClick={onSettings} title="Setări"><IconSettings /></button>
                 </nav>
 
                 <div className="db-sidebar-bottom">

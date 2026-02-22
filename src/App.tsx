@@ -5,6 +5,7 @@ import RegisterPage from "./inregistrare/inregistrare";
 import { ForgotPasswordPage, VerifyCodePage } from "./recuperarecont/recuperare-parola";
 import Dashboard from "./main/main_page";
 import ProfilePage from "./profile/profil";
+import SettingsPage from "./setari/setari";
 import { useState } from 'react'
 
 function App() {
@@ -59,8 +60,8 @@ function App() {
             <Route path="/dashboard" element={
                 <Dashboard
                     username="Ion"
-                    onLogout={() => navigate("/login")}
-                    onProfile={() => navigate("/profile")}  // ← asta lipsea probabil
+                    onProfile={() => navigate("/profile")}
+                    onSettings={() => navigate("/settings")}
                 />
             } />
 
@@ -68,8 +69,16 @@ function App() {
                 <ProfilePage
                     username="Ion Popescu"
                     email="ion.popescu@gmail.com"
-                    onLogout={() => navigate("/login")}
+                    onSettings={() => navigate("/settings")}
                     onDashboard={() => navigate("/dashboard")}
+                />
+            } />
+
+            <Route path="/settings" element={
+                <SettingsPage
+                    username="Ion"
+                    onDashboard={() => navigate("/dashboard")}
+                    onProfile={() => navigate("/profile")}
                 />
             } />
         </Routes>
