@@ -8,9 +8,10 @@ const IconHome = () => (
         <path d="M9 21V12h6v9"/>
     </svg>
 );
-const IconChart = () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-7"/>
+const UserIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
     </svg>
 );
 const IconCal = () => (
@@ -20,16 +21,9 @@ const IconCal = () => (
     </svg>
 );
 const IconSettings = () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-    </svg>
-);
-const IconLogout = () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        <polyline points="16 17 21 12 16 7"/>
-        <line x1="21" y1="12" x2="9" y2="12"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
 );
 const IconBell = () => (
@@ -169,11 +163,10 @@ const bmiBarPos = (bmi: number) => `${Math.min(Math.max((bmi - 15) / 25, 0), 1) 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 interface DashboardProps {
     username?: string;
-    onLogout?: () => void;
     onProfile?: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onLogout, onProfile }) => {
+const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile }) => {
     const [waterMl, setWaterMl] = useState(1200);
     const [height,  setHeight]  = useState(170);
     const [weight,  setWeight]  = useState(72);
@@ -201,13 +194,12 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onLogout, onPro
 
                 <nav className="db-nav">
                     <button className="db-nav-btn active" title="Acasă"><IconHome /></button>
-                    <button className="db-nav-btn" title="Statistici"><IconChart /></button>
                     <button className="db-nav-btn" title="Programări"><IconCal /></button>
+                    <button className="db-nav-btn" onClick={onProfile} title="Profil"><UserIcon /></button>
                     <button className="db-nav-btn" title="Setări"><IconSettings /></button>
                 </nav>
 
                 <div className="db-sidebar-bottom">
-                    <button className="db-nav-btn" title="Ieșire" onClick={onLogout}><IconLogout /></button>
                     <button className="db-avatar" onClick={onProfile}>{username.charAt(0).toUpperCase()}</button>
                 </div>
             </aside>
