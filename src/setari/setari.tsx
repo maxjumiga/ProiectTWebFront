@@ -81,8 +81,8 @@ const ACCENT_COLORS = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const SettingsPage: React.FC<SettingsPageProps> = ({
-                                                       username = "Ion",
-                                                       onLogout,
+                                                       username = "Ion Popescu",
+                                                       onLogout,gi
                                                        onDashboard,
                                                        onProfile,
                                                    }) => {

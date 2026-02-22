@@ -154,12 +154,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
         <div className="profile-root">
             {/* ── Sidebar ── */}
             <aside className="db-sidebar">
-                <div className="db-logo">NF</div>
+                <div className="db-logo">W&H</div>
                 <nav className="db-nav">
                     <button className="db-nav-btn" onClick={onDashboard} title="Dashboard">
                         <HomeIcon />
                     </button>
-                    <button className="db-nav-btn" title="Statistici">
+                    <button className="db-nav-btn" title="Programari">
                         <IconCal />
                     </button>
                     <button className="db-nav-btn active" title="Profil">

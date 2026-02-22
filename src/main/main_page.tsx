@@ -39,6 +39,15 @@ const IconSearch = () => (
     </svg>
 );
 
+const username = "Ion Popescu"
+
+const initials = username
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
 // ─── Chart Data ───────────────────────────────────────────────────────────────
 const DAYS     = ["Lun","Mar","Mie","Joi","Vin","Sâm","Dum"];
 const CAL_DATA = [1650, 2100, 1800, 2350, 1950, 2200, 1420];
@@ -201,7 +210,7 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                 </nav>
 
                 <div className="db-sidebar-bottom">
-                    <button className="db-avatar" onClick={onProfile}>{username.charAt(0).toUpperCase()}</button>
+                    <button className="db-avatar" onClick={onProfile}>{initials}</button>
                 </div>
             </aside>
 
