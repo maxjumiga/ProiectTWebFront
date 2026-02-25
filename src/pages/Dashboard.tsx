@@ -5,6 +5,7 @@ import { calcBMI, calcBMR, calcTDEE, goalCalories, goalLabel, bmiCategory } from
 
 interface Props {
     data: OnboardingData;
+    onLogout: () => void;
 }
 
 const navItems = [
@@ -21,7 +22,7 @@ function getGreeting() {
     return 'Bună seara';
 }
 
-export default function Dashboard({ data }: Props) {
+export default function Dashboard({ data, onLogout }: Props) {
     const [activeNav, setActiveNav] = useState(0);
     const { gender, age, heightCm, weightKg, goal } = data;
 
@@ -101,7 +102,8 @@ export default function Dashboard({ data }: Props) {
 
                 {/* Logout */}
                 <button
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-lg"
+                    onClick={onLogout}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-lg hover:bg-white/5 transition-colors"
                     style={{ color: '#3a4560' }}
                     title="Logout"
                 >

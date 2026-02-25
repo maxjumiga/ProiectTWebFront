@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect, UIEvent } from 'react';
 import { motion } from 'framer-motion';
 
 interface Props {
@@ -9,69 +9,146 @@ interface Props {
 }
 
 export default function AgeStep({ value, onChange, onNext, onBack }: Props) {
-    const [raw, setRaw] = useState(value ? String(value) : '');
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const itemHeight = 60; // pixel height of each row
+    const [isScrolling, setIsScrolling] = useState(false);
+    const scrollTimeout = useRef<ReturnType<typeof setTimeout>>();
 
-    const handleChange = (input: string) => {
-        setRaw(input);
-        const num = parseInt(input);
-        if (!isNaN(num) && num >= 10 && num <= 100) {
-            onChange(num);
+    const minAge = 10;
+    const maxAge = 120;
+    const items = Array.from({ length: maxAge - minAge + 1 }, (_, i) => minAge + i);
+
+    const [activeVal, setActiveVal] = useState(value || 25);
+
+    // Track initialization to avoid setting scroll on unmounted DOM
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
+
+    // Effect to scroll to the initial activeVal
+    useEffect(() => {
+        if (mounted && scrollRef.current && !isScrolling) {
+            const index = items.indexOf(activeVal);
+            if (index !== -1) {
+                // Instantly center the item
+                scrollRef.current.scrollTop = index * itemHeight;
+            }
+        }
+    }, [mounted]);
+
+    const updateValue = (val: number, smooth: boolean = true) => {
+        const clamped = Math.max(minAge, Math.min(maxAge, val));
+        setActiveVal(clamped);
+        onChange(clamped);
+
+        // Scroll visually
+        if (scrollRef.current) {
+            const idx = items.indexOf(clamped);
+            if (idx !== -1) {
+                scrollRef.current.scrollTo({
+                    top: idx * itemHeight,
+                    behavior: smooth ? 'smooth' : 'auto'
+                });
+            }
         }
     };
 
-    const isValid = value !== null;
+    const handleScroll = (e: UIEvent<HTMLDivElement>) => {
+        const idx = Math.round(e.currentTarget.scrollTop / itemHeight);
+        const selected = items[idx];
+
+        if (selected !== activeVal && selected >= minAge && selected <= maxAge) {
+            setActiveVal(selected);
+            onChange(selected);
+        }
+
+        setIsScrolling(true);
+        if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+        scrollTimeout.current = setTimeout(() => {
+            setIsScrolling(false);
+            // Snap exactly after scroll ends
+            const exactIdx = Math.round(e.currentTarget.scrollTop / itemHeight);
+            e.currentTarget.scrollTo({
+                top: exactIdx * itemHeight,
+                behavior: 'smooth'
+            });
+        }, 400);
+    };
+
+    const jump = (delta: number) => {
+        updateValue(activeVal + delta, true);
+    };
 
     return (
         <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="flex flex-col px-6 py-10 h-full"
+            exit={{ opacity: 0, x: -30 }}
+            transition={{ duration: 0.35 }}
+            className="flex flex-col px-8 py-10 h-full"
         >
-            <div className="mb-10">
-                <p className="text-lime-400 text-sm font-semibold uppercase tracking-widest mb-2">Step 5</p>
-                <h2 className="font-display text-4xl font-bold text-white">How old<br />are you?</h2>
-                <p className="text-zinc-500 mt-2 text-sm">Used to calculate your personalised calorie target.</p>
+            <div className="mb-6">
+                <span className="text-xs font-semibold text-[#42448A] uppercase tracking-widest">Step 5 of 6</span>
+                <h2 className="text-3xl font-extrabold text-[#1E1F35] mt-2">How old are you?</h2>
+                <p className="text-slate-600 mt-2 text-sm">Used for accurate calorie calculations.</p>
             </div>
 
-            <div className="flex-1 flex flex-col justify-center">
-                <div className="flex items-end gap-3 bg-zinc-900/60 border border-zinc-800 rounded-2xl px-6 py-8">
-                    <input
-                        type="number"
-                        value={raw}
-                        onChange={(e) => handleChange(e.target.value)}
-                        placeholder="25"
-                        min={10}
-                        max={100}
-                        autoFocus
-                        className="bg-transparent text-white font-display text-7xl font-bold flex-1 outline-none placeholder:text-zinc-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    />
-                    <span className="text-zinc-500 text-2xl mb-3">yrs</span>
+            <div className="flex-1 flex flex-col items-center justify-center -mt-6">
+                {/* Scroll Picker container */}
+                <div className="relative w-48 h-[240px] flex justify-center py-4 overflow-hidden mb-6" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 30%, black 70%, transparent)' }}>
+
+                    {/* Active highlight bar */}
+                    <div className="absolute top-1/2 left-0 w-full h-[60px] -translate-y-1/2 border-y-2 border-[#42448A]/30 bg-[#42448A]/5 pointer-events-none rounded-xl" />
+
+                    <div
+                        ref={scrollRef}
+                        onScroll={handleScroll}
+                        className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-scrollbar flex flex-col items-center cursor-grab active:cursor-grabbing"
+                        style={{ padding: `90px 0`, scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    >
+                        {items.map((val) => (
+                            <div
+                                key={val}
+                                className={`h-[60px] w-full flex items-center justify-center text-4xl font-extrabold transition-all duration-200 shrink-0 snap-center
+                                    ${activeVal === val ? 'text-[#1E1F35] scale-110' : 'text-slate-300 scale-90 blur-[0.5px]'}`}
+                            >
+                                {val}
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                {raw && (parseInt(raw) < 10 || parseInt(raw) > 100) && (
-                    <motion.p
-                        initial={{ opacity: 0, y: -4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-red-400 text-sm mt-3 ml-1"
-                    >
-                        Please enter a valid age between 10 and 100.
-                    </motion.p>
-                )}
+                {/* Micro Adjustments */}
+                <div className="flex items-center gap-6">
+                    <button onClick={() => jump(-1)} className="w-12 h-12 rounded-full flex items-center justify-center bg-slate-100 text-slate-600 hover:bg-slate-200 text-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-sm">
+                        −
+                    </button>
+                    <span className="text-slate-500 font-semibold w-8 text-center">yrs</span>
+                    <button onClick={() => jump(1)} className="w-12 h-12 rounded-full flex items-center justify-center bg-slate-100 text-slate-600 hover:bg-slate-200 text-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-sm">
+                        +
+                    </button>
+                </div>
+
+                {/* Error message slot (just to maintain height if needed, though scroll picker prevents errors) */}
+                <div className="h-6 mt-4 flex items-center justify-center">
+                    {value === null && <p className="text-slate-400 text-xs">Please select your age</p>}
+                </div>
+
+                <style>{`
+                    .no-scrollbar::-webkit-scrollbar { display: none; }
+                `}</style>
             </div>
 
-            <div className="flex gap-3 mt-8">
+            <div className="flex gap-3 mt-6">
                 <button
                     onClick={onBack}
-                    className="flex-1 py-4 rounded-2xl border border-zinc-700 text-zinc-400 font-semibold hover:border-zinc-500 transition-colors"
+                    className="flex-1 py-3.5 rounded-2xl border border-slate-200 text-slate-500 font-semibold hover:border-[#42448A] transition-colors text-sm"
                 >
                     ← Back
                 </button>
                 <button
                     onClick={onNext}
-                    disabled={!isValid}
-                    className="flex-2 grow py-4 rounded-2xl bg-lime-400 text-black font-semibold disabled:opacity-30 disabled:cursor-not-allowed hover:shadow-[0_0_30px_rgba(163,230,53,0.4)] transition-shadow"
+                    disabled={value === null}
+                    className="flex-[2] py-3.5 rounded-2xl bg-[#42448A] hover:opacity-90 text-white font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-all text-sm shadow-[0_4px_14px_-6px_rgba(66,68,138,0.4)]"
                 >
                     Continue →
                 </button>
