@@ -2,8 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
-import UserManagement from './pages/UserManagement';
-import GestionareAlimente from './pages/GestionareAlimente';
+import UserManagement from './pages/utilizatori/UserManagement';
+import GestionareAlimente from './pages/alimente/GestionareAlimente';
 import './index.css';
 
 export default function App() {
