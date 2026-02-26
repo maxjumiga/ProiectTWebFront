@@ -1,12 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import type { OnboardingData } from '../types/onboarding';
 import { calcBMI, calcBMR, calcTDEE, goalCalories, goalLabel, bmiCategory } from '../utils/calculations';
-
-interface Props {
-    data: OnboardingData;
-    onLogout: () => void;
-}
 
 const navItems = [
     { icon: '⊞', label: 'Dashboard', active: true },
@@ -22,8 +18,32 @@ function getGreeting() {
     return 'Bună seara';
 }
 
-export default function Dashboard({ data, onLogout }: Props) {
+export default function Dashboard() {
     const [activeNav, setActiveNav] = useState(0);
+    const [data, setData] = useState<OnboardingData | null>(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const saved = localStorage.getItem('onboarding');
+        if (saved) {
+            try {
+                setData(JSON.parse(saved));
+            } catch (e) { }
+        }
+    }, []);
+
+    const onLogout = () => {
+        localStorage.removeItem('isAuthenticated');
+        // Let's keep the user's generated onboarding data just in case they log back in
+        // or we could wipe everything. For a mock frontend only flow, wiping everything is fine.
+        localStorage.removeItem('user');
+        localStorage.removeItem('onboarding');
+        localStorage.removeItem('onboardingCompleted');
+        navigate('/login');
+    };
+
+    if (!data) return null;
+
     const { gender, age, heightCm, weightKg, goal } = data;
 
     const bmi = heightCm && weightKg ? calcBMI(weightKg, heightCm) : null;
