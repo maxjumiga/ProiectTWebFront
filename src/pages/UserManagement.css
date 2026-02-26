@@ -90,7 +90,7 @@
 
 .btn-primary:hover {
     background: var(--accent-hover);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+    box-shadow: 0 4px 12px rgba(66, 68, 138, 0.35);
 }
 
 .btn-ghost {
@@ -359,7 +359,7 @@
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: var(--text-muted);
-    background: #f8faff;
+    background: #f3f4fa;
     border-bottom: 1px solid var(--border);
 }
 
@@ -379,7 +379,7 @@
 }
 
 .data-table tbody tr:hover td {
-    background: #f7f9ff;
+    background: var(--bg-card-hover);
     color: var(--text-primary);
 }
 
@@ -393,7 +393,7 @@
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), #7c3aed);
+    background: linear-gradient(135deg, var(--accent), #5BB6F5);
     display: flex;
     align-items: center;
     justify-content: center;

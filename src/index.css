@@ -10,43 +10,53 @@
 
 :root {
   /* ── Backgrounds ─────────────────────────── */
-  --bg-page: #eef2f8;
-  --bg-sidebar: #0d1427;
-  --bg-card: #ffffff;
+  --bg-page: #F0F2F8;
+  --bg-sidebar: #1A1A2E;
+  --bg-sidebar-secondary: #1E1F35;
+  --bg-sidebar-tertiary: #272840;
+  --bg-card: #FFFFFF;
   --bg-card-hover: #f7f9ff;
-  --bg-input: #f0f4fa;
-  --bg-input-focus: #ffffff;
+  --bg-input: #eceef5;
+  --bg-input-focus: #FFFFFF;
 
   /* ── Borders ─────────────────────────────── */
-  --border: rgba(30, 42, 60, 0.08);
-  --border-light: rgba(30, 42, 60, 0.13);
-  --border-focus: rgba(59, 130, 246, 0.45);
+  --border: rgba(66, 68, 138, 0.10);
+  --border-light: rgba(66, 68, 138, 0.16);
+  --border-focus: rgba(66, 68, 138, 0.40);
 
-  /* ── Accent ──────────────────────────────── */
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --accent-glow: rgba(59, 130, 246, 0.18);
-  --accent-soft: rgba(59, 130, 246, 0.09);
+  /* ── Accent (Brand Purple) ───────────────── */
+  --accent: #42448A;
+  --accent-hover: #33356e;
+  --accent-glow: rgba(66, 68, 138, 0.18);
+  --accent-soft: rgba(66, 68, 138, 0.08);
+
+  /* ── Secondary accent (Info Blue) ──────────*/
+  --blue: #5BB6F5;
+  --blue-soft: rgba(91, 182, 245, 0.12);
+
+  /* ── Tertiary accent (Energy Orange) ───────*/
+  --orange: #FCAF79;
+  --orange-soft: rgba(252, 175, 121, 0.14);
 
   /* ── Status colors ───────────────────────── */
   --green: #22c55e;
   --green-soft: rgba(34, 197, 94, 0.10);
   --red: #ef4444;
   --red-soft: rgba(239, 68, 68, 0.10);
-  --amber: #f59e0b;
-  --amber-soft: rgba(245, 158, 11, 0.10);
-  --purple: #a855f7;
-  --purple-soft: rgba(168, 85, 247, 0.10);
+  --amber: #FCAF79;
+  --amber-soft: rgba(252, 175, 121, 0.14);
+  --purple: #42448A;
+  --purple-soft: rgba(66, 68, 138, 0.10);
 
   /* ── Text ────────────────────────────────── */
-  --text-primary: #1a2540;
-  --text-secondary: #546178;
-  --text-muted: #93a3b8;
+  --text-primary: #1E1F35;
+  --text-secondary: #4a4f70;
+  --text-muted: #8b90b8;
 
   /* Sidebar-specific text (always light, sidebar stays dark) */
-  --sidebar-text: #94a3b8;
+  --sidebar-text: #8b90b8;
   --sidebar-text-active: #ffffff;
-  --sidebar-text-hover: #cbd5e1;
+  --sidebar-text-hover: #c5c8e0;
 
   /* ── Radii ───────────────────────────────── */
   --radius-sm: 6px;
@@ -54,11 +64,11 @@
   --radius-lg: 16px;
   --radius-xl: 22px;
 
-  /* ── Shadows (lighter for light theme) ───── */
-  --shadow-xs: 0 1px 3px rgba(30, 42, 60, 0.06);
-  --shadow-sm: 0 2px 8px rgba(30, 42, 60, 0.08);
-  --shadow-md: 0 4px 18px rgba(30, 42, 60, 0.10);
-  --shadow-lg: 0 8px 32px rgba(30, 42, 60, 0.13);
+  /* ── Shadows ─────────────────────────────── */
+  --shadow-xs: 0 1px 3px rgba(30, 31, 53, 0.06);
+  --shadow-sm: 0 2px 8px rgba(30, 31, 53, 0.08);
+  --shadow-md: 0 4px 18px rgba(30, 31, 53, 0.10);
+  --shadow-lg: 0 8px 32px rgba(30, 31, 53, 0.14);
 
   --transition: 0.18s ease;
 }

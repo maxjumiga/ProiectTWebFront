@@ -77,15 +77,15 @@
 
 /* ── Color variants on trigger ── */
 .csel-color--admin {
-    background: rgba(59, 130, 246, 0.08) !important;
+    background: rgba(66, 68, 138, 0.08) !important;
     color: var(--accent) !important;
-    border-color: rgba(59, 130, 246, 0.2) !important;
+    border-color: rgba(66, 68, 138, 0.2) !important;
 }
 
 .csel-color--user {
-    background: rgba(168, 85, 247, 0.08) !important;
+    background: rgba(66, 68, 138, 0.08) !important;
     color: var(--purple) !important;
-    border-color: rgba(168, 85, 247, 0.2) !important;
+    border-color: rgba(66, 68, 138, 0.2) !important;
 }
 
 .csel-color--activ {
