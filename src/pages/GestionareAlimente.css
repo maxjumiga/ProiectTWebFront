@@ -6,10 +6,10 @@
     min-height: 60vh;
     gap: 16px;
     text-align: center;
-    animation: fadeIn 0.4s ease;
+    animation: fadeInGA 0.4s ease;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInGA {
     from {
         opacity: 0;
         transform: translateY(12px);
@@ -25,8 +25,8 @@
     width: 90px;
     height: 90px;
     border-radius: var(--radius-xl);
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.04));
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    background: var(--amber-soft);
+    border: 1px solid rgba(245, 158, 11, 0.18);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -55,7 +55,7 @@
     padding: 5px 14px;
     background: var(--amber-soft);
     color: var(--amber);
-    border: 1px solid rgba(245, 158, 11, 0.25);
+    border: 1px solid rgba(245, 158, 11, 0.2);
     border-radius: 99px;
     font-size: 12px;
     font-weight: 600;

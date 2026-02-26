@@ -1,14 +1,14 @@
 .dashboard {
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 24px;
 }
 
 /* ── Stats grid ── */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
+    gap: 16px;
 }
 
 @media (max-width: 1100px) {
@@ -28,6 +28,7 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
 }
 
@@ -35,7 +36,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 20px 24px 16px;
+    padding: 18px 24px 14px;
     border-bottom: 1px solid var(--border);
     gap: 12px;
 }
@@ -63,14 +64,14 @@
     padding: 6px 12px;
     border-radius: var(--radius-sm);
     background: var(--accent-soft);
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.15);
     transition: background var(--transition), border-color var(--transition);
     flex-shrink: 0;
 }
 
 .btn-link:hover {
-    background: rgba(59, 130, 246, 0.18);
-    border-color: rgba(59, 130, 246, 0.35);
+    background: rgba(59, 130, 246, 0.14);
+    border-color: rgba(59, 130, 246, 0.3);
 }
 
 /* ── Table ── */
@@ -85,19 +86,19 @@
 }
 
 .data-table th {
-    padding: 11px 24px;
+    padding: 10px 24px;
     text-align: left;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: var(--text-muted);
-    background: var(--bg-sidebar);
+    background: #f8faff;
     border-bottom: 1px solid var(--border);
 }
 
 .data-table td {
-    padding: 14px 24px;
+    padding: 13px 24px;
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
@@ -112,7 +113,7 @@
 }
 
 .data-table tbody tr:hover td {
-    background: var(--bg-card-hover);
+    background: #f7f9ff;
     color: var(--text-primary);
 }
 
