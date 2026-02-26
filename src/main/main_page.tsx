@@ -21,7 +21,7 @@ const initials = username
     .slice(0, 2);
 
 // ─── Chart Data ───────────────────────────────────────────────────────────────
-const DAYS     = ["Lun","Mar","Mie","Joi","Vin","Sâm","Dum"];
+const DAYS = ["Lun", "Mar", "Mie", "Joi", "Vin", "Sâm", "Dum"];
 const CAL_DATA = [1650, 2100, 1800, 2350, 1950, 2200, 1420];
 const WAT_DATA = [1800, 2400, 2000, 2800, 2200, 2600, 1600]; // ml
 
@@ -40,13 +40,13 @@ const Sparkline = ({ data, color }: { data: number[]; color: string }) => {
         <svg className="db-sparkline" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
             <defs>
                 <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={color} stopOpacity="0.22"/>
-                    <stop offset="100%" stopColor={color} stopOpacity="0"/>
+                    <stop offset="0%" stopColor={color} stopOpacity="0.22" />
+                    <stop offset="100%" stopColor={color} stopOpacity="0" />
                 </linearGradient>
             </defs>
-            <polygon points={area} fill="url(#sg)"/>
+            <polygon points={area} fill="url(#sg)" />
             <polyline points={line} fill="none" stroke={color} strokeWidth="2"
-                      strokeLinecap="round" strokeLinejoin="round"/>
+                strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     );
 };
@@ -63,18 +63,18 @@ const BarChart = () => {
         <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet">
             <defs>
                 <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#f97316" stopOpacity="0.9"/>
-                    <stop offset="100%" stopColor="#f97316" stopOpacity="0.5"/>
+                    <stop offset="0%" stopColor="#f97316" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="#f97316" stopOpacity="0.5" />
                 </linearGradient>
                 <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.9"/>
-                    <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.5"/>
+                    <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.5" />
                 </linearGradient>
             </defs>
             {[0, 0.5, 1].map((v, i) => (
                 <line key={i} x1={pL} x2={W - pR}
-                      y1={pT + cH - v * cH} y2={pT + cH - v * cH}
-                      stroke="#e4e7f0" strokeWidth="1" strokeDasharray={i === 0 ? "0" : "3 5"}/>
+                    y1={pT + cH - v * cH} y2={pT + cH - v * cH}
+                    stroke="#e4e7f0" strokeWidth="1" strokeDasharray={i === 0 ? "0" : "3 5"} />
             ))}
             {DAYS.map((d, i) => {
                 const cx = pL + i * gW + gW / 2;
@@ -82,10 +82,10 @@ const BarChart = () => {
                 const wh = (WAT_DATA[i] / mW) * cH;
                 return (
                     <g key={i}>
-                        <rect x={cx - gap / 2 - bW} y={pT + cH - ch} width={bW} height={ch} fill="url(#cg)" rx="3"/>
-                        <rect x={cx + gap / 2}       y={pT + cH - wh} width={bW} height={wh} fill="url(#wg)" rx="3"/>
+                        <rect x={cx - gap / 2 - bW} y={pT + cH - ch} width={bW} height={ch} fill="url(#cg)" rx="3" />
+                        <rect x={cx + gap / 2} y={pT + cH - wh} width={bW} height={wh} fill="url(#wg)" rx="3" />
                         <text x={cx} y={H - 5} textAnchor="middle" fontSize="10"
-                              fontFamily="'Space Mono', monospace" fill="#a8adc4">{d}</text>
+                            fontFamily="'Space Mono', monospace" fill="#a8adc4">{d}</text>
                     </g>
                 );
             })}
@@ -101,28 +101,28 @@ const WaterBottle = ({ pct }: { pct: number }) => {
     return (
         <svg className="water-bottle-svg" viewBox="0 0 42 92" fill="none">
             <defs>
-                <clipPath id="bc"><rect x="7" y={bY} width={bW} height={bH} rx="5"/></clipPath>
+                <clipPath id="bc"><rect x="7" y={bY} width={bW} height={bH} rx="5" /></clipPath>
                 <linearGradient id="wf" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#93c5fd"/>
-                    <stop offset="100%" stopColor="#0ea5e9"/>
+                    <stop offset="0%" stopColor="#93c5fd" />
+                    <stop offset="100%" stopColor="#0ea5e9" />
                 </linearGradient>
             </defs>
             {/* Cap */}
-            <rect x={(42 - cW) / 2} y="2" width={cW} height={cH} rx="3" fill="#cbd5e1"/>
+            <rect x={(42 - cW) / 2} y="2" width={cW} height={cH} rx="3" fill="#cbd5e1" />
             {/* Body */}
             <rect x="7" y={bY} width={bW} height={bH} rx="5"
-                  fill="#f4f6fb" stroke="#e4e7f0" strokeWidth="1.5"/>
+                fill="#f4f6fb" stroke="#e4e7f0" strokeWidth="1.5" />
             {/* Fill */}
             <rect x="7" y={fY} width={bW} height={fH}
-                  fill="url(#wf)" clipPath="url(#bc)"
-                  style={{ transition: "all 0.5s ease" }}/>
+                fill="url(#wf)" clipPath="url(#bc)"
+                style={{ transition: "all 0.5s ease" }} />
             {/* Shine */}
-            <rect x="11" y={bY + 5} width="3" height={bH - 10} rx="1.5" fill="white" opacity="0.3"/>
+            <rect x="11" y={bY + 5} width="3" height={bH - 10} rx="1.5" fill="white" opacity="0.3" />
             {/* Tick marks */}
             {[0.33, 0.66].map((v, i) => (
                 <line key={i} x1="7" x2="15"
-                      y1={bY + bH - bH * v} y2={bY + bH - bH * v}
-                      stroke="#bfdbfe" strokeWidth="1" strokeDasharray="2 2"/>
+                    y1={bY + bH - bH * v} y2={bY + bH - bH * v}
+                    stroke="#bfdbfe" strokeWidth="1" strokeDasharray="2 2" />
             ))}
         </svg>
     );
@@ -132,10 +132,10 @@ const WaterBottle = ({ pct }: { pct: number }) => {
 const calcBMI = (h: number, w: number) => w / ((h / 100) ** 2);
 
 const bmiStatus = (bmi: number) => {
-    if (bmi < 18.5) return { label: "Subponderal",   bg: "#bfdbfe", color: "#1d4ed8" };
-    if (bmi < 25)   return { label: "Sănătos",       bg: "#bbf7d0", color: "#065f46" };
-    if (bmi < 30)   return { label: "Supraponderal", bg: "#fed7aa", color: "#9a3412" };
-    return               { label: "Obez",            bg: "#fecdd3", color: "#9f1239" };
+    if (bmi < 18.5) return { label: "Subponderal", bg: "#bfdbfe", color: "#1d4ed8" };
+    if (bmi < 25) return { label: "Sănătos", bg: "#bbf7d0", color: "#065f46" };
+    if (bmi < 30) return { label: "Supraponderal", bg: "#fed7aa", color: "#9a3412" };
+    return { label: "Obez", bg: "#fecdd3", color: "#9f1239" };
 };
 
 // position on gradient bar: 15-40 → 0-100%
@@ -148,21 +148,21 @@ interface DashboardProps {
     onSettings?: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSettings}) => {
+const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSettings }) => {
     const [waterMl, setWaterMl] = useState(1200);
-    const [height,  setHeight]  = useState(170);
-    const [weight,  setWeight]  = useState(72);
+    const [height, setHeight] = useState(170);
+    const [weight, setWeight] = useState(72);
 
     const WATER_MAX = 3000;
-    const CAL_GOAL  = 2200;
-    const todayCal  = CAL_DATA[CAL_DATA.length - 1];
-    const calPct    = Math.round((todayCal / CAL_GOAL) * 100);
-    const waterPct  = waterMl / WATER_MAX;
+    const CAL_GOAL = 2200;
+    const todayCal = CAL_DATA[CAL_DATA.length - 1];
+    const calPct = Math.round((todayCal / CAL_GOAL) * 100);
+    const waterPct = waterMl / WATER_MAX;
 
-    const bmi    = calcBMI(height, weight);
+    const bmi = calcBMI(height, weight);
     const status = bmiStatus(bmi);
 
-    const today  = new Date();
+    const today = new Date();
     const dateStr = today.toLocaleDateString("ro-RO", {
         weekday: "long", year: "numeric", month: "long", day: "numeric",
     });
@@ -178,7 +178,7 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                     <button className="db-nav-btn active" title="Acasă">
                         <FontAwesomeIcon icon={faHouse} />
                     </button>
-                    <button className="db-nav-btn" title="Programări">
+                    <button className="db-nav-btn" title="Calendar">
                         <FontAwesomeIcon icon={faCalendarDays} />
                     </button>
                     <button className="db-nav-btn" onClick={onProfile} title="Profil">
@@ -227,9 +227,9 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                             Obiectiv: <strong>{CAL_GOAL.toLocaleString("ro-RO")} kcal</strong> ({calPct}% atins)
                         </div>
                         <div className="cal-prog">
-                            <div className="cal-prog-fill" style={{ width: `${Math.min(calPct, 100)}%` }}/>
+                            <div className="cal-prog-fill" style={{ width: `${Math.min(calPct, 100)}%` }} />
                         </div>
-                        <Sparkline data={CAL_DATA} color="#f97316"/>
+                        <Sparkline data={CAL_DATA} color="#f97316" />
                     </div>
 
                     {/* Water */}
@@ -237,13 +237,13 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                         <div className="db-card-lbl">Apă băută astăzi</div>
                         <div className="water-body">
                             <div className="water-bottle-wrap">
-                                <WaterBottle pct={waterPct}/>
+                                <WaterBottle pct={waterPct} />
                             </div>
                             <div className="water-details">
                                 <div className="water-num">{waterMl.toLocaleString("ro-RO")}<em>ml</em></div>
                                 <div className="water-sub">din <strong>{WATER_MAX.toLocaleString("ro-RO")} ml</strong> zilnic</div>
                                 <div className="water-prog">
-                                    <div className="water-prog-fill" style={{ width: `${Math.min(waterPct * 100, 100)}%` }}/>
+                                    <div className="water-prog-fill" style={{ width: `${Math.min(waterPct * 100, 100)}%` }} />
                                 </div>
                                 <div className="water-btns">
                                     <button className="wbtn" onClick={() => setWaterMl(p => Math.min(p + 250, WATER_MAX))}>+250 ml</button>
@@ -258,10 +258,10 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                 {/* Chart */}
                 <div className="db-card db-chart-card">
                     <div className="chart-hdr">
-                        <span className="chart-hdr-title">Evoluție săptămânală</span>
+                        <span className="db-card-lbl">Evoluție săptămânală</span>
                         <div className="chart-legend">
-                            <div className="legend-item"><span style={{ background: "#f97316" }} className="legend-dot"/>Calorii</div>
-                            <div className="legend-item"><span style={{ background: "#38bdf8" }} className="legend-dot"/>Apă băută</div>
+                            <div className="legend-item"><span style={{ background: "#f97316" }} className="legend-dot" />Calorii</div>
+                            <div className="legend-item"><span style={{ background: "#38bdf8" }} className="legend-dot" />Apă băută</div>
                         </div>
                     </div>
                     <div className="chart-box"><BarChart /></div>
@@ -272,24 +272,13 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
 
                     {/* Appointments */}
                     <div className="db-card">
-                        <div className="db-card-lbl">Programări viitoare</div>
+                        <div className="db-card-lbl">Antrenamentele mele</div>
+                        <div className="db-card-sublbl">Ultimul antrenament:</div>
                         <div className="appt-row">
-                            <div className="appt-badge" style={{ background: "#6366f1" }}>
-                                <div className="d">14</div><div className="m">Aug</div>
-                            </div>
-                            <div>
-                                <div className="appt-name">Dr. Ionescu Maria</div>
-                                <div className="appt-sub">Nutriționist • 10:00</div>
-                            </div>
+
                         </div>
                         <div className="appt-row">
-                            <div className="appt-badge" style={{ background: "#10b981" }}>
-                                <div className="d">21</div><div className="m">Aug</div>
-                            </div>
-                            <div>
-                                <div className="appt-name">Dr. Popescu Andrei</div>
-                                <div className="appt-sub">Medic de familie • 14:30</div>
-                            </div>
+
                         </div>
                     </div>
 
@@ -338,9 +327,9 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                             <span className="sl-val">{height}<em>cm</em></span>
                         </div>
                         <input type="range" className="bmi-range"
-                               min={140} max={210} value={height}
-                               onChange={e => setHeight(Number(e.target.value))}
-                               style={{ background: `linear-gradient(90deg, #6366f1 ${((height-140)/70)*100}%, rgba(255,255,255,0.12) ${((height-140)/70)*100}%)` }}
+                            min={140} max={210} value={height}
+                            onChange={e => setHeight(Number(e.target.value))}
+                            style={{ background: `linear-gradient(90deg, #6366f1 ${((height - 140) / 70) * 100}%, rgba(255,255,255,0.12) ${((height - 140) / 70) * 100}%)` }}
                         />
                     </div>
                     <div className="sl-row">
@@ -349,9 +338,9 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                             <span className="sl-val">{weight}<em>kg</em></span>
                         </div>
                         <input type="range" className="bmi-range"
-                               min={40} max={150} value={weight}
-                               onChange={e => setWeight(Number(e.target.value))}
-                               style={{ background: `linear-gradient(90deg, #6366f1 ${((weight-40)/110)*100}%, rgba(255,255,255,0.12) ${((weight-40)/110)*100}%)` }}
+                            min={40} max={150} value={weight}
+                            onChange={e => setWeight(Number(e.target.value))}
+                            style={{ background: `linear-gradient(90deg, #6366f1 ${((weight - 40) / 110) * 100}%, rgba(255,255,255,0.12) ${((weight - 40) / 110) * 100}%)` }}
                         />
                     </div>
                 </div>
@@ -366,7 +355,7 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
 
                     <div className="bmi-bar-wrap">
                         <div className="bmi-bar">
-                            <div className="bmi-indicator" style={{ left: bmiBarPos(bmi) }}/>
+                            <div className="bmi-indicator" style={{ left: bmiBarPos(bmi) }} />
                         </div>
                         <div className="bmi-bar-ticks">
                             <span>15</span><span>18.5</span><span>25</span><span>30</span><span>40</span>

@@ -6,6 +6,7 @@ import { ForgotPasswordPage, VerifyCodePage } from "./recuperarecont/recuperare-
 import Dashboard from "./main/main_page";
 import ProfilePage from "./profile/profil";
 import SettingsPage from "./setari/setari";
+// import CalendarPage from "./calendar/calendar";
 import { useState } from 'react'
 
 function App() {
@@ -64,11 +65,19 @@ function App() {
                     onSettings={() => navigate("/settings")}
                 />
             } />
+            {/* <Route path="/calendar" element={
+                <CalendarPage
+                    onProfile={() => navigate("/profile")}
+                    onSettings={() => navigate("/settings")}
+                    onDashboard={() => navigate("/dashboard")}
+                />
+            } /> */}
 
             <Route path="/profile" element={
                 <ProfilePage
                     username="Ion Popescu"
                     email="ion.popescu@gmail.com"
+                    onLogin={() => navigate("/login")}
                     onSettings={() => navigate("/settings")}
                     onDashboard={() => navigate("/dashboard")}
                 />
@@ -77,6 +86,7 @@ function App() {
             <Route path="/settings" element={
                 <SettingsPage
                     username="Ion"
+                    onLogin={() => navigate("/login")}
                     onDashboard={() => navigate("/dashboard")}
                     onProfile={() => navigate("/profile")}
                 />

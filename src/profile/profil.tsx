@@ -23,7 +23,7 @@ import "./profil.css";
 interface ProfilePageProps {
     username?: string;
     email?: string;
-    onLogout?: () => void;
+    onLogin?: () => void;
     onDashboard?: () => void;
     onSettings?: () => void;
 }
@@ -31,12 +31,12 @@ interface ProfilePageProps {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 const ProfilePage: React.FC<ProfilePageProps> = ({
-                                                     username = "Ion Popescu",
-                                                     email = "ion.popescu@gmail.com",
-                                                     onLogout,
-                                                     onDashboard,
-                                                     onSettings,
-                                                 }) => {
+    username = "Ion Popescu",
+    email = "ion.popescu@gmail.com",
+    onLogin,
+    onDashboard,
+    onSettings,
+}) => {
     const [twoFA, setTwoFA] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -332,7 +332,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
 
                 <hr className="pr-divider" />
 
-                <button className="logout-btn" onClick={onLogout}>
+                <button className="logout-btn" onClick={onLogin}>
                     <FontAwesomeIcon icon={faRightFromBracket} />
                     Deconectare
                 </button>

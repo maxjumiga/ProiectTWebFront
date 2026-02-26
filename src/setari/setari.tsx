@@ -45,7 +45,7 @@ type NavSection = "notificari" | "aspect" | "limba" | "securitate" | "date" | "c
 
 interface SettingsPageProps {
     username?: string;
-    onLogout?: () => void;
+    onLogin?: () => void;
     onDashboard?: () => void;
     onProfile?: () => void;
 }
@@ -54,51 +54,51 @@ interface SettingsPageProps {
 const ACCENT_COLORS = [
     { id: "indigo", value: "#6366f1" },
     { id: "violet", value: "#8b5cf6" },
-    { id: "sky",    value: "#0ea5e9" },
-    { id: "emerald",value: "#10b981" },
-    { id: "rose",   value: "#f43f5e" },
-    { id: "amber",  value: "#f59e0b" },
+    { id: "sky", value: "#0ea5e9" },
+    { id: "emerald", value: "#10b981" },
+    { id: "rose", value: "#f43f5e" },
+    { id: "amber", value: "#f59e0b" },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const SettingsPage: React.FC<SettingsPageProps> = ({
-                                                       username = "Ion Popescu",
-                                                       onLogout,
-                                                       onDashboard,
-                                                       onProfile,
-                                                   }) => {
+    username = "Ion Popescu",
+    onLogin,
+    onDashboard,
+    onProfile,
+}) => {
     const [activeNav, setActiveNav] = useState<NavSection>("notificari");
     const [saved, setSaved] = useState(false);
 
     // Notificări
-    const [notifEmail,  setNotifEmail]  = useState(true);
-    const [notifPush,   setNotifPush]   = useState(true);
+    const [notifEmail, setNotifEmail] = useState(true);
+    const [notifPush, setNotifPush] = useState(true);
     const [notifReport, setNotifReport] = useState(false);
-    const [notifAppt,   setNotifAppt]   = useState(true);
-    const [notifTips,   setNotifTips]   = useState(false);
+    const [notifAppt, setNotifAppt] = useState(true);
+    const [notifTips, setNotifTips] = useState(false);
 
     // Aspect
-    const [darkMode,     setDarkMode]     = useState(false);
-    const [accentColor,  setAccentColor]  = useState("indigo");
-    const [fontSize,     setFontSize]     = useState(14);
-    const [compactMode,  setCompactMode]  = useState(false);
-    const [animations,   setAnimations]   = useState(true);
+    const [darkMode, setDarkMode] = useState(false);
+    const [accentColor, setAccentColor] = useState("indigo");
+    const [fontSize, setFontSize] = useState(14);
+    const [compactMode, setCompactMode] = useState(false);
+    const [animations, setAnimations] = useState(true);
 
     // Limbă & regiune
     const [language, setLanguage] = useState("ro");
     const [timezone, setTimezone] = useState("Europe/Bucharest");
-    const [units,    setUnits]    = useState("metric");
+    const [units, setUnits] = useState("metric");
     const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
 
     // Securitate
-    const [twoFA,        setTwoFA]        = useState(false);
-    const [loginAlerts,  setLoginAlerts]  = useState(true);
+    const [twoFA, setTwoFA] = useState(false);
+    const [loginAlerts, setLoginAlerts] = useState(true);
     const [sessionTimeout, setSessionTimeout] = useState("30");
 
     // Date & confidențialitate
-    const [shareData,   setShareData]   = useState(false);
-    const [analytics,   setAnalytics]   = useState(true);
-    const [autoBackup,  setAutoBackup]  = useState(true);
+    const [shareData, setShareData] = useState(false);
+    const [analytics, setAnalytics] = useState(true);
+    const [autoBackup, setAutoBackup] = useState(true);
 
     const handleSave = () => {
         setSaved(true);
@@ -109,12 +109,12 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
 
     // ── Nav items ──
     const navItems: { id: NavSection; label: string; icon: React.ReactNode }[] = [
-        { id: "notificari", label: "Notificări",         icon: <FontAwesomeIcon icon={faBell} /> },
-        { id: "aspect",     label: "Aspect & Temă",      icon: <FontAwesomeIcon icon={faPalette} /> },
-        { id: "limba",      label: "Limbă & Regiune",    icon: <FontAwesomeIcon icon={faGlobe} /> },
-        { id: "securitate", label: "Securitate",         icon: <FontAwesomeIcon icon={faShield} /> },
-        { id: "date",       label: "Date & Confidenț.", icon: <FontAwesomeIcon icon={faDatabase} /> },
-        { id: "cont",       label: "Cont",               icon: <FontAwesomeIcon icon={faUser} /> },
+        { id: "notificari", label: "Notificări", icon: <FontAwesomeIcon icon={faBell} /> },
+        { id: "aspect", label: "Aspect & Temă", icon: <FontAwesomeIcon icon={faPalette} /> },
+        { id: "limba", label: "Limbă & Regiune", icon: <FontAwesomeIcon icon={faGlobe} /> },
+        { id: "securitate", label: "Securitate", icon: <FontAwesomeIcon icon={faShield} /> },
+        { id: "date", label: "Date & Confidenț.", icon: <FontAwesomeIcon icon={faDatabase} /> },
+        { id: "cont", label: "Cont", icon: <FontAwesomeIcon icon={faUser} /> },
     ];
 
     return (
@@ -149,7 +149,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 ))}
                 <div className="snav-spacer" />
                 <div className="settings-nav-title">Sistem</div>
-                <button className="snav-btn danger" onClick={onLogout}>
+                <button className="snav-btn danger" onClick={onLogin}>
                     <FontAwesomeIcon icon={faRightFromBracket} />
                     Deconectare
                 </button>
@@ -659,11 +659,11 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                     <div className="sr-sub">Ultimele modificări</div>
                     <div className="activity-log">
                         {[
-                            { color: "#10b981", text: "Notificări push activate",       time: "acum" },
-                            { color: "#6366f1", text: "Limbă schimbată în Română",      time: "2h" },
-                            { color: "#f97316", text: "Parolă actualizată cu succes",   time: "3 zile" },
-                            { color: "#a855f7", text: "2FA activat pe cont",            time: "5 zile" },
-                            { color: "#38bdf8", text: "Backup automat configurat",      time: "1 săpt." },
+                            { color: "#10b981", text: "Notificări push activate", time: "acum" },
+                            { color: "#6366f1", text: "Limbă schimbată în Română", time: "2h" },
+                            { color: "#f97316", text: "Parolă actualizată cu succes", time: "3 zile" },
+                            { color: "#a855f7", text: "2FA activat pe cont", time: "5 zile" },
+                            { color: "#38bdf8", text: "Backup automat configurat", time: "1 săpt." },
                         ].map((item, i) => (
                             <div className="log-item" key={i}>
                                 <div className="log-dot" style={{ background: item.color }} />
@@ -689,8 +689,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                         <div className="storage-items">
                             {[
                                 { color: "#6366f1", label: "Date sănătate", val: "28 MB" },
-                                { color: "#10b981", label: "Backup-uri",    val: "14 MB" },
-                                { color: "#f97316", label: "Imagini profil",val: "5 MB" },
+                                { color: "#10b981", label: "Backup-uri", val: "14 MB" },
+                                { color: "#f97316", label: "Imagini profil", val: "5 MB" },
                             ].map((item, i) => (
                                 <div className="storage-item" key={i}>
                                     <div className="storage-item-left">
@@ -710,11 +710,11 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                     <div className="sr-title">Scurtături tastatură</div>
                     <div className="shortcuts-list">
                         {[
-                            { label: "Salvează",       keys: ["Ctrl", "S"] },
-                            { label: "Caută",          keys: ["Ctrl", "K"] },
-                            { label: "Dashboard",      keys: ["Alt", "D"] },
-                            { label: "Profil",         keys: ["Alt", "P"] },
-                            { label: "Setări",         keys: ["Alt", "S"] },
+                            { label: "Salvează", keys: ["Ctrl", "S"] },
+                            { label: "Caută", keys: ["Ctrl", "K"] },
+                            { label: "Dashboard", keys: ["Alt", "D"] },
+                            { label: "Profil", keys: ["Alt", "P"] },
+                            { label: "Setări", keys: ["Alt", "S"] },
                         ].map((sc, i) => (
                             <div className="shortcut-row" key={i}>
                                 <span className="shortcut-lbl">{sc.label}</span>
