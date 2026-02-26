@@ -1,28 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faEnvelope,
+    faCircleInfo,
+} from "@fortawesome/free-solid-svg-icons";
 import "./recuperare-parola.css";
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
 
 const MailIcon = () => (
-    <svg className="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="4" width="20" height="16" rx="3" />
-        <path d="M2 7l10 7 10-7" />
-    </svg>
+    <FontAwesomeIcon icon={faEnvelope} className="input-icon" />
 );
 
 const InfoIcon = () => (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="info-box-icon">
-        <circle cx="12" cy="12" r="10" />
-        <line x1="12" y1="8" x2="12" y2="12" />
-        <line x1="12" y1="16" x2="12.01" y2="16" />
-    </svg>
+    <FontAwesomeIcon icon={faCircleInfo} className="info-box-icon" />
 );
 
 const MailBadgeIcon = () => (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="4" width="20" height="16" rx="3" />
-        <path d="M2 7l10 7 10-7" />
-    </svg>
+    <FontAwesomeIcon icon={faEnvelope} />
 );
 
 // ─── Pagina 1: Introducere email ─────────────────────────────────────────────
@@ -111,15 +106,15 @@ interface VerifyCodeProps {
 }
 
 export const VerifyCodePage: React.FC<VerifyCodeProps> = ({
-                                                              email = "exemplu@gmail.com",
-                                                              onBack,
-                                                              onSubmit,
-                                                              onResend,
-                                                          }) => {
-    const [digits, setDigits]     = useState<string[]>(Array(OTP_LENGTH).fill(""));
+    email = "exemplu@gmail.com",
+    onBack,
+    onSubmit,
+    onResend,
+}) => {
+    const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
     const [hasError, setHasError] = useState(false);
-    const [timer, setTimer]       = useState(RESEND_SECONDS);
-    const inputsRef               = useRef<(HTMLInputElement | null)[]>([]);
+    const [timer, setTimer] = useState(RESEND_SECONDS);
+    const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
     // countdown timer
     useEffect(() => {
