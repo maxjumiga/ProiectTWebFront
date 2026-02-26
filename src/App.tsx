@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
 import UserManagement from './pages/utilizatori/UserManagement';
 import GestionareAlimente from './pages/alimente/GestionareAlimente';
+import GestionareExercitii from './pages/exercitii/GestionareExercitii';
 import './index.css';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/utilizatori" element={<UserManagement />} />
               <Route path="/alimente" element={<GestionareAlimente />} />
+              <Route path="/exercitii" element={<GestionareExercitii />} />
             </Routes>
           </main>
         </div>

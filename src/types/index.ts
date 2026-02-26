@@ -1,6 +1,9 @@
 export type Role = 'admin' | 'user';
 export type Status = 'activ' | 'inactiv';
 
+export type GrupMuscular = 'piept' | 'spate' | 'umeri' | 'brate' | 'abdomen' | 'picioare' | 'cardio' | 'altele';
+export type DificultateExercitiu = 'incepator' | 'intermediar' | 'avansat';
+
 export interface User {
     id: string;
     name: string;
@@ -27,4 +30,13 @@ export interface Aliment {
     proteine: number;      // g / 100g
     carbohidrati: number;  // g / 100g
     grasimi: number;       // g / 100g
+}
+
+export interface Exercitiu {
+    id: string;
+    nume: string;
+    grupMuscular: GrupMuscular;
+    dificultate: DificultateExercitiu;
+    descriere: string;
+    durataMed: number; // minute
 }

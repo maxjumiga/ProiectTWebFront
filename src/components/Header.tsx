@@ -5,6 +5,7 @@ const routeTitles: Record<string, { title: string; subtitle: string }> = {
     '/dashboard': { title: 'Panou Principal', subtitle: 'Bine ai venit înapoi, Administrator' },
     '/utilizatori': { title: 'Gestionare Utilizatori', subtitle: 'Administrează conturile utilizatorilor' },
     '/alimente': { title: 'Gestionare Alimente', subtitle: 'Administrează baza de date cu alimente' },
+    '/exercitii': { title: 'Gestionare Exerciții', subtitle: 'Administrează baza de date cu exerciții' },
 };
 
 export default function Header() {

@@ -35,6 +35,16 @@ const navItems = [
             </svg>
         ),
     },
+    {
+        to: '/exercitii',
+        label: 'Gestionare Exerciții',
+        icon: (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6.5 6.5h11" /><path d="M17.5 17.5h-11" />
+                <path d="M3 12h3l2-4 4 8 2-4 3 0" />
+            </svg>
+        ),
+    },
 ];
 
 export default function Sidebar() {
