@@ -9,3 +9,22 @@ export interface User {
     status: Status;
     joinedAt: string; // ISO date string
 }
+
+export type Categorie =
+    | 'fructe'
+    | 'legume'
+    | 'carne'
+    | 'lactate'
+    | 'cereale'
+    | 'bauturi'
+    | 'altele';
+
+export interface Aliment {
+    id: string;
+    nume: string;
+    categorie: Categorie;
+    calorii: number;       // kcal / 100g
+    proteine: number;      // g / 100g
+    carbohidrati: number;  // g / 100g
+    grasimi: number;       // g / 100g
+}

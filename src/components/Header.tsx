@@ -34,10 +34,7 @@ export default function Header() {
                     </svg>
                     <span>{today}</span>
                 </div>
-                <div className="header-badge">
-                    <span className="header-badge-dot" />
-                    Sistem activ
-                </div>
+
             </div>
         </header>
     );
