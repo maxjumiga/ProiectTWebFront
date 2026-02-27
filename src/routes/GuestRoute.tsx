@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
 export default function GuestRoute() {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
     const onboardingCompleted = localStorage.getItem('onboardingCompleted') === 'true';
 
     if (isAuthenticated) {

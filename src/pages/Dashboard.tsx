@@ -32,14 +32,16 @@ export default function Dashboard() {
         }
     }, []);
 
+    const onExit = () => {
+        navigate('/');
+    };
+
     const onLogout = () => {
-        localStorage.removeItem('isAuthenticated');
-        // Let's keep the user's generated onboarding data just in case they log back in
-        // or we could wipe everything. For a mock frontend only flow, wiping everything is fine.
+        sessionStorage.removeItem('isAuthenticated');
         localStorage.removeItem('user');
         localStorage.removeItem('onboarding');
         localStorage.removeItem('onboardingCompleted');
-        navigate('/login');
+        navigate('/');
     };
 
     if (!data) return null;
@@ -120,14 +122,24 @@ export default function Dashboard() {
                     ))}
                 </div>
 
+                {/* Home / Exit Dashboard */}
+                <button
+                    onClick={onExit}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-lg hover:bg-white/5 transition-colors mt-auto"
+                    style={{ color: '#3a4560' }}
+                    title="Exit Dashboard"
+                >
+                    🏠
+                </button>
+
                 {/* Logout */}
                 <button
                     onClick={onLogout}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-lg hover:bg-white/5 transition-colors"
-                    style={{ color: '#3a4560' }}
-                    title="Logout"
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-bold hover:bg-red-500/10 transition-colors"
+                    style={{ color: '#ef4444' }}
+                    title="LOG OUT"
                 >
-                    ⇥
+                    LOG<br />OUT
                 </button>
 
                 {/* Avatar */}

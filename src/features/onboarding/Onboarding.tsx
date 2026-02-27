@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import type { OnboardingData } from '../../types/onboarding';
 import WelcomeStep from '../steps/WelcomeStep';
 import GenderStep from '../steps/GenderStep';
@@ -33,13 +33,35 @@ export default function Onboarding() {
     const complete = () => {
         localStorage.setItem('onboarding', JSON.stringify(data));
         localStorage.setItem('onboardingCompleted', 'true');
+
+        try {
+            const currentUserStr = localStorage.getItem('user');
+            if (currentUserStr) {
+                const currentUser = JSON.parse(currentUserStr);
+                const email = currentUser.email;
+                let users = JSON.parse(localStorage.getItem('users') || '{}');
+                if (users[email]) {
+                    users[email].onboardingCompleted = true;
+                    // also store the data if desired
+                    users[email].onboardingData = data;
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
+            }
+        } catch (e) { }
+
         navigate('/dashboard');
     };
 
     const isWelcome = step === 0;
 
     return (
-        <div className="min-h-screen bg-[#F0F2F8] flex items-center justify-center p-4">
+        <div className="min-h-screen bg-[#F0F2F8] flex items-center justify-center p-4 relative">
+            <Link to="/" className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-white text-[#42448A] font-bold rounded-xl shadow-sm hover:shadow-md transition-all z-10">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Back to Home
+            </Link>
             <div className="w-full max-w-4xl min-h-[600px] flex rounded-3xl overflow-hidden shadow-2xl">
 
                 {/* SIDEBAR */}

@@ -15,8 +15,21 @@ export default function Register() {
             return;
         }
 
+        let users: Record<string, any> = {};
+        try {
+            users = JSON.parse(localStorage.getItem('users') || '{}');
+        } catch (e) { }
+
+        if (users[email]) {
+            setError('User already exists. Please log in.');
+            return;
+        }
+
+        users[email] = { password, onboardingCompleted: false };
+        localStorage.setItem('users', JSON.stringify(users));
+
         // Simulate registration
-        localStorage.setItem('isAuthenticated', 'true');
+        sessionStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('user', JSON.stringify({ email }));
         // A fresh register implies no onboarding done yet
         localStorage.setItem('onboardingCompleted', 'false');

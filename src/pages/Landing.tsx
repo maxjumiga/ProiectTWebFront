@@ -16,37 +16,39 @@ const stagger = {
 };
 
 export default function Landing() {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
 
     return (
         <div className="min-h-screen bg-[#F0F2F8] font-sans text-[#1A1A2E] overflow-x-hidden">
             {/* Navigation */}
-            <nav className="w-full py-6 px-8 flex justify-between items-center max-w-7xl mx-auto">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#42448A] flex items-center justify-center shadow-lg shadow-[#42448A]/30">
-                        <svg viewBox="0 0 32 32" className="w-6 h-6 fill-white">
-                            <path d="M4 16a2 2 0 0 1 2-2h2V9a1 1 0 0 1 2 0v10a1 1 0 0 1-2 0v-1H6a2 2 0 0 1-2-2ZM24 9a1 1 0 0 1 2 0v14a1 1 0 0 1-2 0v-5h-2a2 2 0 0 1 0-4h2V9ZM12 7a1 1 0 0 1 1 1v16a1 1 0 0 1-2 0V8a1 1 0 0 1 1-1ZM19 5a1 1 0 0 1 1 1v20a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1Z" />
-                        </svg>
+            <header className="w-full bg-white relative z-50 border-b border-gray-100">
+                <nav className="w-full py-6 px-8 flex justify-between items-center max-w-7xl mx-auto">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-[#42448A] flex items-center justify-center shadow-lg shadow-[#42448A]/30">
+                            <svg viewBox="0 0 32 32" className="w-6 h-6 fill-white">
+                                <path d="M4 16a2 2 0 0 1 2-2h2V9a1 1 0 0 1 2 0v10a1 1 0 0 1-2 0v-1H6a2 2 0 0 1-2-2ZM24 9a1 1 0 0 1 2 0v14a1 1 0 0 1-2 0v-5h-2a2 2 0 0 1 0-4h2V9ZM12 7a1 1 0 0 1 1 1v16a1 1 0 0 1-2 0V8a1 1 0 0 1 1-1ZM19 5a1 1 0 0 1 1 1v20a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1Z" />
+                            </svg>
+                        </div>
+                        <span className="font-bold text-xl text-[#1E1F35] tracking-tight">Sănătate</span>
                     </div>
-                    <span className="font-bold text-xl text-[#1E1F35] tracking-tight">Sănătate</span>
-                </div>
-                <div className="flex gap-4 items-center">
-                    {isAuthenticated ? (
-                        <Link to="/dashboard" className="px-5 py-2.5 font-medium bg-[#42448A] text-white rounded-xl shadow-lg shadow-[#42448A]/30 hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                            Go to Dashboard
-                        </Link>
-                    ) : (
-                        <>
-                            <Link to="/login" className="px-5 py-2.5 font-medium text-[#42448A] hover:bg-[#42448A]/5 rounded-xl transition-colors">
-                                Login
+                    <div className="flex gap-4 items-center">
+                        {isAuthenticated ? (
+                            <Link to="/dashboard" className="px-5 py-2.5 font-medium bg-[#42448A] text-white rounded-xl shadow-lg shadow-[#42448A]/30 hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                                Go to Dashboard
                             </Link>
-                            <Link to="/register" className="px-5 py-2.5 font-medium bg-[#42448A] text-white rounded-xl shadow-lg shadow-[#42448A]/30 hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                                Get Started
-                            </Link>
-                        </>
-                    )}
-                </div>
-            </nav>
+                        ) : (
+                            <>
+                                <Link to="/login" className="px-5 py-2.5 font-medium text-[#42448A] hover:bg-[#42448A]/5 rounded-xl transition-colors">
+                                    Login
+                                </Link>
+                                <Link to="/register" className="px-5 py-2.5 font-medium bg-[#42448A] text-white rounded-xl shadow-lg shadow-[#42448A]/30 hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                                    Get Started
+                                </Link>
+                            </>
+                        )}
+                    </div>
+                </nav>
+            </header>
 
             {/* Hero Section */}
             <section className="relative pt-20 pb-32 px-6 overflow-hidden">

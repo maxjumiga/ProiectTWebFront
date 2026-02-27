@@ -15,13 +15,30 @@ export default function Login() {
             return;
         }
 
+        let users: Record<string, any> = {};
+        try {
+            users = JSON.parse(localStorage.getItem('users') || '{}');
+        } catch (e) { }
+
+        const userRecord = users[email];
+        if (!userRecord || userRecord.password !== password) {
+            setError('Invalid email or password');
+            return;
+        }
+
         // Simulate login
-        localStorage.setItem('isAuthenticated', 'true');
+        sessionStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('user', JSON.stringify({ email }));
 
-        // Check onboarding status
-        const onboardingCompleted = localStorage.getItem('onboardingCompleted') === 'true';
-        if (onboardingCompleted) {
+        // Restore onboarding data if exists (optional but helpful)
+        if (userRecord.onboardingData) {
+            localStorage.setItem('onboarding', JSON.stringify(userRecord.onboardingData));
+        }
+
+        // Set global flag
+        localStorage.setItem('onboardingCompleted', userRecord.onboardingCompleted ? 'true' : 'false');
+
+        if (userRecord.onboardingCompleted) {
             navigate('/dashboard');
         } else {
             navigate('/onboarding');

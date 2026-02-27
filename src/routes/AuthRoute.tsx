@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 export default function AuthRoute() {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
     const onboardingCompleted = localStorage.getItem('onboardingCompleted') === 'true';
     const location = useLocation();
 
