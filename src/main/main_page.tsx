@@ -25,32 +25,6 @@ const DAYS = ["Lun", "Mar", "Mie", "Joi", "Vin", "Sâm", "Dum"];
 const CAL_DATA = [1650, 2100, 1800, 2350, 1950, 2200, 1420];
 const WAT_DATA = [1800, 2400, 2000, 2800, 2200, 2600, 1600]; // ml
 
-// ─── Sparkline ────────────────────────────────────────────────────────────────
-const Sparkline = ({ data, color }: { data: number[]; color: string }) => {
-    const mn = Math.min(...data), mx = Math.max(...data);
-    const n = (v: number) => (v - mn) / (mx - mn || 1);
-    const W = 200, H = 46, P = 3;
-    const pts = data.map((v, i) => ({
-        x: P + (i / (data.length - 1)) * (W - P * 2),
-        y: H - P - n(v) * (H - P * 2),
-    }));
-    const line = pts.map(p => `${p.x},${p.y}`).join(" ");
-    const area = `${pts[0].x},${H} ${line} ${pts[pts.length - 1].x},${H}`;
-    return (
-        <svg className="db-sparkline" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
-            <defs>
-                <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={color} stopOpacity="0.22" />
-                    <stop offset="100%" stopColor={color} stopOpacity="0" />
-                </linearGradient>
-            </defs>
-            <polygon points={area} fill="url(#sg)" />
-            <polyline points={line} fill="none" stroke={color} strokeWidth="2"
-                strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    );
-};
-
 // ─── Bar Chart ────────────────────────────────────────────────────────────────
 const BarChart = () => {
     const W = 520, H = 148, pL = 8, pR = 8, pT = 8, pB = 24;
@@ -146,9 +120,10 @@ interface DashboardProps {
     username?: string;
     onProfile?: () => void;
     onSettings?: () => void;
+    onCalendar?: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSettings }) => {
+const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSettings, onCalendar }) => {
     const [waterMl, setWaterMl] = useState(1200);
     const [height, setHeight] = useState(170);
     const [weight, setWeight] = useState(72);
@@ -178,7 +153,7 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                     <button className="db-nav-btn active" title="Acasă">
                         <FontAwesomeIcon icon={faHouse} />
                     </button>
-                    <button className="db-nav-btn" title="Calendar">
+                    <button className="db-nav-btn" onClick={onCalendar} title="Calendar">
                         <FontAwesomeIcon icon={faCalendarDays} />
                     </button>
                     <button className="db-nav-btn" onClick={onProfile} title="Profil">
@@ -229,7 +204,6 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                         <div className="cal-prog">
                             <div className="cal-prog-fill" style={{ width: `${Math.min(calPct, 100)}%` }} />
                         </div>
-                        <Sparkline data={CAL_DATA} color="#f97316" />
                     </div>
 
                     {/* Water */}
