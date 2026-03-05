@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faHouse,
@@ -8,19 +8,12 @@ import {
     faUser,
     faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
-
+import { useUser } from "../../store/UserContext";
+import { getBmiResult, getInitials } from "../../assets/calculations";
 import "./main_page.css";
 
-const username = "Ion Popescu";
 
-const initials = username
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-
-// ─── Chart Data ───────────────────────────────────────────────────────────────
+// ─── Chart Data ──────────────────────────────────────────────────────────────────
 const DAYS = ["Lun", "Mar", "Mie", "Joi", "Vin", "Sâm", "Dum"];
 const CAL_DATA = [1650, 2100, 1800, 2350, 1950, 2200, 1420];
 const WAT_DATA = [1800, 2400, 2000, 2800, 2200, 2600, 1600]; // ml
@@ -102,19 +95,6 @@ const WaterBottle = ({ pct }: { pct: number }) => {
     );
 };
 
-// ─── BMI helpers ──────────────────────────────────────────────────────────────
-const calcBMI = (h: number, w: number) => w / ((h / 100) ** 2);
-
-const bmiStatus = (bmi: number) => {
-    if (bmi < 18.5) return { label: "Subponderal", bg: "#bfdbfe", color: "#1d4ed8" };
-    if (bmi < 25) return { label: "Sănătos", bg: "#bbf7d0", color: "#065f46" };
-    if (bmi < 30) return { label: "Supraponderal", bg: "#fed7aa", color: "#9a3412" };
-    return { label: "Obez", bg: "#fecdd3", color: "#9f1239" };
-};
-
-// position on gradient bar: 15-40 → 0-100%
-const bmiBarPos = (bmi: number) => `${Math.min(Math.max((bmi - 15) / 25, 0), 1) * 100}%`;
-
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 interface DashboardProps {
     username?: string;
@@ -123,19 +103,24 @@ interface DashboardProps {
     onCalendar?: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSettings, onCalendar }) => {
-    const [waterMl, setWaterMl] = useState(1200);
-    const [height, setHeight] = useState(170);
-    const [weight, setWeight] = useState(72);
+const Dashboard: React.FC<DashboardProps> = ({ onProfile, onSettings, onCalendar }) => {
+    const { state, addWater, updateProfile } = useUser();
+    const { profile, goals, todayWaterMl } = state;
+    const waterMl = todayWaterMl;
+    const height = profile.heightCm;
+    const weight = profile.weightKg;
+    const username = profile.fullName.split(" ")[0];
 
-    const WATER_MAX = 3000;
-    const CAL_GOAL = 2200;
+    const WATER_MAX = goals.waterGoalMl;
+    const CAL_GOAL = goals.calorieGoalKcal;
     const todayCal = CAL_DATA[CAL_DATA.length - 1];
     const calPct = Math.round((todayCal / CAL_GOAL) * 100);
     const waterPct = waterMl / WATER_MAX;
 
-    const bmi = calcBMI(height, weight);
-    const status = bmiStatus(bmi);
+    const bmiResult = getBmiResult(height, weight);
+    const bmi = bmiResult.value;
+    const status = bmiResult;
+    const initials = getInitials(profile.fullName);
 
     const today = new Date();
     const dateStr = today.toLocaleDateString("ro-RO", {
@@ -220,9 +205,9 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                                     <div className="water-prog-fill" style={{ width: `${Math.min(waterPct * 100, 100)}%` }} />
                                 </div>
                                 <div className="water-btns">
-                                    <button className="wbtn" onClick={() => setWaterMl(p => Math.min(p + 250, WATER_MAX))}>+250 ml</button>
-                                    <button className="wbtn primary" onClick={() => setWaterMl(p => Math.min(p + 500, WATER_MAX))}>+500 ml</button>
-                                    <button className="wbtn" onClick={() => setWaterMl(p => Math.max(p - 250, 0))}>−</button>
+                                    <button className="wbtn" onClick={() => addWater(250)}>+250 ml</button>
+                                    <button className="wbtn primary" onClick={() => addWater(500)}>+500 ml</button>
+                                    <button className="wbtn" onClick={() => addWater(-250)}>−</button>
                                 </div>
                             </div>
                         </div>
@@ -302,7 +287,7 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                         </div>
                         <input type="range" className="bmi-range"
                             min={140} max={210} value={height}
-                            onChange={e => setHeight(Number(e.target.value))}
+                            onChange={e => updateProfile({ heightCm: Number(e.target.value) })}
                             style={{ background: `linear-gradient(90deg, #6366f1 ${((height - 140) / 70) * 100}%, rgba(255,255,255,0.12) ${((height - 140) / 70) * 100}%)` }}
                         />
                     </div>
@@ -313,7 +298,7 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                         </div>
                         <input type="range" className="bmi-range"
                             min={40} max={150} value={weight}
-                            onChange={e => setWeight(Number(e.target.value))}
+                            onChange={e => updateProfile({ weightKg: Number(e.target.value) })}
                             style={{ background: `linear-gradient(90deg, #6366f1 ${((weight - 40) / 110) * 100}%, rgba(255,255,255,0.12) ${((weight - 40) / 110) * 100}%)` }}
                         />
                     </div>
@@ -329,7 +314,7 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
 
                     <div className="bmi-bar-wrap">
                         <div className="bmi-bar">
-                            <div className="bmi-indicator" style={{ left: bmiBarPos(bmi) }} />
+                            <div className="bmi-indicator" style={{ left: bmiResult.barPosition }} />
                         </div>
                         <div className="bmi-bar-ticks">
                             <span>15</span><span>18.5</span><span>25</span><span>30</span><span>40</span>

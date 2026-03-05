@@ -1,0 +1,929 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #f0f2f8;
+    --surface: #ffffff;
+    --border: #e2e5ef;
+    --border-focus: #6366f1;
+    --accent: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.15);
+    --accent-soft: rgba(99, 102, 241, 0.08);
+    --text-primary: #1a1a2e;
+    --text-secondary: #6b7090;
+    --text-muted: #b0b4cc;
+    --input-bg: #f7f8fc;
+    --cal-soft: rgba(249, 115, 22, 0.1);
+    --water-soft: rgba(56, 189, 248, 0.1);
+    --green-soft: rgba(16, 185, 129, 0.1);
+    --sidebar-bg: #1a1a2e;
+    --dark-panel: #1e1f35;
+    --dark-surface: #272840;
+    --dark-text: rgba(255, 255, 255, 0.9);
+    --dark-muted: rgba(255, 255, 255, 0.45);
+    --sidebar-w: 88px;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Sora', sans-serif;
+    background-color: var(--bg);
+    color: var(--text-primary);
+}
+
+/* ════════════════════════════════════
+   LAYOUT
+════════════════════════════════════ */
+.cal-root {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: fixed;
+    inset: 0;
+}
+
+/* ════════════════════════════════════
+   SIDEBAR — identical to db-sidebar
+════════════════════════════════════ */
+.cal-sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    height: 100vh;
+    background: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0 22px;
+    flex-shrink: 0;
+}
+
+.cal-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+    margin-bottom: 30px;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.cal-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.cal-nav-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--dark-muted);
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    flex-shrink: 0;
+}
+
+.cal-nav-btn svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.cal-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.09);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.cal-nav-btn.active {
+    background: rgba(99, 102, 241, 0.28);
+    color: #fff;
+}
+
+.cal-sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.cal-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
+    cursor: pointer;
+    flex-shrink: 0;
+    border: none;
+    font-family: 'Space Mono', monospace;
+    transition: opacity 0.18s;
+}
+
+.cal-avatar:hover {
+    opacity: 0.85;
+}
+
+/* ════════════════════════════════════
+   CENTER PANEL
+════════════════════════════════════ */
+.cal-center {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 24px 20px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+.cal-center::-webkit-scrollbar {
+    width: 4px;
+}
+
+.cal-center::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+/* ── Page header ── */
+.cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.cal-header h1 {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.cal-header p {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    font-family: 'Space Mono', monospace;
+}
+
+/* ── Month nav ── */
+.cal-month-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.cal-month-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: 'Space Mono', monospace;
+    letter-spacing: -0.01em;
+    min-width: 170px;
+    text-align: center;
+}
+
+.cal-nav-arrow {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.cal-nav-arrow:hover {
+    border-color: var(--border-focus);
+    color: var(--accent);
+    box-shadow: 0 2px 10px var(--accent-glow);
+}
+
+/* ════════════════════════════════════
+   CALENDAR CARD WRAPPER
+════════════════════════════════════ */
+.cal-grid-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 6px 20px rgba(99, 102, 241, 0.05);
+    flex-shrink: 0;
+    animation: dbFup 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes dbFup {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--border);
+    background: #f7f8fc;
+}
+
+.cal-weekday {
+    text-align: center;
+    padding: 10px 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ── Day grid: 7 equal columns, rows defined by JS class ── */
+.cal-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.cal-days.rows-4 {
+    grid-template-rows: repeat(4, 100px);
+}
+
+.cal-days.rows-5 {
+    grid-template-rows: repeat(5, 100px);
+}
+
+.cal-days.rows-6 {
+    grid-template-rows: repeat(6, 100px);
+}
+
+.cal-day {
+    padding: 8px 10px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.cal-day:nth-child(7n) {
+    border-right: none;
+}
+
+.cal-days>.cal-day:nth-last-child(-n+7) {
+    border-bottom: none;
+}
+
+.cal-day:hover {
+    background: #f7f8fc;
+}
+
+.cal-day:hover .cal-day-num {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.cal-day.other-month {
+    opacity: 0.28;
+    cursor: default;
+}
+
+.cal-day.other-month:hover {
+    background: transparent;
+}
+
+.cal-day.today .cal-day-num {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+}
+
+.cal-day-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-primary);
+    transition: background 0.15s, color 0.15s;
+    margin-bottom: 4px;
+}
+
+.cal-day-indicators {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cal-day-pill {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 9px;
+    font-family: 'Space Mono', monospace;
+    border-radius: 4px;
+    padding: 2px 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1.3;
+}
+
+.cal-day-pill.cal {
+    background: var(--cal-soft);
+    color: #c2410c;
+}
+
+.cal-day-pill.water {
+    background: var(--water-soft);
+    color: #0369a1;
+}
+
+.cal-day-pill.workout {
+    background: var(--green-soft);
+    color: #065f46;
+}
+
+/* ── Stats row below calendar ── */
+.cal-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.cal-stat-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    animation: dbFup 0.44s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cal-stat-card:nth-child(2) {
+    animation-delay: 0.05s;
+}
+
+.cal-stat-card:nth-child(3) {
+    animation-delay: 0.1s;
+}
+
+.cal-stat-lbl {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.cal-stat-num {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    font-family: 'Space Mono', monospace;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.cal-stat-num em {
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-left: 3px;
+}
+
+.cal-stat-desc {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ════════════════════════════════════
+   RIGHT DARK PANEL
+════════════════════════════════════ */
+.cal-right {
+    width: 290px;
+    min-width: 290px;
+    height: 100vh;
+    background: var(--dark-panel);
+    overflow-y: auto;
+    padding: 26px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    scrollbar-width: none;
+    flex-shrink: 0;
+}
+
+.cal-right::-webkit-scrollbar {
+    display: none;
+}
+
+.rp-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dark-muted);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 10px;
+}
+
+.rp-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 4px;
+}
+
+.rp-sub {
+    font-size: 10px;
+    color: var(--dark-muted);
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.04em;
+    margin-bottom: 14px;
+}
+
+/* ── Dark card ── */
+.rp-card {
+    background: var(--dark-surface);
+    border-radius: 16px;
+    padding: 16px;
+}
+
+/* ── Stat rows in dark panel ── */
+.rp-stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 11px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
+.rp-stat-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rp-stat-ico {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.rp-stat-lbl {
+    font-size: 11px;
+    color: var(--dark-muted);
+    font-family: 'Space Mono', monospace;
+}
+
+.rp-stat-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark-text);
+    font-family: 'Space Mono', monospace;
+}
+
+/* ── Mini progress bars ── */
+.rp-mini-bar-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--dark-muted);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 5px;
+}
+
+.rp-mini-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.rp-mini-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+/* ── Recent workouts ── */
+.rp-workout-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 9px;
+    margin-bottom: 5px;
+}
+
+.rp-workout-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.rp-workout-name {
+    font-size: 11.5px;
+    color: var(--dark-text);
+    flex: 1;
+}
+
+.rp-workout-time {
+    font-size: 10px;
+    color: var(--dark-muted);
+    font-family: 'Space Mono', monospace;
+}
+
+/* ── Streak / activity dots ── */
+.rp-streak-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.rp-streak-cell {
+    aspect-ratio: 1;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    color: var(--dark-muted);
+}
+
+.rp-streak-cell.done {
+    background: rgba(16, 185, 129, 0.3);
+    color: #6ee7b7;
+}
+
+.rp-streak-cell.active {
+    background: rgba(99, 102, 241, 0.35);
+    color: #a5b4fc;
+}
+
+.rp-streak-cell.missed {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Month goal ring placeholder ── */
+.rp-goal-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+}
+
+.rp-goal-ring {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+.rp-goal-info-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 2px;
+}
+
+.rp-goal-info-sub {
+    font-size: 10px;
+    color: var(--dark-muted);
+    font-family: 'Space Mono', monospace;
+}
+
+/* ════════════════════════════════════
+   MODAL
+════════════════════════════════════ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 46, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: overlayIn 0.2s ease;
+}
+
+@keyframes overlayIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 82vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04), 0 24px 64px rgba(99, 102, 241, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+    animation: modalIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.modal-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    border-radius: 100%;
+}
+
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-date {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    text-transform: capitalize;
+}
+
+.modal-close {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--input-bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.modal-close:hover {
+    border-color: var(--border-focus);
+    color: var(--accent);
+}
+
+.modal-body {
+    padding: 18px 24px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.modal-section {
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+}
+
+.modal-section-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.modal-section-title .section-icon {
+    font-size: 13px;
+}
+
+.modal-cal-row,
+.modal-water-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.modal-cal-num {
+    font-size: 26px;
+    font-weight: 600;
+    font-family: 'Space Mono', monospace;
+    color: #ea580c;
+    letter-spacing: -0.03em;
+}
+
+.modal-water-num {
+    font-size: 26px;
+    font-weight: 600;
+    font-family: 'Space Mono', monospace;
+    color: #0284c7;
+    letter-spacing: -0.03em;
+}
+
+.modal-cal-unit {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.modal-cal-goal {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.modal-prog-bar {
+    height: 6px;
+    background: rgba(249, 115, 22, 0.12);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.modal-prog-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f97316, #fb923c);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+}
+
+.modal-prog-fill.water-fill {
+    background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+}
+
+.modal-water-bg {
+    background: rgba(56, 189, 248, 0.07);
+    border-color: rgba(56, 189, 248, 0.18);
+}
+
+.workout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.workout-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.workout-type-badge {
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.workout-type-badge.forta {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+.workout-type-badge.stretching {
+    background: rgba(168, 85, 247, 0.1);
+    color: #9333ea;
+}
+
+.workout-type-badge.rezistenta {
+    background: rgba(234, 179, 8, 0.1);
+    color: #b45309;
+}
+
+.workout-type-badge.cardio {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+}
+
+.workout-time {
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-secondary);
+    margin-left: auto;
+}
+
+.workout-duration {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-left: 4px;
+}
+
+.modal-empty {
+    text-align: center;
+    padding: 22px 0;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.modal-empty-icon {
+    font-size: 30px;
+    margin-bottom: 8px;
+}

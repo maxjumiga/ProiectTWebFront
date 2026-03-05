@@ -15,40 +15,55 @@ import {
     faEye,
     faEyeSlash,
     faRightFromBracket,
+    faCheck,
 } from "@fortawesome/free-solid-svg-icons";
+import { useUser } from "../../store/UserContext";
+import { getInitials } from "../../assets/calculations";
 import "./profil.css";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface ProfilePageProps {
-    username?: string;
-    email?: string;
     onLogin?: () => void;
     onDashboard?: () => void;
     onSettings?: () => void;
+    onCalendar?: () => void;
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-const ProfilePage: React.FC<ProfilePageProps> = ({
-    username = "Ion Popescu",
-    email = "ion.popescu@gmail.com",
-    onLogin,
-    onDashboard,
-    onSettings,
-}) => {
-    const [twoFA, setTwoFA] = useState(false);
+const ProfilePage: React.FC<ProfilePageProps> = ({ onLogin, onDashboard, onSettings, onCalendar }) => {
+    const { state, updateProfile, updateSettings } = useUser();
+    const { profile, settings } = state;
+    const { fullName, email, heightCm, weightKg, age, gender, memberSince } = profile;
+
+    const [twoFA, setTwoFA] = useState(settings.twoFA);
     const [showPassword, setShowPassword] = useState(false);
+    const [editingTraits, setEditingTraits] = useState(false);
+    const [traitsSaved, setTraitsSaved] = useState(false);
 
-    // Fake password for display
+    // form local state pentru editare trăsături
+    const [draftHeight, setDraftHeight] = useState(heightCm);
+    const [draftWeight, setDraftWeight] = useState(weightKg);
+    const [draftAge, setDraftAge] = useState(age);
+    const [draftGender, setDraftGender] = useState<"M" | "F" | "altul">(gender);
+
     const fakePassword = "MySecretPass123";
+    const initials = getInitials(fullName);
 
-    const initials = username
-        .split(" ")
-        .map((w) => w[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
+    const saveTraits = () => {
+        updateProfile({
+            heightCm: draftHeight,
+            weightKg: draftWeight,
+            age: draftAge,
+            gender: draftGender,
+        });
+        updateSettings({ twoFA });
+        setEditingTraits(false);
+        setTraitsSaved(true);
+        setTimeout(() => setTraitsSaved(false), 2000);
+    };
+
 
     return (
         <div className="profile-root">
@@ -59,7 +74,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                     <button className="db-nav-btn" onClick={onDashboard} title="Dashboard">
                         <FontAwesomeIcon icon={faHouse} />
                     </button>
-                    <button className="db-nav-btn" title="Programări">
+                    <button className="db-nav-btn" onClick={onCalendar} title="Calendar">
                         <FontAwesomeIcon icon={faCalendarDays} />
                     </button>
                     <button className="db-nav-btn active" title="Profil">
@@ -109,13 +124,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                                 <div className="profile-online-dot" />
                             </div>
                             <div className="profile-info">
-                                <div className="profile-name">{username}</div>
-                                <div className="profile-username">@{username.toLowerCase().replace(" ", "_")}</div>
+                                <div className="profile-name">{fullName}</div>
+                                <div className="profile-username">@{fullName.toLowerCase().replace(" ", "_")}</div>
                                 <div className="profile-email">
                                     <FontAwesomeIcon icon={faEnvelope} />
                                     {email}
                                 </div>
-                                <div className="profile-member-since">Membru din Ian 2025</div>
+                                <div className="profile-member-since">Membru din {memberSince}</div>
                             </div>
                         </div>
                     </div>
@@ -124,28 +139,82 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                     <div className="p-card">
                         <div className="p-card-label">Trăsături fizice</div>
                         <div className="traits-grid">
-                            <div className="trait-item gender">
-                                <div className="trait-label">Gen</div>
-                                <div className="trait-value">M</div>
-                            </div>
-                            <div className="trait-item age">
-                                <div className="trait-label">Vârstă</div>
-                                <div className="trait-value">24<em>ani</em></div>
-                            </div>
-                            <div className="trait-item height">
-                                <div className="trait-label">Înălțime</div>
-                                <div className="trait-value">182<em>cm</em></div>
-                            </div>
-                            <div className="trait-item weight">
-                                <div className="trait-label">Greutate</div>
-                                <div className="trait-value">78<em>kg</em></div>
-                            </div>
+                            {editingTraits ? (
+                                <>
+                                    <div className="trait-item gender">
+                                        <div className="trait-label">Gen</div>
+                                        <select
+                                            className="trait-input"
+                                            value={draftGender}
+                                            onChange={e => setDraftGender(e.target.value as "M" | "F" | "altul")}
+                                        >
+                                            <option value="M">M</option>
+                                            <option value="F">F</option>
+                                            <option value="altul">Altul</option>
+                                        </select>
+                                    </div>
+                                    <div className="trait-item age">
+                                        <div className="trait-label">Vârstă</div>
+                                        <input type="number" className="trait-input" value={draftAge}
+                                            min={1} max={120}
+                                            onChange={e => setDraftAge(Number(e.target.value))} />
+                                    </div>
+                                    <div className="trait-item height">
+                                        <div className="trait-label">Înălțime</div>
+                                        <input type="number" className="trait-input" value={draftHeight}
+                                            min={100} max={250}
+                                            onChange={e => setDraftHeight(Number(e.target.value))} />
+                                    </div>
+                                    <div className="trait-item weight">
+                                        <div className="trait-label">Greutate</div>
+                                        <input type="number" className="trait-input" value={draftWeight}
+                                            min={20} max={300}
+                                            onChange={e => setDraftWeight(Number(e.target.value))} />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="trait-item gender">
+                                        <div className="trait-label">Gen</div>
+                                        <div className="trait-value">{gender}</div>
+                                    </div>
+                                    <div className="trait-item age">
+                                        <div className="trait-label">Vârstă</div>
+                                        <div className="trait-value">{age}<em>ani</em></div>
+                                    </div>
+                                    <div className="trait-item height">
+                                        <div className="trait-label">Înălțime</div>
+                                        <div className="trait-value">{heightCm}<em>cm</em></div>
+                                    </div>
+                                    <div className="trait-item weight">
+                                        <div className="trait-label">Greutate</div>
+                                        <div className="trait-value">{weightKg}<em>kg</em></div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                         <div className="trait-edit-row">
-                            <button className="trait-edit-btn">
-                                <FontAwesomeIcon icon={faPenToSquare} />
-                                Editează
-                            </button>
+                            {editingTraits ? (
+                                <>
+                                    <button className="trait-edit-btn" onClick={saveTraits}>
+                                        <FontAwesomeIcon icon={faCheck} />
+                                        Salvează
+                                    </button>
+                                    <button className="trait-edit-btn" style={{ marginLeft: 8, background: "var(--bg)" }}
+                                        onClick={() => setEditingTraits(false)}>
+                                        Anulare
+                                    </button>
+                                </>
+                            ) : (
+                                <button className="trait-edit-btn" onClick={() => {
+                                    setDraftHeight(heightCm); setDraftWeight(weightKg);
+                                    setDraftAge(age); setDraftGender(gender);
+                                    setEditingTraits(true);
+                                }}>
+                                    <FontAwesomeIcon icon={faPenToSquare} />
+                                    {traitsSaved ? "✓ Salvat!" : "Editează"}
+                                </button>
+                            )}
                         </div>
                     </div>
 
@@ -168,7 +237,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                                 <input
                                     type="checkbox"
                                     checked={twoFA}
-                                    onChange={() => setTwoFA((v) => !v)}
+                                    onChange={() => { const newVal = !twoFA; setTwoFA(newVal); updateSettings({ twoFA: newVal }); }}
                                 />
                                 <span className="twofa-slider" />
                             </label>

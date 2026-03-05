@@ -30,6 +30,8 @@ import {
     faTextHeight,
     faFont
 } from "@fortawesome/free-solid-svg-icons";
+import { useUser } from "../../store/UserContext";
+import { getInitials } from "../../assets/calculations";
 import "./setari.css";
 
 // ─── Toggle component ─────────────────────────────────────────────────────────
@@ -48,6 +50,7 @@ interface SettingsPageProps {
     onLogin?: () => void;
     onDashboard?: () => void;
     onProfile?: () => void;
+    onCalendar?: () => void;
 }
 
 // ─── Accent colors ────────────────────────────────────────────────────────────
@@ -61,51 +64,54 @@ const ACCENT_COLORS = [
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
-const SettingsPage: React.FC<SettingsPageProps> = ({
-    username = "Ion Popescu",
-    onLogin,
-    onDashboard,
-    onProfile,
-}) => {
+const SettingsPage: React.FC<SettingsPageProps> = ({ onLogin, onDashboard, onProfile, onCalendar }) => {
+    const { state, updateSettings, updateProfile, resetData } = useUser();
+    const { profile, settings } = state;
+    const initials = getInitials(profile.fullName);
+
     const [activeNav, setActiveNav] = useState<NavSection>("notificari");
     const [saved, setSaved] = useState(false);
 
-    // Notificări
-    const [notifEmail, setNotifEmail] = useState(true);
-    const [notifPush, setNotifPush] = useState(true);
-    const [notifReport, setNotifReport] = useState(false);
-    const [notifAppt, setNotifAppt] = useState(true);
-    const [notifTips, setNotifTips] = useState(false);
+    // Copii locale (nu se scriu până la apăsarea Salvează)
+    const [notifEmail, setNotifEmail] = useState(settings.notifEmail);
+    const [notifPush, setNotifPush] = useState(settings.notifPush);
+    const [notifReport, setNotifReport] = useState(settings.notifReport);
+    const [notifAppt, setNotifAppt] = useState(settings.notifAppt);
+    const [notifTips, setNotifTips] = useState(settings.notifTips);
+    const [darkMode, setDarkMode] = useState(settings.darkMode);
+    const [accentColor, setAccentColor] = useState(settings.accentColor);
+    const [fontSize, setFontSize] = useState(settings.fontSize);
+    const [compactMode, setCompactMode] = useState(settings.compactMode);
+    const [animations, setAnimations] = useState(settings.animations);
+    const [language, setLanguage] = useState(settings.language);
+    const [timezone, setTimezone] = useState(settings.timezone);
+    const [units, setUnits] = useState<"metric" | "imperial">(settings.units);
+    const [dateFormat, setDateFormat] = useState(settings.dateFormat);
+    const [twoFA, setTwoFA] = useState(settings.twoFA);
+    const [loginAlerts, setLoginAlerts] = useState(settings.loginAlerts);
+    const [sessionTimeout, setSessionTimeout] = useState(settings.sessionTimeout);
+    const [shareData, setShareData] = useState(settings.shareData);
+    const [analytics, setAnalytics] = useState(settings.analytics);
+    const [autoBackup, setAutoBackup] = useState(settings.autoBackup);
 
-    // Aspect
-    const [darkMode, setDarkMode] = useState(false);
-    const [accentColor, setAccentColor] = useState("indigo");
-    const [fontSize, setFontSize] = useState(14);
-    const [compactMode, setCompactMode] = useState(false);
-    const [animations, setAnimations] = useState(true);
-
-    // Limbă & regiune
-    const [language, setLanguage] = useState("ro");
-    const [timezone, setTimezone] = useState("Europe/Bucharest");
-    const [units, setUnits] = useState("metric");
-    const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
-
-    // Securitate
-    const [twoFA, setTwoFA] = useState(false);
-    const [loginAlerts, setLoginAlerts] = useState(true);
-    const [sessionTimeout, setSessionTimeout] = useState("30");
-
-    // Date & confidențialitate
-    const [shareData, setShareData] = useState(false);
-    const [analytics, setAnalytics] = useState(true);
-    const [autoBackup, setAutoBackup] = useState(true);
+    // Cont
+    const [editName, setEditName] = useState(profile.fullName);
+    const [editEmail, setEditEmail] = useState(profile.email);
 
     const handleSave = () => {
+        updateSettings({
+            notifEmail, notifPush, notifReport, notifAppt, notifTips,
+            darkMode, accentColor, fontSize, compactMode, animations,
+            language, timezone, units: units as "metric" | "imperial", dateFormat,
+            twoFA, loginAlerts, sessionTimeout,
+            shareData, analytics, autoBackup,
+        });
+        updateProfile({ fullName: editName, email: editEmail });
         setSaved(true);
         setTimeout(() => setSaved(false), 2500);
     };
 
-    const initials = username.charAt(0).toUpperCase();
+
 
     // ── Nav items ──
     const navItems: { id: NavSection; label: string; icon: React.ReactNode }[] = [
@@ -125,7 +131,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 <div className="db-logo"></div>
                 <nav className="db-nav">
                     <button className="db-nav-btn" onClick={onDashboard} title="Acasă"><FontAwesomeIcon icon={faHouse} /></button>
-                    <button className="db-nav-btn" title="Statistici"><FontAwesomeIcon icon={faCalendarDays} /></button>
+                    <button className="db-nav-btn" onClick={onCalendar} title="Calendar"><FontAwesomeIcon icon={faCalendarDays} /></button>
                     <button className="db-nav-btn" onClick={onProfile} title="Profil"><FontAwesomeIcon icon={faUser} /></button>
                     <button className="db-nav-btn active" title="Setări"><FontAwesomeIcon icon={faUserGear} /></button>
                 </nav>
@@ -405,7 +411,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                                             <div className="s-sub">Metric (kg, cm) sau Imperial (lbs, ft)</div>
                                         </div>
                                     </div>
-                                    <select className="s-select" value={units} onChange={e => setUnits(e.target.value)}>
+                                    <select className="s-select" value={units} onChange={e => setUnits(e.target.value as "metric" | "imperial")}>
                                         <option value="metric">Metric (kg, cm)</option>
                                         <option value="imperial">Imperial (lbs, ft)</option>
                                     </select>
@@ -582,7 +588,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                                             <div className="s-sub">Vizibil în profilul tău public</div>
                                         </div>
                                     </div>
-                                    <input className="s-input" defaultValue={username} placeholder="Nume utilizator" />
+                                    <input className="s-input" value={editName}
+                                        onChange={e => setEditName(e.target.value)}
+                                        placeholder="Nume utilizator" />
                                 </div>
                                 <div className="s-row">
                                     <div className="s-row-left">
@@ -592,24 +600,17 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                                             <div className="s-sub">Folosită pentru notificări și autentificare</div>
                                         </div>
                                     </div>
-                                    <input className="s-input" defaultValue="ion.popescu@gmail.com" placeholder="Email" />
+                                    <input className="s-input" value={editEmail}
+                                        onChange={e => setEditEmail(e.target.value)}
+                                        placeholder="Email" />
                                 </div>
                             </div>
                         </div>
 
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faBolt} />Abonament</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faBolt} />Aplicație</div>
                             <div className="s-card">
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico green"><FontAwesomeIcon icon={faBolt} /></div>
-                                        <div>
-                                            <div className="s-lbl">Plan curent: Free</div>
-                                            <div className="s-sub">Ai acces la funcționalitățile de bază ale aplicației</div>
-                                        </div>
-                                    </div>
-                                    <button className="s-action-btn"><FontAwesomeIcon icon={faBolt} />Upgrade Pro</button>
-                                </div>
+
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico gray"><FontAwesomeIcon icon={faGear} /></div>
@@ -634,7 +635,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                                             <div className="s-sub">Șterge tot istoricul de calorii și apă. Ireversibil.</div>
                                         </div>
                                     </div>
-                                    <button className="s-action-btn danger"><FontAwesomeIcon icon={faArrowsRotate} />Resetează</button>
+                                    <button className="s-action-btn danger" onClick={() => { if (window.confirm('Ești sigur? Toate datele de sănătate vor fi șterse!')) { resetData(); setSaved(true); setTimeout(() => setSaved(false), 2500); } }}><FontAwesomeIcon icon={faArrowsRotate} />Resetează</button>
                                 </div>
                                 <div className="s-row">
                                     <div className="s-row-left">
