@@ -107,8 +107,10 @@ export default function Landing() {
             <section className="features-section">
                 <div className="section-container">
                     <div className="section-header">
-                        <h2 className="section-title">Everything You Need</h2>
-                        <p className="section-subtitle">Powerful features built to simplify your health journey and give you the actionable data you need to succeed.</p>
+                        <span className="section-badge">✦ Features</span>
+                        <h2 className="section-title" style={{ fontSize: '4rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: '1.25rem', color: '#1E1F35', textAlign: 'center' }}>Everything You Need</h2>
+                        <span className="section-title-accent" />
+                        <p className="section-subtitle" style={{ fontSize: '1.2rem', lineHeight: 1.7, textAlign: 'center', color: 'rgba(39,40,64,0.65)', maxWidth: '42rem' }}>Powerful features built to simplify your health journey and give you the actionable data you need to succeed.</p>
                     </div>
 
                     <motion.div
@@ -158,8 +160,9 @@ export default function Landing() {
             <section className="how-it-works-section">
                 <div className="section-container">
                     <div className="section-header">
-                        <h2 className="section-title" style={{ color: '#fff' }}>How It Works</h2>
-                        <p className="section-subtitle" style={{ color: 'rgba(255,255,255,0.6)' }}>Three simple steps to start taking control of your fitness journey today.</p>
+                        <h2 className="section-title" style={{ fontSize: '4rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: '1.25rem', color: '#fff', textAlign: 'center' }}>How It Works</h2>
+                        <span className="section-title-accent" style={{ background: 'linear-gradient(90deg, #5BB6F5, #FCAF79)' }} />
+                        <p className="section-subtitle" style={{ fontSize: '1.2rem', lineHeight: 1.7, textAlign: 'center', color: 'rgba(255,255,255,0.65)', maxWidth: '42rem' }}>Three simple steps to start taking control of your fitness journey today.</p>
                     </div>
 
                     <div className="steps-grid">

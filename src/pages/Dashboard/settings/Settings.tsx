@@ -30,7 +30,8 @@ import {
     faTextHeight,
     faFont
 } from "@fortawesome/free-solid-svg-icons";
-import "./setari.css";
+import { useNavigate } from "react-router-dom";
+import "./Settings.css";
 
 // ─── Toggle component ─────────────────────────────────────────────────────────
 const Toggle = ({ checked, onChange }: { checked: boolean; onChange: () => void }) => (
@@ -43,12 +44,7 @@ const Toggle = ({ checked, onChange }: { checked: boolean; onChange: () => void 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type NavSection = "notificari" | "aspect" | "limba" | "securitate" | "date" | "cont";
 
-interface SettingsPageProps {
-    username?: string;
-    onLogin?: () => void;
-    onDashboard?: () => void;
-    onProfile?: () => void;
-}
+
 
 // ─── Accent colors ────────────────────────────────────────────────────────────
 const ACCENT_COLORS = [
@@ -61,12 +57,9 @@ const ACCENT_COLORS = [
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
-const SettingsPage: React.FC<SettingsPageProps> = ({
-    username = "Ion Popescu",
-    onLogin,
-    onDashboard,
-    onProfile,
-}) => {
+const SettingsPage: React.FC = () => {
+    const navigate = useNavigate();
+    const username = "Ion Popescu";
     const [activeNav, setActiveNav] = useState<NavSection>("notificari");
     const [saved, setSaved] = useState(false);
 
@@ -124,13 +117,13 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             <aside className="db-sidebar">
                 <div className="db-logo"></div>
                 <nav className="db-nav">
-                    <button className="db-nav-btn" onClick={onDashboard} title="Acasă"><FontAwesomeIcon icon={faHouse} /></button>
-                    <button className="db-nav-btn" title="Statistici"><FontAwesomeIcon icon={faCalendarDays} /></button>
-                    <button className="db-nav-btn" onClick={onProfile} title="Profil"><FontAwesomeIcon icon={faUser} /></button>
-                    <button className="db-nav-btn active" title="Setări"><FontAwesomeIcon icon={faUserGear} /></button>
+                    <button className="db-nav-btn" onClick={() => navigate('/dashboard')} title="Acasă"><FontAwesomeIcon icon={faHouse} /></button>
+                    <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Statistici"><FontAwesomeIcon icon={faCalendarDays} /></button>
+                    <button className="db-nav-btn" onClick={() => navigate('/profile')} title="Profil"><FontAwesomeIcon icon={faUser} /></button>
+                    <button className="db-nav-btn active" onClick={() => navigate('/settings')} title="Setări"><FontAwesomeIcon icon={faUserGear} /></button>
                 </nav>
                 <div className="db-sidebar-bottom">
-                    <button className="db-avatar" onClick={onProfile}>{initials}</button>
+                    <button className="db-avatar" onClick={() => navigate('/profile')}>{initials}</button>
                 </div>
             </aside>
 
@@ -149,7 +142,11 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 ))}
                 <div className="snav-spacer" />
                 <div className="settings-nav-title">Sistem</div>
-                <button className="snav-btn danger" onClick={onLogin}>
+                <button className="snav-btn danger" onClick={() => {
+                    localStorage.removeItem('user');
+                    sessionStorage.removeItem('isAuthenticated');
+                    navigate('/login');
+                }}>
                     <FontAwesomeIcon icon={faRightFromBracket} />
                     Deconectare
                 </button>

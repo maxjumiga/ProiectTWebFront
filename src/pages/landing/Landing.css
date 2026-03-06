@@ -229,7 +229,7 @@
     position: relative;
 }
 
-.section-container {
+.landing-page .section-container {
     max-width: 80rem;
     margin-left: auto;
     margin-right: auto;
@@ -237,24 +237,60 @@
     padding-right: 1.5rem;
 }
 
-.section-header {
+.landing-page .section-header {
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 4.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.section-title {
-    font-size: 2.25rem;
+.landing-page .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(66, 68, 138, 0.08);
+    border: 1px solid rgba(66, 68, 138, 0.18);
+    color: #42448A;
+    font-size: 0.75rem;
     font-weight: 700;
-    color: #1E1F35;
-    margin-bottom: 1rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.35rem 1rem;
+    border-radius: 9999px;
+    margin-bottom: 1.25rem;
 }
 
-.section-subtitle {
-    font-size: 1.125rem;
-    color: rgba(39, 40, 64, 0.7);
+.landing-page .section-title {
+    font-size: 4rem;
+    font-weight: 800;
+    color: #1E1F35;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    max-width: 40rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.landing-page .section-title-accent {
+    display: block;
+    width: 3.5rem;
+    height: 4px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #42448A, #5BB6F5);
+    margin: 0 auto 1.5rem;
+}
+
+.landing-page .section-subtitle {
+    font-size: 1.25rem;
+    color: rgba(39, 40, 64, 0.65);
     max-width: 42rem;
     margin-left: auto;
     margin-right: auto;
+    line-height: 1.7;
+    text-align: center;
 }
 
 .features-grid {

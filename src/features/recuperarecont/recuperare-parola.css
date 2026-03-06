@@ -26,10 +26,10 @@
     --success-soft: rgba(16, 185, 129, 0.08);
 }
 
-body {
+.recovery-page {
     font-family: 'Sora', sans-serif;
-    background-color: var(--bg);
-    color: var(--text-primary);
+    background-color: #f0f2f8;
+    color: #1a1a2e;
     min-height: 100vh;
     height: 100vh;
     display: flex;
@@ -39,11 +39,12 @@ body {
     overflow: hidden;
     margin: 0;
     padding: 0;
+    width: 100%;
 }
 
-body::before {
+.recovery-page::before {
     content: '';
-    position: fixed;
+    position: absolute;
     top: -120px;
     left: -120px;
     width: 480px;
@@ -53,9 +54,9 @@ body::before {
     z-index: 0;
 }
 
-body::after {
+.recovery-page::after {
     content: '';
-    position: fixed;
+    position: absolute;
     bottom: -100px;
     right: -100px;
     width: 400px;
@@ -64,6 +65,7 @@ body::after {
     pointer-events: none;
     z-index: 0;
 }
+
 
 /* Back button — fixed top-left */
 .back-btn {

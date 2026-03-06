@@ -32,19 +32,6 @@
     --sidebar-w: 64px;
 }
 
-html,
-body,
-#root {
-    height: 100%;
-    overflow: hidden;
-}
-
-body {
-    font-family: 'Sora', sans-serif;
-    background-color: var(--bg);
-    color: var(--text-primary);
-}
-
 /* ═══════════════════════════
    3-COLUMN LAYOUT
 ═══════════════════════════ */

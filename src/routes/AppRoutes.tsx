@@ -1,8 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Landing from '../pages/Landing';
-import Autentificare from '../autentificare/autentificare';
-import Inregistrare from '../inregistrare/inregistrare';
-import Dashboard from '../pages/Dashboard';
+import Landing from '../pages/landing/Landing';
+import Autentificare from '../features/autentificare/Autentificare';
+import Inregistrare from '../features/inregistrare/Inregistrare';
+import Dashboard from '../pages/dashboard/Dashboard';
+import Profile from '../pages/dashboard/profile/Profil';
+import Settings from '../pages/dashboard/settings/Settings';
+import Calendar from '../pages/dashboard/calendar/Calendar';
 import Onboarding from '../features/onboarding/Onboarding';
 import AuthRoute from './AuthRoute';
 import GuestRoute from './GuestRoute';
@@ -24,6 +27,9 @@ export default function AppRoutes() {
                 <Route element={<AuthRoute />}>
                     <Route path="/onboarding" element={<Onboarding />} />
                     <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/calendar" element={<Calendar />} />
                 </Route>
 
                 {/* Fallback */}
