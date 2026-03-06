@@ -53,8 +53,8 @@ export default function Landing() {
             {/* Hero Section */}
             <section className="relative pt-20 pb-32 px-6 overflow-hidden">
                 {/* Background Decorative Blob */}
-                <div className="absolute top-0 right-0 -m-32 w-[500px] h-[500px] bg-[#42448A]/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 -m-32 w-[400px] h-[400px] bg-[#5BB6F5]/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-0 right-0 -m-32 w-[500px] h-[500px] bg-[#42448A]/30 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-0 left-0 -m-32 w-[400px] h-[400px] bg-[#F472B6]/20 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="max-w-5xl mx-auto text-center relative z-10">
                     <motion.h1
