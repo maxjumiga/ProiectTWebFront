@@ -4,7 +4,7 @@ import {
     faEnvelope,
     faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
-import "./recuperare-parola.css";
+import "./Recuperare-parola.css";
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
 
@@ -36,7 +36,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({ onBack, onSu
     };
 
     return (
-        <>
+        <div className="recovery-page">
             <button className="back-btn" onClick={onBack} type="button">
                 <span className="back-arrow">←</span>
                 Înapoi
@@ -89,7 +89,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({ onBack, onSu
 
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
@@ -175,10 +175,10 @@ export const VerifyCodePage: React.FC<VerifyCodeProps> = ({
         `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
     return (
-        <>
+        <div className="recovery-page">
             <button className="back-btn" onClick={onBack} type="button">
                 <span className="back-arrow">←</span>
-                Înapoi
+                Înapoii
             </button>
 
             <div className="recovery-wrapper">
@@ -215,7 +215,7 @@ export const VerifyCodePage: React.FC<VerifyCodeProps> = ({
                                 ))}
                             </div>
                             {hasError && (
-                                <p className="input-error-msg">⚠ Cod incorect. Încearcă din nou.</p>
+                                <p className="input-error-msg">⚠ Cod incorect. Înceacă din nou.</p>
                             )}
                         </div>
 
@@ -237,6 +237,6 @@ export const VerifyCodePage: React.FC<VerifyCodeProps> = ({
 
                 </div>
             </div>
-        </>
+        </div>
     );
 };

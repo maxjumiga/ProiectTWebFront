@@ -8,9 +8,8 @@ import {
     faUser,
     faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
-
-import "./main_page.css";
-
+import { useNavigate } from "react-router-dom";
+import "./Dashboard.css";
 const username = "Ion Popescu";
 
 const initials = username
@@ -142,13 +141,9 @@ const bmiStatus = (bmi: number) => {
 const bmiBarPos = (bmi: number) => `${Math.min(Math.max((bmi - 15) / 25, 0), 1) * 100}%`;
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
-interface DashboardProps {
-    username?: string;
-    onProfile?: () => void;
-    onSettings?: () => void;
-}
 
-const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSettings }) => {
+const Dashboard: React.FC = () => {
+    const navigate = useNavigate();
     const [waterMl, setWaterMl] = useState(1200);
     const [height, setHeight] = useState(170);
     const [weight, setWeight] = useState(72);
@@ -175,22 +170,22 @@ const Dashboard: React.FC<DashboardProps> = ({ username = "Ion", onProfile, onSe
                 <div className="db-logo"></div>
 
                 <nav className="db-nav">
-                    <button className="db-nav-btn active" title="Acasă">
+                    <button className="db-nav-btn active" onClick={() => navigate('/dashboard')} title="Acasă">
                         <FontAwesomeIcon icon={faHouse} />
                     </button>
-                    <button className="db-nav-btn" title="Calendar">
+                    <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Calendar">
                         <FontAwesomeIcon icon={faCalendarDays} />
                     </button>
-                    <button className="db-nav-btn" onClick={onProfile} title="Profil">
+                    <button className="db-nav-btn" onClick={() => navigate('/profile')} title="Profil">
                         <FontAwesomeIcon icon={faUser} />
                     </button>
-                    <button className="db-nav-btn" onClick={onSettings} title="Setări">
+                    <button className="db-nav-btn" onClick={() => navigate('/settings')} title="Setări">
                         <FontAwesomeIcon icon={faUserGear} />
                     </button>
                 </nav>
 
                 <div className="db-sidebar-bottom">
-                    <button className="db-avatar" onClick={onProfile}>{initials}</button>
+                    <button className="db-avatar" onClick={() => navigate('/profile')}>{initials}</button>
                 </div>
             </aside>
 

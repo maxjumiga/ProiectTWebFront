@@ -1,46 +1,59 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faEye,
-    faEyeSlash
-} from "@fortawesome/free-regular-svg-icons";
-import {
-    faEnvelope,
-    faLock
-} from "@fortawesome/free-solid-svg-icons";
-import "./autentificare.css";
+import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
+import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
+import "./Autentificare.css";
 
-interface LoginPageProps {
-    onBack?: () => void;
-    onRegister?: () => void;
-    onForgotPassword?: () => void;
-    onSubmit?: (email: string, password: string) => void;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({
-    onBack,
-    onRegister,
-    onForgotPassword,
-    onSubmit,
-}) => {
+const LoginPage: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit?.(email, password);
+
+        if (!email || !password) {
+            setError('Please fill everything in');
+            return;
+        }
+
+        let users: Record<string, any> = {};
+        try {
+            users = JSON.parse(localStorage.getItem('users') || '{}');
+        } catch (e) { }
+
+        const userRecord = users[email];
+        if (!userRecord || userRecord.password !== password) {
+            setError('Invalid email or password');
+            return;
+        }
+
+        sessionStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('user', JSON.stringify({ email }));
+
+        if (userRecord.onboardingData) {
+            localStorage.setItem('onboarding', JSON.stringify(userRecord.onboardingData));
+        }
+
+        localStorage.setItem('onboardingCompleted', userRecord.onboardingCompleted ? 'true' : 'false');
+
+        if (userRecord.onboardingCompleted) {
+            navigate('/dashboard');
+        } else {
+            navigate('/onboarding');
+        }
     };
 
     return (
-        <>
-            {/* Back button — fixed top-left corner */}
-            <button className="back-btn" onClick={onBack} type="button">
+        <div className="auth-container">
+            <button className="back-btn" onClick={() => navigate('/')} type="button">
                 <span className="back-arrow">←</span>
                 Înapoi
             </button>
 
-            {/* Login card — centered */}
             <div className="login-wrapper">
                 <div className="login-card">
 
@@ -48,6 +61,12 @@ const LoginPage: React.FC<LoginPageProps> = ({
                         <h1 className="login-title">Bun venit înapoi</h1>
                         <p className="login-subtitle">Autentifică-te în contul tău</p>
                     </div>
+
+                    {error && (
+                        <div style={{ marginBottom: '1.5rem', padding: '1rem', borderRadius: '0.75rem', backgroundColor: 'rgba(252, 175, 121, 0.1)', color: '#e65c00', fontSize: '0.875rem', fontWeight: 500, textAlign: 'center', border: '1px solid rgba(252, 175, 121, 0.2)' }}>
+                            {error}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} autoComplete="off">
                         <div className="form-group">
@@ -109,17 +128,16 @@ const LoginPage: React.FC<LoginPageProps> = ({
                     </form>
 
                     <div className="form-footer">
-                        <button className="footer-link register" onClick={onRegister} type="button">
+                        <button className="footer-link register" onClick={() => navigate('/register')} type="button">
                             Înregistrare
                         </button>
-                        <button className="footer-link muted" onClick={onForgotPassword} type="button">
+                        <button className="footer-link muted" type="button">
                             Ai uitat parola?
                         </button>
                     </div>
-
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

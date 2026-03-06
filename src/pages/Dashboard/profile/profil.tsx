@@ -16,27 +16,15 @@ import {
     faEyeSlash,
     faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
-import "./profil.css";
-
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-interface ProfilePageProps {
-    username?: string;
-    email?: string;
-    onLogin?: () => void;
-    onDashboard?: () => void;
-    onSettings?: () => void;
-}
+import { useNavigate } from "react-router-dom";
+import "./Profil.css";
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-const ProfilePage: React.FC<ProfilePageProps> = ({
-    username = "Ion Popescu",
-    email = "ion.popescu@gmail.com",
-    onLogin,
-    onDashboard,
-    onSettings,
-}) => {
+const ProfilePage: React.FC = () => {
+    const navigate = useNavigate();
+    const username = "Ion Popescu";
+    const email = "ion.popescu@gmail.com";
     const [twoFA, setTwoFA] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -56,16 +44,16 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
             <aside className="db-sidebar">
                 <div className="db-logo"></div>
                 <nav className="db-nav">
-                    <button className="db-nav-btn" onClick={onDashboard} title="Dashboard">
+                    <button className="db-nav-btn" onClick={() => navigate('/dashboard')} title="Dashboard">
                         <FontAwesomeIcon icon={faHouse} />
                     </button>
-                    <button className="db-nav-btn" title="Programări">
+                    <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Programări">
                         <FontAwesomeIcon icon={faCalendarDays} />
                     </button>
-                    <button className="db-nav-btn active" title="Profil">
+                    <button className="db-nav-btn active" onClick={() => navigate('/profile')} title="Profil">
                         <FontAwesomeIcon icon={faUser} />
                     </button>
-                    <button className="db-nav-btn" onClick={onSettings} title="Setări">
+                    <button className="db-nav-btn" onClick={() => navigate('/settings')} title="Setări">
                         <FontAwesomeIcon icon={faUserGear} />
                     </button>
                 </nav>
@@ -86,7 +74,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                         <button className="ph-icon-btn" title="Notificări">
                             <FontAwesomeIcon icon={faBell} />
                         </button>
-                        <button className="ph-icon-btn" onClick={onSettings} title="Setări">
+                        <button className="ph-icon-btn" onClick={() => navigate('/settings')} title="Setări">
                             <FontAwesomeIcon icon={faUserGear} />
                         </button>
                     </div>
@@ -332,7 +320,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
 
                 <hr className="pr-divider" />
 
-                <button className="logout-btn" onClick={onLogin}>
+                <button className="logout-btn" onClick={() => {
+                    localStorage.removeItem('user');
+                    sessionStorage.removeItem('isAuthenticated');
+                    navigate('/login');
+                }}>
                     <FontAwesomeIcon icon={faRightFromBracket} />
                     Deconectare
                 </button>
