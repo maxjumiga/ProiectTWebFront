@@ -19,6 +19,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../store/UserContext";
 import { getInitials } from "../../assets/calculations";
+import logo from "../../assets/logo.png";
 import "./profil.css";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -69,7 +70,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onLogin, onDashboard, onSetti
         <div className="profile-root">
             {/* ── Sidebar ── */}
             <aside className="db-sidebar">
-                <div className="db-logo"></div>
+                <div className="db-logo"><img src={logo} alt="Logo" /></div>
                 <nav className="db-nav">
                     <button className="db-nav-btn" onClick={onDashboard} title="Dashboard">
                         <FontAwesomeIcon icon={faHouse} />

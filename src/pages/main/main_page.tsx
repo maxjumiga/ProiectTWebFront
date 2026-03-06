@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../store/UserContext";
 import { getBmiResult, getInitials } from "../../assets/calculations";
+import logo from "../../assets/logo.png";
 import "./main_page.css";
 
 
@@ -132,7 +133,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onProfile, onSettings, onCalendar
 
             {/* ── SIDEBAR ── */}
             <aside className="db-sidebar">
-                <div className="db-logo"></div>
+                <div className="db-logo"><img src={logo} alt="Logo" /></div>
 
                 <nav className="db-nav">
                     <button className="db-nav-btn active" title="Acasă">
@@ -272,7 +273,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onProfile, onSettings, onCalendar
             </main>
 
             {/* ── RIGHT DARK PANEL — BMI ── */}
-            <aside className="db-right">
+            <aside className="db-right" style={{ borderRadius: "10px" }}>
                 <div>
                     <div className="bmi-title">BMI Calculator</div>
                     <div className="bmi-sub">Calculează indicele tău de masă corporală</div>

@@ -32,6 +32,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../store/UserContext";
 import { getInitials } from "../../assets/calculations";
+import logo from "../../assets/logo.png";
 import "./setari.css";
 
 // ─── Toggle component ─────────────────────────────────────────────────────────
@@ -128,7 +129,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onLogin, onDashboard, onPro
 
             {/* ── Sidebar ── */}
             <aside className="db-sidebar">
-                <div className="db-logo"></div>
+                <div className="db-logo"><img src={logo} alt="Logo" /></div>
                 <nav className="db-nav">
                     <button className="db-nav-btn" onClick={onDashboard} title="Acasă"><FontAwesomeIcon icon={faHouse} /></button>
                     <button className="db-nav-btn" onClick={onCalendar} title="Calendar"><FontAwesomeIcon icon={faCalendarDays} /></button>

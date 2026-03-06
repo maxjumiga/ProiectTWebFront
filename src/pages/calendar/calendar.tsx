@@ -10,6 +10,7 @@ import {
     faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import "./calendar.css";
+import logo from "../../assets/logo.png";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -392,7 +393,7 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ onHome, onProfile, onSettin
 
             {/* ── SIDEBAR ── */}
             <aside className="cal-sidebar">
-                <div className="cal-logo" />
+                <div className="cal-logo"><img src={logo} alt="Logo" /></div>
                 <nav className="cal-nav">
                     <button className="cal-nav-btn" onClick={onDashboard ?? onHome} title="Acasă">
                         <FontAwesomeIcon icon={faHouse} />
