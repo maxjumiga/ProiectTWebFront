@@ -124,8 +124,8 @@
     bottom: 0;
     left: 0;
     margin: -8rem;
-    width: 25rem;
-    height: 25rem;
+    width: 30rem;
+    height: 30rem;
     background-color: rgba(244, 114, 182, 0.2);
     border-radius: 9999px;
     filter: blur(64px);
@@ -344,37 +344,39 @@
 }
 
 .how-it-works-section {
-    padding-top: 6rem;
-    padding-bottom: 6rem;
-    background-color: #1E1F35;
-    color: #ffffff;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+    background: radial-gradient(circle at top right, #2a2c4e, #1e1f35);
+    color: #ffffff !important;
 }
 
 .steps-grid {
     display: grid;
-    gap: 2rem;
+    gap: 3rem;
     position: relative;
+    margin-top: 4rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
     .steps-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
     }
 }
 
 .steps-line {
     display: none;
     position: absolute;
-    top: 50%;
-    left: 16.6%;
-    right: 16.6%;
-    height: 0.125rem;
-    background-image: linear-gradient(to right, #42448A, #5BB6F5, #FCAF79);
-    transform: translateY(-50%);
-    opacity: 0.3;
+    top: 2rem;
+    /* Half of step-number height */
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: 1;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
     .steps-line {
         display: block;
     }
@@ -387,33 +389,40 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 1.5rem;
+    padding: 0 2rem;
 }
 
 .step-number {
     width: 4rem;
     height: 4rem;
-    border-radius: 9999px;
-    background-color: #1A1A2E;
-    border: 4px solid #272840;
+    border-radius: 50%;
+    background-color: #1a1b2e;
+    border: 2px solid rgba(255, 255, 255, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #5BB6F5;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #ffffff !important;
+    margin-bottom: 2.5rem;
+    position: relative;
+    box-shadow: 0 0 30px rgba(81, 155, 245, 0.3);
 }
 
 .step-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #ffffff !important;
+    letter-spacing: -0.01em;
 }
 
 .step-desc {
-    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.1rem;
+    color: #ffffff !important;
+    line-height: 1.6;
+    opacity: 1 !important;
+    max-width: 18rem;
 }
 
 .cta-section {

@@ -2,10 +2,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Landing from '../pages/landing/Landing';
 import Autentificare from '../features/autentificare/Autentificare';
 import Inregistrare from '../features/inregistrare/Inregistrare';
-import Dashboard from '../pages/dashboard/Dashboard';
-import Profile from '../pages/dashboard/profile/Profil';
-import Settings from '../pages/dashboard/settings/Settings';
-import Calendar from '../pages/dashboard/calendar/Calendar';
+import Dashboard from '../pages/Dashboard/Dashboard';
+import Profile from '../pages/Dashboard/profile/Profil';
+import Settings from '../pages/Dashboard/settings/Settings';
+import Calendar from '../pages/Dashboard/calendar/Calendar';
 import Onboarding from '../features/onboarding/Onboarding';
 import AuthRoute from './AuthRoute';
 import GuestRoute from './GuestRoute';
