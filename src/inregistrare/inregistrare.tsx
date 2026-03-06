@@ -7,6 +7,7 @@ import {
     faEye,
     faEyeSlash
 } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 import "./inregistrare.css";
 
 const UserIcon = () => (
@@ -29,38 +30,15 @@ const EyeClosedIcon = () => (
     <FontAwesomeIcon icon={faEyeSlash} />
 );
 
-// const EyeOpenIcon = () => (
-//     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-//         <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" />
-//         <circle cx="12" cy="12" r="3" />
-//     </svg>
-// );
-
-// const EyeClosedIcon = () => (
-//     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-//         <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-//         <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-//         <line x1="1" y1="1" x2="23" y2="23" />
-//     </svg>
-// );
-
-interface RegisterPageProps {
-    onBack?: () => void;
-    onLogin?: () => void;
-    onSubmit?: (nickname: string, email: string, password: string) => void;
-}
-
-const RegisterPage: React.FC<RegisterPageProps> = ({
-    onBack,
-    onLogin,
-    onSubmit,
-}) => {
+const RegisterPage: React.FC = () => {
     const [nickname, setNickname] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirm] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [passwordError, setPasswordError] = useState("");
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
 
     const handleConfirmChange = (val: string) => {
         setConfirm(val);
@@ -88,8 +66,30 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!isValid) return;
-        onSubmit?.(nickname, email, password);
+
+        if (!email || password.length < 6) {
+            setError('Invalid email or password (min 6 chars)');
+            return;
+        }
+
+        let users: Record<string, any> = {};
+        try {
+            users = JSON.parse(localStorage.getItem('users') || '{}');
+        } catch (e) { }
+
+        if (users[email]) {
+            setError('User already exists. Please log in.');
+            return;
+        }
+
+        users[email] = { password, onboardingCompleted: false };
+        localStorage.setItem('users', JSON.stringify(users));
+
+        sessionStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('user', JSON.stringify({ email }));
+        localStorage.setItem('onboardingCompleted', 'false');
+
+        navigate('/onboarding');
     };
 
     const confirmStatus =
@@ -100,9 +100,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
                 : "input-error";
 
     return (
-        <>
-            {/* Back button — fixed top-left */}
-            <button className="back-btn" onClick={onBack} type="button">
+        <div className="auth-container">
+            <button className="back-btn" onClick={() => navigate('/')} type="button">
                 <span className="back-arrow">←</span>
                 Înapoi
             </button>
@@ -114,6 +113,12 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
                         <h1 className="register-title">Creează un cont</h1>
                         <p className="register-subtitle">Completează datele de mai jos pentru a te înregistra</p>
                     </div>
+
+                    {error && (
+                        <div style={{ marginBottom: '1.5rem', padding: '1rem', borderRadius: '0.75rem', backgroundColor: 'rgba(252, 175, 121, 0.1)', color: '#e65c00', fontSize: '0.875rem', fontWeight: 500, textAlign: 'center', border: '1px solid rgba(252, 175, 121, 0.2)' }}>
+                            {error}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} autoComplete="off">
 
@@ -213,14 +218,14 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
 
                     <div className="form-footer">
                         <span>Ai deja un cont?</span>
-                        <button className="footer-link" onClick={onLogin} type="button">
+                        <button className="footer-link" onClick={() => navigate('/login')} type="button">
                             Autentifică-te
                         </button>
                     </div>
 
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

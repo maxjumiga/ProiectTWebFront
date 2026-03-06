@@ -1,22 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap');
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-#root {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 60px;
-}
-
-:root {
+.auth-container {
     --bg: #f0f2f8;
     --surface: #ffffff;
     --border: #e2e5ef;
@@ -27,9 +11,7 @@
     --text-secondary: #6b7090;
     --text-muted: #b0b4cc;
     --input-bg: #f7f8fc;
-}
 
-body {
     font-family: 'Sora', sans-serif;
     background-color: var(--bg);
     color: var(--text-primary);
@@ -42,11 +24,12 @@ body {
     overflow: hidden;
     margin: 0;
     padding: 0;
+    width: 100%;
 }
 
-body::before {
+.auth-container::before {
     content: '';
-    position: fixed;
+    position: absolute;
     top: -120px;
     left: -120px;
     width: 480px;
@@ -56,9 +39,9 @@ body::before {
     z-index: 0;
 }
 
-body::after {
+.auth-container::after {
     content: '';
-    position: fixed;
+    position: absolute;
     bottom: -100px;
     right: -100px;
     width: 400px;
@@ -68,9 +51,9 @@ body::after {
     z-index: 0;
 }
 
-/* Back button — fixed top-left corner of the screen */
+/* Back button — fixed top-left corner of the container */
 .back-btn {
-    position: fixed;
+    position: absolute;
     top: 28px;
     left: 28px;
     display: inline-flex;
