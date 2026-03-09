@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import './Landing.css';
-
-const fadeIn = {
+import workoutUserImg from '../../assets/workout_app_user.png';
+import nutritionUserImg from '../../assets/nutrition_app_user.png';
+import './Landing.css'; const fadeIn = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.6 }
@@ -53,6 +53,10 @@ export default function Landing() {
 
             {/* Hero Section */}
             <section className="hero-section">
+                {/* Faint Illustrations */}
+                <img src={workoutUserImg} alt="Workout App User" className="hero-illustration hero-illustration-right" />
+                <img src={nutritionUserImg} alt="Nutrition App User" className="hero-illustration hero-illustration-left" />
+
                 {/* Background Decorative Blob */}
                 <div className="hero-blob-right" />
                 <div className="hero-blob-left" />
@@ -186,6 +190,49 @@ export default function Landing() {
                                 </div>
                                 <h3 className="step-title">{s.title}</h3>
                                 <p className="step-desc">{s.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Reviews Section */}
+            <section className="reviews-section">
+                <div className="section-container">
+                    <div className="section-header">
+                        <span className="section-badge" style={{ background: 'rgba(252, 175, 121, 0.15)', borderColor: 'rgba(252, 175, 121, 0.3)', color: '#FCAF79' }}>✦ Testimonials</span>
+                        <h2 className="section-title">Success Stories</h2>
+                        <span className="section-title-accent" style={{ background: 'linear-gradient(90deg, #FCAF79, #42448A)' }} />
+                        <p className="section-subtitle">Join thousands of others who have transformed their lives using Sănătate.</p>
+                    </div>
+
+                    <div className="reviews-grid">
+                        {[
+                            { name: "Alex Popescu", role: "Lost 15kg in 6 months", review: "Sănătate changed the way I look at my food and workouts. The personalized plans are simply incredible. I've never felt better!", rating: 5, color: "#FCAF79" },
+                            { name: "Maria Ionescu", role: "Marathon Runner", review: "The workout tracking is super clean and intuitive. I love how I can see my volume progress over the months. Highly recommended for any athlete.", rating: 5, color: "#5BB6F5" },
+                            { name: "Andrei Radu", role: "Gained 5kg Muscle", review: "Best app I've used for tracking my macros and workouts in one place. The dark mode dashboard is absolutely gorgeous to use every day.", rating: 5, color: "#42448A" }
+                        ].map((r, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-50px" }}
+                                transition={{ delay: i * 0.2, duration: 0.6 }}
+                                className="review-card"
+                            >
+                                <div className="review-stars" style={{ color: r.color }}>
+                                    {[...Array(r.rating)].map((_, i) => <span key={i}>★</span>)}
+                                </div>
+                                <p className="review-text">"{r.review}"</p>
+                                <div className="review-author">
+                                    <div className="author-avatar" style={{ backgroundColor: r.color }}>
+                                        {r.name.charAt(0)}
+                                    </div>
+                                    <div className="author-info">
+                                        <h4>{r.name}</h4>
+                                        <span>{r.role}</span>
+                                    </div>
+                                </div>
                             </motion.div>
                         ))}
                     </div>
