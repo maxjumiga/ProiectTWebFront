@@ -1,16 +1,31 @@
-// SearchBar — bară de căutare reutilizabilă cu buton de clear
+// ============================================================
+// components/SearchBar.tsx — Bara de cautare reutilizabila
+// Poate fi folosita in orice pagina care necesita filtrare de date.
+// Contine:
+//   - iconi ta de cautare (Font Awesome)
+//   - camp text de input
+//   - buton X pentru stergere rapida (apare doar cand exista text)
+// ============================================================
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons';
+
+// Proprietatile acceptate de componenta
 interface SearchBarProps {
-    value: string;
-    onChange: (value: string) => void;
-    placeholder?: string;
+    value: string;                    // Valoarea curenta a textului de cautare
+    onChange: (value: string) => void; // Functia apelata la fiecare modificare
+    placeholder?: string;             // Text optional placeholder (default: "Cauta...")
 }
 
 export default function SearchBar({ value, onChange, placeholder = 'Caută...' }: SearchBarProps) {
     return (
+        // Containerul wrap pozitioneaza iconita si butonul absolut fata de input
         <div className="um-search-wrap">
-            <svg className="um-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+
+            {/* Iconita lupa — pozitionata cu CSS absolut in stanga inputului */}
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="um-search-icon" style={{ width: 15, height: 15 }} />
+
+            {/* Campul de introducere text — apeleaza onChange la fiecare tasta */}
             <input
                 className="um-search"
                 type="text"
@@ -18,11 +33,11 @@ export default function SearchBar({ value, onChange, placeholder = 'Caută...' }
                 value={value}
                 onChange={e => onChange(e.target.value)}
             />
+
+            {/* Butonul X — apare doar daca exista text in input (conditional rendering) */}
             {value && (
                 <button className="um-search-clear" onClick={() => onChange('')} title="Șterge">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
+                    <FontAwesomeIcon icon={faXmark} style={{ width: 12, height: 12 }} />
                 </button>
             )}
         </div>

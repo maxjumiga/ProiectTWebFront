@@ -1,9 +1,17 @@
+// ============================================================
+// main.tsx — Punctul de intrare al aplicatiei React
+// Acest fisier initializeaza aplicatia si o monteaza in DOM.
+// Este primul fisier executat cand aplicatia porneste.
+// ============================================================
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
+import './index.css'  // Stilurile globale aplicate pe intreaga aplicatie
 import App from './App.tsx'
 
-// Prinde orice eroare de runtime și o afișează pe pagină (debugging)
+// --- Gestionarea erorilor de runtime ---
+// Capteaza erorile JavaScript neasteptate si le afiseaza pe pagina
+// in loc sa lase pagina alba — util pentru debugging in dezvoltare
 window.addEventListener('error', (e) => {
   document.getElementById('root')!.innerHTML = `
     <div style="background:#0a0f1e;color:#ef4444;padding:32px;font-family:monospace;min-height:100vh;">
@@ -12,6 +20,7 @@ window.addEventListener('error', (e) => {
     </div>`;
 });
 
+// Capteaza Promise-urile respinse (erori asincrone) si le afiseaza similar
 window.addEventListener('unhandledrejection', (e) => {
   document.getElementById('root')!.innerHTML = `
     <div style="background:#0a0f1e;color:#ef4444;padding:32px;font-family:monospace;min-height:100vh;">
@@ -20,6 +29,8 @@ window.addEventListener('unhandledrejection', (e) => {
     </div>`;
 });
 
+// Monteaza aplicatia React in elementul HTML cu id="root" din index.html
+// StrictMode activeaza verificari suplimentare in dezvoltare (nu afecteaza productia)
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />

@@ -1,33 +1,47 @@
-/* ═══════════════════════════════════════════════════════════════
-   shared.css — clase CSS reutilizabile în toate paginile admin
-   ═══════════════════════════════════════════════════════════════ */
+/* ============================================================
+   shared.css — Clase CSS reutilizabile in toate paginile admin
+   Importat automat prin index.css, disponibil global.
+   Contine: toolbar, butoane, tabel, modals, formulare, user-cell.
+   NU contine stiluri specifice unei singure pagini.
+   ============================================================ */
 
-/* ── Toolbar ─────────────────────────────────────────────────── */
+/* ── Toolbar ────────────────────────────────────────────────────
+   Bara de sus din fiecare pagina cu SearchBar + filtre + buton Add.
+   Foloseste flex-wrap pentru a merge pe un rand nou pe ecrane mici. */
 .um-toolbar {
     display: flex;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
+    /* Pe ecrane mici, elementele se muta pe randul urmator */
 }
 
+/* Containerul relative al SearchBar — necesar pentru iconitele pozitionate absolut */
 .um-search-wrap {
     position: relative;
     flex: 1;
+    /* Ocupa tot spatiul disponibil */
     min-width: 200px;
+    /* Nu se subtiaza sub 200px */
 }
 
+/* Iconita lupa — pozitionata cu absolute in stanga inputului */
 .um-search-icon {
     position: absolute;
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
+    /* Centrat vertical precis */
     color: var(--text-muted);
     pointer-events: none;
+    /* Nu blocheaza click-urile pe input */
 }
 
+/* Campul de input pentru cautare */
 .um-search {
     width: 100%;
     padding: 10px 36px 10px 36px;
+    /* Spatiu stanga pentru iconita, dreapta pentru butonul X */
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -41,13 +55,16 @@
     color: var(--text-muted);
 }
 
+/* La focus: bordura accent + halo violet subtil */
 .um-search:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-glow);
+    /* Halo exterior */
     background: var(--bg-input-focus);
 }
 
+/* Butonul X de stergere rapida — apare doar cand exista text (conditional in React) */
 .um-search-clear {
     position: absolute;
     right: 10px;
@@ -66,12 +83,17 @@
     color: var(--text-primary);
 }
 
+/* Containerul filtrelor (dropdown-uri) — le aranjeaza in linie */
 .um-filters {
     display: flex;
     gap: 10px;
 }
 
-/* ── Buttons ──────────────────────────────────────────────────── */
+/* ── Butoane ─────────────────────────────────────────────────────
+   Toate clasele de butoane din aplicatie sunt definite aici
+   pentru consistenta vizuala pe toate paginile. */
+
+/* Buton principal — violet inchis, folosit pentru actiuni primare (Adaugare) */
 .btn-primary {
     display: inline-flex;
     align-items: center;
@@ -83,14 +105,17 @@
     font-size: 13.5px;
     font-weight: 600;
     flex-shrink: 0;
+    /* Nu se micsoreaza pe ecrane mici */
     transition: background var(--transition), box-shadow var(--transition);
 }
 
 .btn-primary:hover {
     background: var(--accent-hover);
     box-shadow: 0 4px 12px rgba(66, 68, 138, 0.35);
+    /* Umbra violeta la hover */
 }
 
+/* Buton ghost — transparent cu bordura, folosit pentru actiuni secundare (Anulare) */
 .btn-ghost {
     padding: 9px 18px;
     background: transparent;
@@ -108,6 +133,7 @@
     border-color: var(--border-light);
 }
 
+/* Buton danger mare — rosu solid, folosit in footer-ul modalului de confirmare stergere */
 .btn-danger {
     padding: 9px 18px;
     background: var(--red);
@@ -123,12 +149,14 @@
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
 }
 
+/* Buton danger mic — fundal rosu transparent, folosit direct in randul tabelului */
 .btn-danger-sm {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     padding: 6px 12px;
     background: var(--red-soft);
+    /* Fundal subtil, nu solid */
     color: var(--red);
     border: 1px solid rgba(239, 68, 68, 0.15);
     border-radius: var(--radius-sm);
@@ -142,30 +170,36 @@
     border-color: rgba(239, 68, 68, 0.3);
 }
 
-/* ── Count ─────────────────────────────────────────────────────── */
+/* ── Contorul de rezultate ──────────────────────────────────────
+   Text mic gri care arata "X utilizatori" sau "X din Y utilizatori" */
 .um-count {
     font-size: 12.5px;
     color: var(--text-muted);
     padding: 0 2px;
 }
 
-/* ── Card wrapper for table ─────────────────────────────────────── */
+/* ── Card container pentru tabel ────────────────────────────────
+   Fundalul alb cu bordura si umbra care inconjoara tabelul */
 .um-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
+    /* Ascunde colturile tabelului interior */
 }
 
-/* ── Actions cell ─────────────────────────────────────────────── */
+/* ── Celula de actiuni (dreapta tabelului) ──────────────────────
+   Aranjeaza butoanele Edit si Delete in linie, aliniate la dreapta */
 .um-actions {
     display: flex;
     justify-content: flex-end;
     gap: 8px;
 }
 
-/* ── Empty state ──────────────────────────────────────────────── */
+/* ── Starea goala (empty state) ─────────────────────────────────
+   Afisata in locul tabelului cand cautarea nu returneaza rezultate.
+   Centreaza iconita si textul vertical si orizontal. */
 .um-empty {
     text-align: center;
     padding: 48px 24px !important;
@@ -176,20 +210,29 @@
     gap: 10px;
 }
 
-/* ── Modal ────────────────────────────────────────────────────── */
+/* ── Modal overlay ───────────────────────────────────────────────
+   Fundalul semi-transparent care acopera toata pagina.
+   position:fixed + inset:0 = acopera complet viewport-ul.
+   backdrop-filter:blur = estompeaza pagina din spate (efect modern). */
 .modal-overlay {
     position: fixed;
     inset: 0;
+    /* Shorthand pentru top:0; right:0; bottom:0; left:0 */
     background: rgba(15, 23, 42, 0.45);
+    /* Negru semi-transparent */
     backdrop-filter: blur(6px);
+    /* Blur pe continutul din spate */
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 100;
+    /* Deasupra oricarui alt element */
     padding: 20px;
     animation: fadeIn 0.15s ease;
+    /* Apare lin, nu instantaneu */
 }
 
+/* Animatia de aparitie a overlay-ului */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -200,42 +243,52 @@
     }
 }
 
+/* Cutia modala — cardular alb care apare centrat pe overlay */
 .modal {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
     width: 100%;
     max-width: 460px;
+    /* Latimea implicita */
     box-shadow: var(--shadow-lg);
     animation: slideUp 0.2s ease;
+    /* Apare cu o miscare usoara de jos in sus */
 }
 
+/* Varianta mica — pentru modals simple (ex: confirmare stergere) */
 .modal--sm {
     max-width: 380px;
 }
 
+/* Varianta lata — pentru formulare cu mai multe campuri (ex: add/edit) */
 .modal--wide {
     max-width: 580px;
 }
 
+/* Animatia modala: apare din jos si se ridica la locul sau */
 @keyframes slideUp {
     from {
         opacity: 0;
         transform: translateY(16px);
+        /* Incepe 16px mai jos */
     }
 
     to {
         opacity: 1;
         transform: translateY(0);
+        /* Ajunge la pozitia normala */
     }
 }
 
+/* Header-ul modala: titlu + buton inchidere */
 .modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 20px 24px 16px;
     border-bottom: 1px solid var(--border);
+    /* Separator vizual */
 }
 
 .modal-header h3 {
@@ -244,6 +297,7 @@
     color: var(--text-primary);
 }
 
+/* Butonul X de inchidere a modala */
 .modal-close {
     background: var(--bg-input);
     border: 1px solid var(--border);
@@ -260,22 +314,30 @@
     background: var(--border);
 }
 
+/* Corpul modala: zona cu formularul sau mesajul */
 .modal-body {
     padding: 20px 24px;
     display: flex;
     flex-direction: column;
     gap: 14px;
+    /* Spatiu intre campurile de formular */
 }
 
+/* Footer-ul modala: zona cu butoanele de actiune */
 .modal-footer {
     display: flex;
     justify-content: flex-end;
+    /* Butoanele sunt aliniate la dreapta */
     gap: 10px;
     padding: 16px 24px;
     border-top: 1px solid var(--border);
+    /* Separator vizual */
 }
 
-/* ── Form ─────────────────────────────────────────────────────── */
+/* ── Campuri de formular ─────────────────────────────────────────
+   Structura unui camp: label + input/select/textarea */
+
+/* Containerul unui camp — aranjeaza label-ul deasupra inputului */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -288,11 +350,13 @@
     color: var(--text-secondary);
 }
 
+/* Asteriscul rosu care marcheaza campurile obligatorii */
 .req {
     color: var(--red);
     margin-left: 2px;
 }
 
+/* Inputul de formular — stilul comun pentru text, number, textarea */
 .form-input {
     padding: 10px 14px;
     background: var(--bg-input);
@@ -308,6 +372,7 @@
     color: var(--text-muted);
 }
 
+/* La focus: bordura accent + halo (identic cu search-ul) */
 .form-input:focus {
     outline: none;
     border-color: var(--accent);
@@ -315,12 +380,14 @@
     background: var(--bg-input-focus);
 }
 
+/* Grila cu 2 coloane — folosita pentru campuri alaturate in formular */
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 14px;
 }
 
+/* Mesajul de eroare de validare — fundal rosu transparent */
 .form-error {
     padding: 10px 14px;
     background: var(--red-soft);
@@ -331,72 +398,92 @@
     font-weight: 500;
 }
 
-/* ── Confirm text ─────────────────────────────────────────────── */
+/* ── Textul de confirmare stergere ───────────────────────────────
+   Mesajul din modalul ConfirmDeleteModal */
 .confirm-text {
     font-size: 13.5px;
     color: var(--text-secondary);
     line-height: 1.6;
 }
 
+/* Numele elementului sters — afisat bold pentru evidenta */
 .confirm-text strong {
     color: var(--text-primary);
 }
 
-/* ── Shared table ─────────────────────────────────────────────── */
+/* ── Tabel partajat ───────────────────────────────────────────────
+   Folosit in UserManagement, GestionareAlimente si GestionareExercitii.
+   table-wrap permite scroll orizontal pe ecrane mici (tablete/telefoane). */
 .table-wrap {
     overflow-x: auto;
+    /* Scroll orizontal daca tabelul e prea lat */
 }
 
+/* Tabelul in sine — fara spatii intre celule */
 .data-table {
     width: 100%;
     border-collapse: collapse;
+    /* Bordurile celulelor devin o singura linie */
     font-size: 13.5px;
 }
 
+/* Headerul tabelului — etichete cu majuscule, discrete */
 .data-table th {
     padding: 10px 24px;
     text-align: left;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
+    /* Majuscule automate */
     letter-spacing: 0.07em;
+    /* Spatiere litere pentru lizibilitate */
     color: var(--text-muted);
     background: #f3f4fa;
+    /* Fundal usor colorat pentru a-l diferentia */
     border-bottom: 1px solid var(--border);
 }
 
+/* Celulele din corpul tabelului */
 .data-table td {
     padding: 13px 24px;
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
+    /* Continutul e centrat vertical in celula */
 }
 
+/* Ultimul rand nu are bordura de jos (aspect curat) */
 .data-table tbody tr:last-child td {
     border-bottom: none;
 }
 
+/* Tranzitia de fundal pe randuri — pregatire pentru efectul hover */
 .data-table tbody tr {
     transition: background var(--transition);
 }
 
+/* Efectul hover pe randuri: fundalul devine usor colorat */
 .data-table tbody tr:hover td {
     background: var(--bg-card-hover);
     color: var(--text-primary);
 }
 
-/* ── User / item cell ─────────────────────────────────────────── */
+/* ── Celula utilizator/element ───────────────────────────────────
+   Celula cu avatar circular + nume + email, aranjate in linie */
 .user-cell {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
+/* Avatarul circular cu initiala numelui — gradient violet-albastru */
 .user-avatar {
     width: 34px;
     height: 34px;
     border-radius: 50%;
+    /* Cerc perfect */
     background: linear-gradient(135deg, var(--accent), #5BB6F5);
+    /* Gradient de brand */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -404,25 +491,30 @@
     font-size: 13px;
     color: #fff;
     flex-shrink: 0;
+    /* Nu se micsoreaza cand spatiul e limitat */
 }
 
+/* Containerul pentru numele + email-ul utilizatorului */
 .user-details {
     display: flex;
     flex-direction: column;
     gap: 1px;
 }
 
+/* Numele utilizatorului — bold, vizibil */
 .user-name {
     font-weight: 600;
     color: var(--text-primary);
     font-size: 13.5px;
 }
 
+/* Email-ul utilizatorului — mic, discret */
 .user-email {
     font-size: 11.5px;
     color: var(--text-muted);
 }
 
+/* Celula cu data — mai mica si discreta */
 .date-cell {
     font-size: 13px;
     color: var(--text-muted);

@@ -1,39 +1,58 @@
-/* GestionareExercitii.css — stiluri specifice paginii de exerciții */
+/* ============================================================
+   GestionareExercitii.css — Stiluri specifice paginii de exercitii
+   Extinde GestionareAlimente.css cu culori pentru grupele musculare
+   si cu stiluri pentru nivelul de dificultate.
+   Avatarele si badge-urile functioneaza la fel ca la alimente,
+   dar cu culori asociate grupelor musculare, nu categoriilor.
+   ============================================================ */
 
-/* ── Avatar culori pe grupă musculară ─────────── */
+/* ── Culori avatare pentru fiecare grupa musculara ──────────────
+   Gradiente distincte pentru recunoastere vizuala rapida in tabel.
+   Fiecare grupa are o culoare intuitive (rosu = piept/forta, verde = picioare etc.) */
 .ex-piept {
     background: linear-gradient(135deg, #dc2626, #f87171);
 }
 
+/* Rosu — piept */
 .ex-spate {
     background: linear-gradient(135deg, #0284c7, #38bdf8);
 }
 
+/* Albastru — spate */
 .ex-umeri {
     background: linear-gradient(135deg, #7c3aed, #a78bfa);
 }
 
+/* Violet — umeri */
 .ex-brate {
     background: linear-gradient(135deg, #ca8a04, #facc15);
 }
 
+/* Galben — brate */
 .ex-abdomen {
     background: linear-gradient(135deg, #f97316, #fb923c);
 }
 
+/* Portocaliu — abdomen */
 .ex-picioare {
     background: linear-gradient(135deg, #16a34a, #4ade80);
 }
 
+/* Verde — picioare */
 .ex-cardio {
     background: linear-gradient(135deg, #db2777, #f472b6);
 }
 
+/* Roz — cardio */
 .ex-altele {
     background: linear-gradient(135deg, var(--accent), #5BB6F5);
 }
 
-/* ── Badges grupă musculară ──────────────────── */
+/* Brand */
+
+/* ── Culorile badge-urilor pentru grupa musculara ───────────────
+   Aceleasi culori ca avatarele, dar versiune pastelata (transparent).
+   Clasa ga-badge-cat vine din GestionareAlimente.css si ofera forma de baza. */
 .ex-piept.ga-badge-cat {
     background: rgba(220, 38, 38, 0.10);
     color: #dc2626;
@@ -74,7 +93,8 @@
     color: var(--accent);
 }
 
-/* ── Badges dificultate ──────────────────────── */
+/* ── Badge-ul de dificultate ────────────────────────────────────
+   Forma de baza: pastila ovala, font mic si bold */
 .ex-badge-dif {
     font-size: 11.5px;
     font-weight: 600;
@@ -83,39 +103,53 @@
     white-space: nowrap;
 }
 
+/* Incepator — verde (cel mai usor) */
 .dif-incepator {
     background: rgba(22, 163, 74, 0.10);
     color: #15803d;
 }
 
+/* Intermediar — portocaliu (nivel mediu) */
 .dif-intermediar {
     background: rgba(202, 138, 4, 0.12);
     color: #a16207;
 }
 
+/* Avansat — rosu (cel mai greu) */
 .dif-avansat {
     background: rgba(220, 38, 38, 0.10);
     color: #dc2626;
 }
 
-/* ── Descriere ───────────────────────────────── */
+/* ── Celula cu descrierea exercitiului ──────────────────────────
+   Truncheaza textul lung cu "..." pentru a pastra tabelul compact.
+   max-width limiteaza latimea celulei. */
 .ex-descriere-cell {
     font-size: 12.5px;
     color: var(--text-muted);
     max-width: 260px;
     white-space: nowrap;
+    /* Textul nu se rupe pe mai multe randuri */
     overflow: hidden;
+    /* Textul depasit e ascuns */
     text-overflow: ellipsis;
+    /* "..." la sfarsit cand textul e trunchiat */
 }
 
+/* Textul "—" afisat cand exercitiul nu are descriere */
 .ex-no-desc {
     color: var(--border-light);
+    /* Aproape invizibil — indica absenta datei */
 }
 
-/* ── Textarea în modal ───────────────────────── */
+/* ── Textarea din modalul de adaugare/editare exercitiu ──────────
+   resize:vertical permite utilizatorului sa redimensioneze textul in jos,
+   dar nu si orizontal (ar strica layout-ul). */
 .ex-textarea {
     resize: vertical;
     min-height: 72px;
+    /* Inaltimea minima — 3 randuri de text */
     font-family: inherit;
+    /* Mosteneste fontul Inter, nu fontul monospaced default */
     line-height: 1.5;
 }

@@ -1,11 +1,20 @@
+// ============================================================
+// data/mockData.ts — Date simulate (mock) pentru utilizatori
+// Acest fisier contine o lista de utilizatori fictivi folositi
+// in lipsa unui backend real / baze de date.
+// In productie, aceste date ar fi preluate dintr-un API REST.
+// ============================================================
+
 import type { User } from '../types';
 
+// Lista de utilizatori simulati pentru demonstratie si testare
+// Contine 15 utilizatori cu roluri si statusuri variate
 export const mockUsers: User[] = [
     {
         id: '1',
         name: 'Alexandru Ionescu',
         email: 'alex.ionescu@email.ro',
-        role: 'admin',
+        role: 'admin',   // Administrator — are acces complet
         status: 'activ',
         joinedAt: '2025-10-05',
     },
@@ -22,7 +31,7 @@ export const mockUsers: User[] = [
         name: 'Andrei Dumitrescu',
         email: 'andrei.dum@email.ro',
         role: 'user',
-        status: 'inactiv',
+        status: 'inactiv', // Cont dezactivat
         joinedAt: '2025-11-28',
     },
     {
@@ -45,7 +54,7 @@ export const mockUsers: User[] = [
         id: '6',
         name: 'Ioana Munteanu',
         email: 'ioana.munt@email.ro',
-        role: 'admin',
+        role: 'admin',   // Al doilea administrator din sistem
         status: 'activ',
         joinedAt: '2026-01-04',
     },

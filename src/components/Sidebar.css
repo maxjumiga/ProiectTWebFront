@@ -1,50 +1,70 @@
+/* ============================================================
+   Sidebar.css — Stilurile meniului lateral fix
+   Sidebar-ul are intotdeauna fundal inchis (dark mode permanent),
+   indiferent de tema aplicatiei.
+   ============================================================ */
+
+/* Containerul principal al sidebar-ului — coloana verticala fixa */
 .sidebar {
     width: 240px;
     min-width: 240px;
+    /* Nu se micsoreaza mai ingust de 240px */
     background: var(--bg-sidebar);
+    /* Bleumarin inchis */
     border-right: none;
     display: flex;
     flex-direction: column;
+    /* Logo sus, nav la mijloc, footer jos */
     padding: 20px 0;
     position: relative;
     z-index: 10;
+    /* Deasupra continutului principal */
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+    /* Umbra spre dreapta */
 }
 
-/* ── Logo ── */
+/* ── Zona Logo (sus) ─────────────────────────────────────────── */
+/* Contine iconita + numele aplicatiei */
 .sidebar-logo {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 0 20px 24px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    /* Separator subtil */
 }
 
+/* Iconita logo — patrat rotunjit cu gradient de brand */
 .logo-icon {
     width: 38px;
     height: 38px;
     border-radius: var(--radius-md);
     background: linear-gradient(135deg, var(--accent), #5BB6F5);
+    /* Gradient violet-albastru */
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fff;
     flex-shrink: 0;
     box-shadow: 0 4px 12px rgba(66, 68, 138, 0.40);
+    /* Stralucire subtila */
 }
 
+/* Containerul textului logo (nume + subtitlu) */
 .logo-text {
     display: flex;
     flex-direction: column;
     line-height: 1.2;
 }
 
+/* Numele aplicatiei — alb, bold */
 .logo-name {
     font-size: 14px;
     font-weight: 700;
     color: #ffffff;
 }
 
+/* Subtitlul "Panou Admin" — text mic, semi-transparent */
 .logo-sub {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.35);
@@ -52,24 +72,29 @@
     margin-top: 2px;
 }
 
-/* ── Nav ── */
+/* ── Navigarea principala ────────────────────────────────────── */
+/* Ocupa tot spatiul ramas intre logo si footer (flex:1) */
 .sidebar-nav {
     flex: 1;
     padding: 20px 12px 12px;
     display: flex;
     flex-direction: column;
     gap: 3px;
+    /* Spatiu mic intre link-uri */
 }
 
+/* Eticheta "NAVIGARE" de deasupra link-urilor */
 .nav-section-label {
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.25);
+    /* Foarte discret */
     padding: 0 8px 10px;
 }
 
+/* Link-ul de navigare — stare normala (inactiv) */
 .nav-link {
     display: flex;
     align-items: center;
@@ -77,41 +102,54 @@
     padding: 10px 12px;
     border-radius: var(--radius-md);
     color: rgba(255, 255, 255, 0.5);
+    /* Semi-transparent — nu e activ */
     text-decoration: none;
     font-weight: 500;
     font-size: 13.5px;
     transition: background var(--transition), color var(--transition);
 }
 
+/* Efectul hover: fundal subtil + text mai luminat */
 .nav-link:hover {
     background: rgba(255, 255, 255, 0.07);
     color: rgba(255, 255, 255, 0.85);
 }
 
+/* Link-ul activ — pagina curenta — aplicat de NavLink din React Router
+   !important este necesar pentru a suprascrie clasa de baza */
 .nav-link--active {
     background: var(--bg-sidebar-tertiary) !important;
+    /* Fundal mai deschis */
     color: #ffffff !important;
+    /* Text complet alb */
     border: 1px solid rgba(255, 255, 255, 0.10);
+    /* Bordura subtila */
 }
 
+/* Containerul iconiței din nav-link */
 .nav-icon {
     display: flex;
     align-items: center;
     opacity: 0.7;
+    /* Iconita e putin mai discreta decat textul */
     transition: opacity var(--transition);
 }
 
+/* La hover sau activ, iconita devine complet opaca */
 .nav-link:hover .nav-icon,
 .nav-link--active .nav-icon {
     opacity: 1;
 }
 
-/* ── Footer ── */
+/* ── Footer sidebar (jos) ────────────────────────────────────── */
+/* Zona cu informatiile administratorului logat */
 .sidebar-footer {
     padding: 16px 12px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
+    /* Separator subtil */
 }
 
+/* "Chip-ul" adminului — card mic cu avatar + informatii */
 .admin-chip {
     display: flex;
     align-items: center;
@@ -119,9 +157,11 @@
     padding: 10px;
     border-radius: var(--radius-md);
     background: rgba(255, 255, 255, 0.05);
+    /* Fundal foarte subtil */
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+/* Avatarul adminului — cerc cu gradient */
 .admin-avatar {
     width: 32px;
     height: 32px;
@@ -136,18 +176,21 @@
     flex-shrink: 0;
 }
 
+/* Containerul pentru informatiile de text ale adminului */
 .admin-info {
     display: flex;
     flex-direction: column;
     line-height: 1.2;
 }
 
+/* Numele adminului — semi-luminat */
 .admin-name {
     font-size: 12.5px;
     font-weight: 600;
     color: rgba(255, 255, 255, 0.85);
 }
 
+/* Rolul adminului — mic si discret */
 .admin-role {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.35);

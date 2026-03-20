@@ -1,37 +1,55 @@
-// ExercitiiModal — modal reutilizabil pentru adăugare și editare exerciții
+// ============================================================
+// features/exercitii/ExercitiiModal.tsx — Modal adaugare/editare exercitiu
+// Componenta reutilizabila pentru ambele operatii (add si edit).
+// Formularul contine:
+//   - Camp text pentru numele exercitiului (obligatoriu)
+//   - Dropdown pentru grupa musculara (CustomSelect)
+//   - Dropdown pentru dificultate (CustomSelect)
+//   - Input numeric pentru durata medie (minute)
+//   - Textarea pentru descriere (optional)
+// Validarea se face in GestionareExercitii prin validateExercitiiForm
+// ============================================================
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark, faCheck } from '@fortawesome/free-solid-svg-icons';
 import type { GrupMuscular, DificultateExercitiu, ExercitiiForm } from './exercitiiConstants';
 import { grupMuscularOptions, dificultateOptions } from './exercitiiConstants';
 import CustomSelect from '../../components/CustomSelect';
 
+// Proprietatile primite de la GestionareExercitii
 interface ExercitiiModalProps {
-    title: string;
-    form: ExercitiiForm;
-    error: string;
-    onFormChange: (form: ExercitiiForm) => void;
-    onSave: () => void;
-    onClose: () => void;
-    saveLabel?: string;
+    title: string;                              // Titlul modalului
+    form: ExercitiiForm;                        // Datele curente ale formularului
+    error: string;                              // Mesajul de eroare (gol = fara eroare)
+    onFormChange: (form: ExercitiiForm) => void; // Callback la orice modificare
+    onSave: () => void;                         // Callback la salvare
+    onClose: () => void;                        // Callback la inchidere
+    saveLabel?: string;                         // Textul butonului (default: "Salvează")
 }
 
 export default function ExercitiiModal({
     title, form, error, onFormChange, onSave, onClose, saveLabel = 'Salvează',
 }: ExercitiiModalProps) {
     return (
+        // Overlay — click pe fundal inchide modalul
         <div className="modal-overlay" onClick={onClose}>
+            {/* Cutia modala — stopPropagation previne inchiderea accidentala */}
             <div className="modal modal--wide" onClick={e => e.stopPropagation()}>
+
+                {/* Header: titlul + butonul X */}
                 <div className="modal-header">
                     <h3>{title}</h3>
                     <button className="modal-close" onClick={onClose}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
+                        <FontAwesomeIcon icon={faXmark} style={{ width: 16, height: 16 }} />
                     </button>
                 </div>
 
+                {/* Corpul: formularul */}
                 <div className="modal-body">
+                    {/* Eroarea de validare — apare doar daca exista */}
                     {error && <div className="form-error">{error}</div>}
 
-                    {/* Rând 1: Nume + Grupă musculară + Dificultate */}
+                    {/* Randul 1: Numele exercitiului (pe toata latimea) */}
                     <div className="form-row">
                         <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                             <label>Nume exercițiu <span className="req">*</span></label>
@@ -45,6 +63,7 @@ export default function ExercitiiModal({
                         </div>
                     </div>
 
+                    {/* Randul 2: Grupa musculara + Dificultate (2 coloane) */}
                     <div className="form-row">
                         <div className="form-group">
                             <label>Grupă musculară</label>
@@ -66,7 +85,7 @@ export default function ExercitiiModal({
                         </div>
                     </div>
 
-                    {/* Durată medie */}
+                    {/* Durata medie in minute */}
                     <div className="form-group">
                         <label>Durată medie <span className="ga-unit">(minute)</span></label>
                         <input
@@ -80,7 +99,7 @@ export default function ExercitiiModal({
                         />
                     </div>
 
-                    {/* Descriere */}
+                    {/* Descriere — camp text liber, optional */}
                     <div className="form-group">
                         <label>Descriere <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: '11px' }}>(opțional)</span></label>
                         <textarea
@@ -93,12 +112,11 @@ export default function ExercitiiModal({
                     </div>
                 </div>
 
+                {/* Footer: Anuleaza + Salveaza */}
                 <div className="modal-footer">
                     <button className="btn-ghost" onClick={onClose}>Anulează</button>
                     <button className="btn-primary" onClick={onSave}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="20 6 9 17 4 12" />
-                        </svg>
+                        <FontAwesomeIcon icon={faCheck} style={{ width: 14, height: 14 }} />
                         {saveLabel}
                     </button>
                 </div>

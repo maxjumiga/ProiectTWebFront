@@ -1,22 +1,35 @@
-/* ── Base wrapper ── */
+/* ============================================================
+   CustomSelect.css — Dropdown personalizat (inlocuitor select nativ)
+   Suporta 3 variante: default (filtre), inline (tabel), form (modal).
+   Animatia cselSlide face lista sa apara elegant de sus in jos.
+   ============================================================ */
+
+/* ── Containerul de baza ────────────────────────────────────────
+   position:relative e necesar pentru a pozitiona dropdown-ul
+   absolut RELATIV la containerul sau, nu la pagina */
 .csel {
     position: relative;
     display: inline-block;
 }
 
+/* Varianta default — pentru filtrele din toolbar */
 .csel--default {
     min-width: 160px;
 }
 
+/* Varianta form — ocupa toata latimea (in formulare) */
 .csel--form {
     width: 100%;
 }
 
+/* Varianta inline — compacta, pentru celulele din tabel */
 .csel--inline {
     min-width: 110px;
 }
 
-/* ── Trigger button ── */
+/* ── Butonul trigger (afisat mereu) ─────────────────────────────
+   Arata optiunea selectata + sageata chevron.
+   La click, deschide/inchide dropdown-ul. */
 .csel-trigger {
     display: flex;
     align-items: center;
@@ -34,6 +47,7 @@
     transition: border-color var(--transition), box-shadow var(--transition);
     text-align: left;
     white-space: nowrap;
+    /* Nu lasa textul sa se rupa pe mai multe randuri */
     box-shadow: var(--shadow-xs);
 }
 
@@ -42,13 +56,15 @@
     color: var(--text-primary);
 }
 
+/* Cand dropdown-ul e deschis — bordura accent + halo */
 .csel--open .csel-trigger {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-glow);
     color: var(--text-primary);
 }
 
-/* ── Inline variant (table cells) ── */
+/* ── Varianta inline (in tabel) ─────────────────────────────────
+   Mai compacta, fara umbra, border-radius mai mic */
 .csel--inline .csel-trigger {
     padding: 5px 10px;
     font-size: 12px;
@@ -56,56 +72,71 @@
     box-shadow: none;
 }
 
-/* ── Form variant ── */
+/* ── Varianta form (in modal) ───────────────────────────────────
+   Padding mai mare si fundal de input */
 .csel--form .csel-trigger {
     padding: 10px 14px;
     font-size: 13.5px;
     background: var(--bg-input);
 }
 
-/* ── Arrow icon ── */
+/* ── Sageata chevron ────────────────────────────────────────────
+   Se roteste 180° cand dropdown-ul e deschis (via clasa csel--open).
+   Rotatia e animata prin transition. */
 .csel-arrow {
     flex-shrink: 0;
     opacity: 0.4;
     transition: transform var(--transition), opacity var(--transition);
 }
 
+/* Rotatie de 180° cand dropdown-ul e deschis */
 .csel--open .csel-arrow {
     transform: rotate(180deg);
     opacity: 0.7;
 }
 
-/* ── Color variants on trigger ── */
+/* ── Variante de culoare pe trigger ─────────────────────────────
+   Aplicate dinamic prin JavaScript (colorMap prop).
+   !important necesar pentru a suprascrie stilul default. */
+
+/* Admin — violet */
 .csel-color--admin {
     background: rgba(66, 68, 138, 0.08) !important;
     color: var(--accent) !important;
     border-color: rgba(66, 68, 138, 0.2) !important;
 }
 
+/* User — violet mai deschis */
 .csel-color--user {
     background: rgba(66, 68, 138, 0.08) !important;
     color: var(--purple) !important;
     border-color: rgba(66, 68, 138, 0.2) !important;
 }
 
+/* Activ — verde */
 .csel-color--activ {
     background: rgba(34, 197, 94, 0.08) !important;
     color: var(--green) !important;
     border-color: rgba(34, 197, 94, 0.2) !important;
 }
 
+/* Inactiv — rosu */
 .csel-color--inactiv {
     background: rgba(239, 68, 68, 0.08) !important;
     color: var(--red) !important;
     border-color: rgba(239, 68, 68, 0.2) !important;
 }
 
-/* ── Dropdown panel ── */
+/* ── Panoul dropdown (lista de optiuni) ─────────────────────────
+   Pozitionat absolut imediat sub trigger (top: 100% + 5px).
+   z-index: 200 = deasupra oricui altcuiva din pagina. */
 .csel-dropdown {
     position: absolute;
     top: calc(100% + 5px);
+    /* 5px spatiu intre trigger si lista */
     left: 0;
     min-width: 100%;
+    /* Cel putin la fel de lat ca trigger-ul */
     background: var(--bg-card);
     border: 1px solid var(--border-light);
     border-radius: var(--radius-md);
@@ -113,8 +144,10 @@
     z-index: 200;
     overflow: hidden;
     animation: cselSlide 0.13s ease;
+    /* Apare rapid — 130ms */
 }
 
+/* Lista apare de sus in jos — deplasare mica pe axa Y */
 @keyframes cselSlide {
     from {
         opacity: 0;
@@ -127,11 +160,13 @@
     }
 }
 
-/* ── Option buttons ── */
+/* ── Butonul pentru fiecare optiune din lista ───────────────────
+   Buton complet (nu <option>) pentru control total al stilizarii. */
 .csel-option {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    /* Textul stanga, iconita check dreapta */
     gap: 10px;
     width: 100%;
     padding: 9px 14px;
@@ -151,12 +186,14 @@
     color: var(--text-primary);
 }
 
+/* Optiunea selectata curent — fundal violet subtil + text accent */
 .csel-option--active {
     color: var(--accent);
     background: var(--accent-soft);
 }
 
-/* color variants on options */
+/* ── Culori pe optiunile din lista ─────────────────────────────
+   Coloreaza textul optiunii in functie de valoarea ei */
 .csel-option.csel-color--admin {
     color: var(--accent);
 }
@@ -173,6 +210,7 @@
     color: var(--red);
 }
 
+/* La hover pe optiunile colorate — fundalul revine la inputul normal */
 .csel-option.csel-color--admin:hover,
 .csel-option.csel-color--user:hover,
 .csel-option.csel-color--activ:hover,

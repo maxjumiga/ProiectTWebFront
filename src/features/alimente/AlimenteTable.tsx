@@ -1,12 +1,25 @@
-// AlimenteTable — tabelul cu lista de alimente
+// ============================================================
+// features/alimente/AlimenteTable.tsx — Tabelul cu alimente
+// Componenta de prezentare care afiseaza lista de alimente filtrate.
+// Nu gestioneaza starea — logica ramane in GestionareAlimente.tsx
+// Fiecare rand contine:
+//   - Avatar colorat cu initiala alimentului
+//   - Badge colorat cu categoria
+//   - Valorile nutritionale (calorii, proteine, carbohidrati, grasimi)
+//   - Butoane Edit si Sterge
+// ============================================================
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import type { Aliment } from '../../types';
 import { categorieLabel, categorieColorClass } from './alimenteConstants';
 
+// Proprietatile primite de la GestionareAlimente
 interface AlimenteTableProps {
-    alimente: Aliment[];
-    filtered: Aliment[];
-    onEdit: (a: Aliment) => void;
-    onDelete: (id: string) => void;
+    alimente: Aliment[];                 // Lista completa (pentru ref)
+    filtered: Aliment[];                 // Lista filtrata de afisat
+    onEdit: (a: Aliment) => void;        // Callback pentru deschiderea modalului de editare
+    onDelete: (id: string) => void;      // Callback pentru initierea stergerii
 }
 
 export default function AlimenteTable({ filtered, onEdit, onDelete }: AlimenteTableProps) {
@@ -26,22 +39,29 @@ export default function AlimenteTable({ filtered, onEdit, onDelete }: AlimenteTa
                         </tr>
                     </thead>
                     <tbody>
+                        {/* Daca lista e goala, nu se afiseaza nimic (null) */}
                         {filtered.length === 0 ? null : (
                             filtered.map(a => (
                                 <tr key={a.id}>
+                                    {/* Celula nutritie: avatar colorat cu initiala + numele alimentului */}
                                     <td>
                                         <div className="ga-name-cell">
+                                            {/* Clasa de culoare a avatarului depinde de categorie */}
                                             <div className={`ga-avatar ${categorieColorClass[a.categorie]}`}>
                                                 {a.nume.charAt(0).toUpperCase()}
                                             </div>
                                             <span className="user-name">{a.nume}</span>
                                         </div>
                                     </td>
+
+                                    {/* Badge colorat pentru categorie */}
                                     <td>
                                         <span className={`badge ga-badge-cat ${categorieColorClass[a.categorie]}`}>
                                             {categorieLabel[a.categorie]}
                                         </span>
                                     </td>
+
+                                    {/* Valori nutritionale cu unitati de masura */}
                                     <td className="ga-num-cell">
                                         <span className="ga-kcal">{a.calorii}</span>
                                         <span className="ga-unit-sm">kcal</span>
@@ -49,27 +69,26 @@ export default function AlimenteTable({ filtered, onEdit, onDelete }: AlimenteTa
                                     <td className="ga-num-cell"><span>{a.proteine}g</span></td>
                                     <td className="ga-num-cell"><span>{a.carbohidrati}g</span></td>
                                     <td className="ga-num-cell"><span>{a.grasimi}g</span></td>
+
+                                    {/* Butoanele de actiune: Editare si Stergere */}
                                     <td>
                                         <div className="um-actions">
+                                            {/* Buton Editare — deschide modalul cu datele pre-completate */}
                                             <button
                                                 className="btn-edit-sm"
                                                 onClick={() => onEdit(a)}
                                                 title="Editează aliment"
                                             >
-                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                                </svg>
+                                                <FontAwesomeIcon icon={faPenToSquare} style={{ width: 13, height: 13 }} />
                                                 Editează
                                             </button>
+                                            {/* Buton Stergere — deschide modalul de confirmare */}
                                             <button
                                                 className="btn-danger-sm"
                                                 onClick={() => onDelete(a.id)}
                                                 title="Șterge aliment"
                                             >
-                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                    <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /><path d="M9 6V4h6v2" />
-                                                </svg>
+                                                <FontAwesomeIcon icon={faTrash} style={{ width: 13, height: 13 }} />
                                                 Șterge
                                             </button>
                                         </div>

@@ -1,79 +1,130 @@
+/* ============================================================
+   index.css — Fisierul CSS global al aplicatiei
+   Importat o singura data in main.tsx si se aplica pe TOT proiectul.
+   Contine:
+     - Importul fontului Inter de la Google Fonts
+     - Variabilele CSS globale (design tokens)
+     - Reset-ul CSS de baza
+     - Layout-ul principal (app-shell, main-area, page-content)
+     - Badge-urile de status (activ/inactiv/admin/user)
+   ============================================================ */
+
+/* Importul fontului Inter — folosit pe toata aplicatia */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Importul claselor CSS reutilizabile (butoane, tabele, formulare, modals) */
 @import './shared.css';
 
+/* Reset CSS universal — elimina margin/padding default din browser */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  /* Include border si padding in dimensiunea elementului */
   margin: 0;
   padding: 0;
 }
 
+/* ── Variabile CSS globale (Design Tokens) ──────────────────────
+   Definite pe :root = disponibile in INTREAGA aplicatie.
+   Schimbarea unei variabile afecteaza automat toate componentele. */
 :root {
-  /* ── Backgrounds ─────────────────────────── */
+  /* ── Fundaluri ─────────────────────────────────────────────── */
   --bg-page: #F0F2F8;
+  /* Fundalul paginii (gri-albastru deschis) */
   --bg-sidebar: #1A1A2E;
+  /* Fundalul sidebar-ului (bleumarin inchis) */
   --bg-sidebar-secondary: #1E1F35;
+  /* Fundal secundar sidebar */
   --bg-sidebar-tertiary: #272840;
+  /* Fundal link activ in sidebar */
   --bg-card: #FFFFFF;
+  /* Fundalul cardurilor si modalelor */
   --bg-card-hover: #f7f9ff;
+  /* Fundalul randurilor de tabel la hover */
   --bg-input: #eceef5;
+  /* Fundalul inputurilor */
   --bg-input-focus: #FFFFFF;
+  /* Fundalul inputului focusat */
 
-  /* ── Borders ─────────────────────────────── */
+  /* ── Borduri ────────────────────────────────────────────────── */
   --border: rgba(66, 68, 138, 0.10);
+  /* Bordura normala (discreta) */
   --border-light: rgba(66, 68, 138, 0.16);
+  /* Bordura usor mai vizibila */
   --border-focus: rgba(66, 68, 138, 0.40);
+  /* Bordura la focus (inputuri active) */
 
-  /* ── Accent (Brand Purple) ───────────────── */
+  /* ── Culoarea accent principala (Brand Purple) ──────────────── */
   --accent: #42448A;
+  /* Violet inchis — culoarea brandului */
   --accent-hover: #33356e;
+  /* Variant mai inchis la hover */
   --accent-glow: rgba(66, 68, 138, 0.18);
+  /* Halo/glow la focus */
   --accent-soft: rgba(66, 68, 138, 0.08);
+  /* Fundal subtle pentru badge-uri accent */
 
-  /* ── Secondary accent (Info Blue) ──────────*/
+  /* ── Accent secundar (Albastru Info) ───────────────────────── */
   --blue: #5BB6F5;
   --blue-soft: rgba(91, 182, 245, 0.12);
 
-  /* ── Tertiary accent (Energy Orange) ───────*/
+  /* ── Accent tertiar (Portocaliu Energie) ────────────────────── */
   --orange: #FCAF79;
   --orange-soft: rgba(252, 175, 121, 0.14);
 
-  /* ── Status colors ───────────────────────── */
+  /* ── Culori de status ───────────────────────────────────────── */
   --green: #22c55e;
+  /* Verde — activ, succes */
   --green-soft: rgba(34, 197, 94, 0.10);
   --red: #ef4444;
+  /* Rosu — eroare, inactiv, stergere */
   --red-soft: rgba(239, 68, 68, 0.10);
   --amber: #FCAF79;
+  /* Portocaliu — avertizare, luna curenta */
   --amber-soft: rgba(252, 175, 121, 0.14);
   --purple: #42448A;
+  /* Violet — utilizatori activi */
   --purple-soft: rgba(66, 68, 138, 0.10);
 
-  /* ── Text ────────────────────────────────── */
+  /* ── Culori text ────────────────────────────────────────────── */
   --text-primary: #1E1F35;
+  /* Text principal (titluri, valori importante) */
   --text-secondary: #4a4f70;
+  /* Text secundar (continut normal) */
   --text-muted: #8b90b8;
+  /* Text estompat (placeholder, date, etichete) */
 
-  /* Sidebar-specific text (always light, sidebar stays dark) */
+  /* Text sidebar — mereu deschis deoarece sidebar-ul e intotdeauna inchis */
   --sidebar-text: #8b90b8;
   --sidebar-text-active: #ffffff;
   --sidebar-text-hover: #c5c8e0;
 
-  /* ── Radii ───────────────────────────────── */
+  /* ── Raze de colt (border-radius) ──────────────────────────── */
   --radius-sm: 6px;
+  /* Butoane mici, badges */
   --radius-md: 10px;
+  /* Inputuri, carduri mici */
   --radius-lg: 16px;
+  /* Carduri mari, sectiuni */
   --radius-xl: 22px;
+  /* Modals */
 
-  /* ── Shadows ─────────────────────────────── */
+  /* ── Umbre ──────────────────────────────────────────────────── */
   --shadow-xs: 0 1px 3px rgba(30, 31, 53, 0.06);
+  /* Umbra minima */
   --shadow-sm: 0 2px 8px rgba(30, 31, 53, 0.08);
+  /* Umbra inputuri, carduri */
   --shadow-md: 0 4px 18px rgba(30, 31, 53, 0.10);
+  /* Umbra carduri la hover */
   --shadow-lg: 0 8px 32px rgba(30, 31, 53, 0.14);
+  /* Umbra modals */
 
+  /* Durata tranzitiei uniforme — folosita peste tot pentru animatii */
   --transition: 0.18s ease;
 }
 
+/* html, body, #root = fac toate sa ocupe 100% din viewport */
 html,
 body,
 #root {
@@ -81,94 +132,124 @@ body,
   width: 100%;
 }
 
+/* Stiluri de baza pentru body */
 body {
   font-family: 'Inter', sans-serif;
+  /* Fontul importat de la Google */
   font-size: 14px;
   background-color: var(--bg-page);
   color: var(--text-primary);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  /* Font mai clar pe Chrome/Safari */
 }
 
-/* ── Scrollbar ─────────────────────────────── */
+/* ── Scrollbar personalizat (numai Chrome/Edge/Safari) ─────────
+   Face scrollbar-ul discreti si elegant in stilul aplicatiei */
 ::-webkit-scrollbar {
   width: 5px;
+  /* Latimea scrollbar-ului vertical */
   height: 5px;
+  /* Inaltimea scrollbar-ului orizontal */
 }
 
 ::-webkit-scrollbar-track {
   background: transparent;
+  /* Sina: invizibila */
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--border-light);
+  /* Cursorul: semi-transparent */
   border-radius: 99px;
+  /* Rotunjit complet (pill shape) */
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
+  /* Mai vizibil la hover */
 }
 
-/* ── Layout shell ──────────────────────────── */
+/* ── Layout principal al aplicatiei ────────────────────────────
+   app-shell = containerul care tine Sidebar + main-area impreuna */
 .app-shell {
   display: flex;
+  /* Sidebar si continut stat pe aceeasi linie */
   height: 100vh;
+  /* Ocupa tot ecranul in inaltime */
   overflow: hidden;
+  /* Previne scrollul pe container (scroll-ul e in page-content) */
 }
 
+/* main-area = coloana din dreapta: Header + page-content */
 .main-area {
   flex: 1;
+  /* Ocupa tot spatiul ramas dupa sidebar */
   display: flex;
   flex-direction: column;
+  /* Header sus, continut jos */
   overflow: hidden;
   background: var(--bg-page);
 }
 
+/* page-content = zona cu scroll unde se afiseaza pagina curenta */
 .page-content {
   flex: 1;
   overflow-y: auto;
+  /* Scroll vertical activ */
   padding: 28px 32px;
+  /* Margini interioare confortabile */
 }
 
-/* ── Shared badges ─────────────────────────── */
+/* ── Badge-uri de status si rol ────────────────────────────────
+   Folosite in tabele pentru a afisa rolul si statusul utilizatorilor.
+   Aspect: pastila colorata cu text mic. */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   padding: 3px 10px;
   border-radius: 99px;
+  /* Forma ovala (pill) */
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.02em;
 }
 
+/* Badge verde pentru statusul "activ" */
 .badge.activ {
   background: var(--green-soft);
   color: var(--green);
 }
 
+/* Badge rosu pentru statusul "inactiv" */
 .badge.inactiv {
   background: var(--red-soft);
   color: var(--red);
 }
 
+/* Badge violet pentru rolul "admin" */
 .badge.admin {
   background: var(--accent-soft);
   color: var(--accent);
 }
 
+/* Badge albastru-violet pentru rolul "user" */
 .badge.user {
   background: var(--purple-soft);
   color: var(--purple);
 }
 
+/* Reset pentru toate butoanele — elimina stilurile default ale browser-ului */
 button {
   cursor: pointer;
   border: none;
   outline: none;
   font-family: inherit;
+  /* Mosteneste fontul aplicatiei */
 }
 
+/* Reset pentru inputuri si select-uri — mostenesc fontul aplicatiei */
 input,
 select {
   font-family: inherit;

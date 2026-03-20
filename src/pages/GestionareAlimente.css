@@ -1,17 +1,28 @@
-/* ── Page wrapper ─────────────────────────── */
+/* ============================================================
+   GestionareAlimente.css — Stiluri specifice paginii de alimente
+   Extinde stilurile din shared.css cu:
+     - Culori pentru avatarele si badge-urile de categorie
+     - Celulele numerice (calorii, proteine etc.)
+     - Butonul de editare (albastru-violet)
+     - Helpere pentru formularul din modal
+   ============================================================ */
+
+/* Containerul principal al paginii — coloana cu spatiu intre sectiuni */
 .ga {
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
 
-/* ── Name cell ─────────────────────────────── */
+/* ── Celula cu numele alimentului ────────────────────────────────
+   Afiseaza avatarul colorat si numele alimentului in linie */
 .ga-name-cell {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
+/* Avatarul circular al alimentului — culoarea depinde de categorie */
 .ga-avatar {
     width: 34px;
     height: 34px;
@@ -25,44 +36,59 @@
     flex-shrink: 0;
 }
 
-/* ── Category color palette ─────────────────── */
+/* ── Paleta de culori pentru avatare (gradient pe categorie) ─────
+   Fiecare categorie are o culoare distinctiva pentru recunoastere vizuala rapida.
+   Gradientele au doua tonuri din aceeasi familie de culori. */
 .cat-fructe {
     background: linear-gradient(135deg, #f97316, #fb923c);
 }
 
+/* Portocaliu */
 .cat-legume {
     background: linear-gradient(135deg, #16a34a, #4ade80);
 }
 
+/* Verde */
 .cat-carne {
     background: linear-gradient(135deg, #dc2626, #f87171);
 }
 
+/* Rosu */
 .cat-lactate {
     background: linear-gradient(135deg, #0284c7, #38bdf8);
 }
 
+/* Albastru */
 .cat-cereale {
     background: linear-gradient(135deg, #ca8a04, #facc15);
 }
 
+/* Galben */
 .cat-bauturi {
     background: linear-gradient(135deg, #7c3aed, #a78bfa);
 }
 
+/* Violet */
 .cat-altele {
     background: linear-gradient(135deg, var(--accent), #5BB6F5);
 }
 
-/* ── Category badges ───────────────────────── */
+/* Brand */
+
+/* ── Badge-urile de categorie (pastila colorata in tabel) ────────
+   Au culori pastelate (fundal transparent + text colorat) spre deosebire
+   de avatare care au gradiente solide */
 .ga-badge-cat {
     font-size: 11.5px;
     font-weight: 600;
     padding: 3px 10px;
     border-radius: 99px;
+    /* Forma ovala */
     white-space: nowrap;
+    /* Nu se rupe pe mai multe randuri */
 }
 
+/* Culorile specifice fiecarei categorii pentru badge-uri */
 .ga-badge-cat.cat-fructe {
     background: rgba(249, 115, 22, 0.10);
     color: #ea580c;
@@ -98,31 +124,36 @@
     color: var(--accent);
 }
 
-/* ── Numeric cells ─────────────────────────── */
+/* ── Celule numerice (calorii, proteine, carbohidrati, grasimi) ──
+   Afisate compact, cu valoarea evidentiata si unitatea discreta */
 .ga-num-cell {
     font-size: 13.5px;
     color: var(--text-secondary);
     white-space: nowrap;
 }
 
+/* Valoarea numerica principala — bold, mai vizibila */
 .ga-kcal {
     font-weight: 600;
     color: var(--text-primary);
 }
 
+/* Unitatea de masura (kcal, g, min) — mica si discreta */
 .ga-unit-sm {
     font-size: 11px;
     color: var(--text-muted);
     margin-left: 3px;
 }
 
-/* ── Edit button ───────────────────────────── */
+/* ── Butonul de editare (mic, in tabel) ─────────────────────────
+   Similar cu btn-danger-sm dar in culori accent (violet) nu rosu */
 .btn-edit-sm {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     padding: 6px 12px;
     background: var(--accent-soft);
+    /* Fundal violet subtil */
     color: var(--accent);
     border: 1px solid var(--border-light);
     border-radius: var(--radius-sm);
@@ -136,13 +167,16 @@
     border-color: rgba(66, 68, 138, 0.28);
 }
 
-/* ── Form helpers ──────────────────────────── */
+/* ── Helper pentru formularul din modal (Adauga/Editeaza Aliment) */
+
+/* Rand cu 2 elemente side-by-side (flex, nu grid) — Nume + Categorie */
 .form-row-2 {
     display: flex;
     gap: 14px;
     align-items: flex-start;
 }
 
+/* Titlul sectiunii "Valori Nutritionale" din modal */
 .ga-section-label {
     font-size: 12px;
     font-weight: 700;
@@ -151,8 +185,10 @@
     color: var(--text-muted);
     padding: 4px 0 2px;
     border-bottom: 1px solid var(--border);
+    /* Linie separator subtila */
 }
 
+/* Textul "per 100g" de langa titlu — mai mic, fara majuscule */
 .ga-per {
     font-weight: 400;
     text-transform: none;
@@ -161,19 +197,20 @@
     color: var(--text-muted);
 }
 
+/* Textul "(kcal)" sau "(g/100g)" de langa eticheta campului */
 .ga-unit {
     font-weight: 400;
     font-size: 11px;
     color: var(--text-muted);
 }
 
-/* ── Wide modal ─────────────────────────────── */
+/* Varianta lata a modala — definita si in shared.css, mentinuta si aici */
 .modal--wide {
     max-width: 580px;
 }
 
-/* ── Re-use shared classes from UserManagement.css ─────────────── */
-/* (um-toolbar, um-search-wrap, um-search, um-search-icon,         */
-/*  um-search-clear, um-filters, um-count, um-card, um-actions,    */
-/*  um-empty, modal-*, form-*, btn-*, data-table, confirm-text)    */
-/* These are already defined globally via UserManagement.css       */
+/* ── Nota: clase reutilizate din shared.css ─────────────────────
+   Urmatoarele clase vin din shared.css si sunt disponibile global:
+   um-toolbar, um-search-wrap, um-search, um-search-icon,
+   um-search-clear, um-filters, um-count, um-card, um-actions,
+   um-empty, modal-*, form-*, btn-*, data-table, confirm-text */

@@ -1,58 +1,78 @@
+/* ============================================================
+   Dashboard.css — Stiluri specifice paginii de dashboard
+   Contine: grila cu carduri statistici + sectiunea "Utilizatori Recenti".
+   Tabelul si celulele utilizator sunt reutilizate din shared.css.
+   ============================================================ */
+
+/* Containerul principal al paginii — coloana cu spatiu intre sectiuni */
 .dashboard {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    /* Spatiu intre grila de carduri si sectiunea de tabel */
 }
 
-/* ── Stats grid ── */
+/* ── Grila de statistici ─────────────────────────────────────────
+   4 carduri pe un rand pe ecrane mari.
+   Responsive: se reduce la 2 coloane pe tablete, 1 coloana pe telefoane. */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    /* 4 coloane egale */
     gap: 16px;
 }
 
+/* Tablete (sub 1100px) — 2 carduri pe rand */
 @media (max-width: 1100px) {
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
+/* Telefoane (sub 640px) — 1 card pe rand */
 @media (max-width: 640px) {
     .stats-grid {
         grid-template-columns: 1fr;
     }
 }
 
-/* ── Section card ── */
+/* ── Sectiunea cu tabelul (ex: "Utilizatori Recenti") ────────────
+   Card alb cu bordura si umbra care inconjoara header-ul + tabelul */
 .dashboard-section {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
+    /* Colturile tabelului interior sunt taiate de border-radius */
 }
 
+/* Header-ul sectiunii: titlu+subtitlu stanga, link "Vezi toti" dreapta */
 .section-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     padding: 18px 24px 14px;
     border-bottom: 1px solid var(--border);
+    /* Separator vizual fata de tabel */
     gap: 12px;
 }
 
+/* Titlul sectiunii (ex: "Utilizatori Recenti") */
 .section-title {
     font-size: 15px;
     font-weight: 700;
     color: var(--text-primary);
 }
 
+/* Subtitlul sectiunii (ex: "Ultimii 5 utilizatori inregistrati") */
 .section-sub {
     font-size: 12px;
     color: var(--text-muted);
     margin-top: 2px;
 }
 
+/* Butonul "Vezi toti →" — link stilizat ca buton mic violet */
 .btn-link {
     display: inline-flex;
     align-items: center;
@@ -60,13 +80,17 @@
     font-size: 12.5px;
     font-weight: 600;
     color: var(--accent);
+    /* Text violet */
     text-decoration: none;
+    /* Fara sublinierea default a link-urilor */
     padding: 6px 12px;
     border-radius: var(--radius-sm);
     background: var(--accent-soft);
+    /* Fundal violet subtil */
     border: 1px solid var(--border-light);
     transition: background var(--transition), border-color var(--transition);
     flex-shrink: 0;
+    /* Nu se comprima */
 }
 
 .btn-link:hover {
@@ -74,9 +98,10 @@
     border-color: rgba(66, 68, 138, 0.3);
 }
 
-/* ── Table ── */
+/* ── Tabel (copie locala din shared.css — pentru Dashboard independent) */
 .table-wrap {
     overflow-x: auto;
+    /* Scroll orizontal pe ecrane mici */
 }
 
 .data-table {
@@ -85,6 +110,7 @@
     font-size: 13.5px;
 }
 
+/* Header tabel cu etichete in majuscule */
 .data-table th {
     padding: 10px 24px;
     text-align: left;
@@ -104,6 +130,7 @@
     vertical-align: middle;
 }
 
+/* Ultimul rand fara bordura jos */
 .data-table tbody tr:last-child td {
     border-bottom: none;
 }
@@ -112,18 +139,20 @@
     transition: background var(--transition);
 }
 
+/* Fundal mai deschis la hover pe rand */
 .data-table tbody tr:hover td {
     background: var(--bg-card-hover);
     color: var(--text-primary);
 }
 
-/* ── User cell ── */
+/* ── Celula utilizator: avatar + nume + email ────────────────── */
 .user-cell {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
+/* Avatarul circular cu gradient de brand */
 .user-avatar {
     width: 34px;
     height: 34px;
@@ -155,6 +184,7 @@
     color: var(--text-muted);
 }
 
+/* Celula cu data — discreta, mai mica */
 .date-cell {
     font-size: 13px;
     color: var(--text-muted);

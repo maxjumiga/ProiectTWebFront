@@ -1,7 +1,14 @@
-/* UserManagement.css — only page-specific styles; shared classes come from shared.css */
+/* ============================================================
+   UserManagement.css — Stiluri specifice paginii Gestionare Utilizatori
+   Fisierul este intentionat minimal — aproape toate stilurile
+   sunt mostenite din shared.css (toolbar, butoane, tabel, modal etc.)
+   Aici se definesc DOAR clasele exclusive acestei pagini.
+   ============================================================ */
 
+/* Containerul principal al paginii — coloana cu spatiu intre sectiuni */
 .um {
     display: flex;
     flex-direction: column;
     gap: 18px;
+    /* Spatiu intre toolbar, contor si tabel */
 }

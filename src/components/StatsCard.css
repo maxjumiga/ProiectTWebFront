@@ -1,3 +1,11 @@
+/* ============================================================
+   StatsCard.css — Cardul de statistica de pe Dashboard
+   Fiecare card afiseaza o singura metrica importanta.
+   Efectul de "ridicare" la hover este realizat prin
+   transform:translateY si o umbra mai mare.
+   ============================================================ */
+
+/* Containerul cardului — layout orizontal (iconita stanga, text dreapta) */
 .stats-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -7,34 +15,46 @@
     align-items: center;
     gap: 18px;
     box-shadow: var(--shadow-sm);
+    /* Pregatim tranzitia pentru transform si umbra — necesara pentru hover smooth */
     transition: transform var(--transition), box-shadow var(--transition);
     position: relative;
     overflow: hidden;
 }
 
+/* Efectul hover: cardul se ridica 3px sus + umbra mai mare = iluzie de "plutire" */
 .stats-card:hover {
     transform: translateY(-3px);
+    /* Miscare verticala in sus */
     box-shadow: var(--shadow-md);
+    /* Umbra mai pronuntata */
 }
 
-/* color accents on left border */
+/* ── Accente de culoare pe bordura stanga ────────────────────────
+   Fiecare culoare indica categoria metricii.
+   border-left inlocuieste border normal pe axa stanga. */
+
+/* Blue — Total Utilizatori */
 .stats-card--blue {
     border-left: 3px solid var(--accent);
 }
 
+/* Green — Aceasta Saptamana */
 .stats-card--green {
     border-left: 3px solid var(--green);
 }
 
+/* Amber (portocaliu) — Aceasta Luna */
 .stats-card--amber {
     border-left: 3px solid var(--amber);
 }
 
+/* Purple — Utilizatori Activi */
 .stats-card--purple {
     border-left: 3px solid var(--purple);
 }
 
-/* icon container */
+/* ── Containerul iconiței ────────────────────────────────────────
+   Patrat rotunjit cu fundal colorat in concordanta cu culoarea cardului */
 .stats-card-icon {
     width: 50px;
     height: 50px;
@@ -43,8 +63,10 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    /* Nu se micsoreaza daca textul e lung */
 }
 
+/* Culorile containerului iconiței — fundal + culoare iconita */
 .stats-card--blue .stats-card-icon {
     background: var(--accent-soft);
     color: var(--accent);
@@ -65,29 +87,37 @@
     color: var(--purple);
 }
 
+/* ── Zona de text ────────────────────────────────────────────────
+   Contine eticheta (label), valoarea principala si tendinta (trend) */
 .stats-card-body {
     display: flex;
     flex-direction: column;
     gap: 2px;
     min-width: 0;
+    /* Permite truncarea textului daca e prea lung */
 }
 
+/* Eticheta — text mic, uppercase, discret (ex: "TOTAL UTILIZATORI") */
 .stats-card-label {
     font-size: 11.5px;
     color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
+    /* Spatiere litere pentru aspect "capitaluri" */
 }
 
+/* Valoarea principala — numarul mare si bold (ex: "15") */
 .stats-card-value {
     font-size: 30px;
     font-weight: 700;
     color: var(--text-primary);
     letter-spacing: -0.03em;
+    /* Literele usor mai stramtate pentru numere mari */
     line-height: 1.1;
 }
 
+/* Textul de tendinta — informatii suplimentare discrete sub valoare */
 .stats-card-trend {
     font-size: 11.5px;
     color: var(--text-muted);

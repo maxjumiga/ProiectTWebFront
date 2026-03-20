@@ -1,4 +1,18 @@
-// ExercitiiTable — tabelul cu lista de exerciții
+// ============================================================
+// features/exercitii/ExercitiiTable.tsx — Tabelul cu exercitii
+// Componenta de prezentare care afiseaza lista de exercitii filtrate.
+// Nu gestioneaza starea — logica ramane in GestionareExercitii.tsx
+// Fiecare rand contine:
+//   - Avatar colorat cu initiala exercitiului + numele
+//   - Badge pentru grupa musculara (colorat pe categorie)
+//   - Badge pentru dificultate (verde/portocaliu/rosu)
+//   - Durata medie in minute
+//   - Descrierea exercitiului (sau "—" daca lipseste)
+//   - Butoane Edit si Sterge
+// ============================================================
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import type { Exercitiu } from '../../types';
 import {
     grupMuscularLabel,
@@ -9,10 +23,11 @@ import {
     type DificultateExercitiu,
 } from './exercitiiConstants';
 
+// Proprietatile primite de la GestionareExercitii
 interface ExercitiiTableProps {
-    filtered: Exercitiu[];
-    onEdit: (e: Exercitiu) => void;
-    onDelete: (id: string) => void;
+    filtered: Exercitiu[];                // Lista de exercitii deja filtrata
+    onEdit: (e: Exercitiu) => void;       // Callback pentru deschidere modal editare
+    onDelete: (id: string) => void;       // Callback pentru initierea stergerii
 }
 
 export default function ExercitiiTable({ filtered, onEdit, onDelete }: ExercitiiTableProps) {
@@ -31,12 +46,15 @@ export default function ExercitiiTable({ filtered, onEdit, onDelete }: Exercitii
                         </tr>
                     </thead>
                     <tbody>
+                        {/* Daca lista e goala dupa filtrare, nu se afiseaza nimic */}
                         {filtered.length === 0 ? null : (
                             filtered.map(ex => (
                                 <tr key={ex.id}>
-                                    {/* Nume + avatar */}
+
+                                    {/* Celula nume: avatar colorat cu initiala + name */}
                                     <td>
                                         <div className="ga-name-cell">
+                                            {/* Culoarea avatarului depinde de grupa musculara */}
                                             <div className={`ga-avatar ${grupColorClass[ex.grupMuscular as GrupMuscular]}`}>
                                                 {ex.nume.charAt(0).toUpperCase()}
                                             </div>
@@ -44,32 +62,32 @@ export default function ExercitiiTable({ filtered, onEdit, onDelete }: Exercitii
                                         </div>
                                     </td>
 
-                                    {/* Grupă musculară */}
+                                    {/* Badge colorat pentru grupa musculara */}
                                     <td>
                                         <span className={`badge ga-badge-cat ${grupColorClass[ex.grupMuscular as GrupMuscular]}`}>
                                             {grupMuscularLabel[ex.grupMuscular as GrupMuscular]}
                                         </span>
                                     </td>
 
-                                    {/* Dificultate */}
+                                    {/* Badge colorat pentru dificultate (verde/portocaliu/rosu) */}
                                     <td>
                                         <span className={`badge ex-badge-dif ${dificultateColorClass[ex.dificultate as DificultateExercitiu]}`}>
                                             {dificultateLabel[ex.dificultate as DificultateExercitiu]}
                                         </span>
                                     </td>
 
-                                    {/* Durată */}
+                                    {/* Durata in minute */}
                                     <td className="ga-num-cell">
                                         <span className="ga-kcal">{ex.durataMed}</span>
                                         <span className="ga-unit-sm">min</span>
                                     </td>
 
-                                    {/* Descriere */}
+                                    {/* Descrierea — daca nu exista, afiseaza "—" */}
                                     <td className="ex-descriere-cell">
                                         {ex.descriere || <span className="ex-no-desc">—</span>}
                                     </td>
 
-                                    {/* Acțiuni */}
+                                    {/* Butoanele de actiune */}
                                     <td>
                                         <div className="um-actions">
                                             <button
@@ -77,10 +95,7 @@ export default function ExercitiiTable({ filtered, onEdit, onDelete }: Exercitii
                                                 onClick={() => onEdit(ex)}
                                                 title="Editează exercițiu"
                                             >
-                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                                </svg>
+                                                <FontAwesomeIcon icon={faPenToSquare} style={{ width: 13, height: 13 }} />
                                                 Editează
                                             </button>
                                             <button
@@ -88,9 +103,7 @@ export default function ExercitiiTable({ filtered, onEdit, onDelete }: Exercitii
                                                 onClick={() => onDelete(ex.id)}
                                                 title="Șterge exercițiu"
                                             >
-                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                    <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /><path d="M9 6V4h6v2" />
-                                                </svg>
+                                                <FontAwesomeIcon icon={faTrash} style={{ width: 13, height: 13 }} />
                                                 Șterge
                                             </button>
                                         </div>

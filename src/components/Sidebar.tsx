@@ -1,60 +1,56 @@
+// ============================================================
+// components/Sidebar.tsx — Meniul lateral de navigare (sidebar)
+// Componenta fixa pe partea stanga a ecranului care contine:
+//   - Logo-ul aplicatiei cu iconita si numele
+//   - Lista de linkuri de navigare (NavLink)
+//   - Informatii despre utilizatorul logat (admin chip)
+// NavLink din react-router-dom aplica automat clasa "activa"
+// pe link-ul care corespunde URL-ului curent.
+// ============================================================
+
 import { NavLink } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faTableCells,      // Iconita dashboard (grila de patrate)
+    faUsers,           // Iconita utilizatori
+    faBasketShopping,  // Iconita alimente
+    faDumbbell,        // Iconita exercitii
+    faHeartPulse,      // Iconita logo aplicatie
+} from '@fortawesome/free-solid-svg-icons';
 import './Sidebar.css';
 
+// Lista de elemente de navigare — fiecare are o cale URL, eticheta si iconita
 const navItems = [
     {
         to: '/dashboard',
         label: 'Panou Principal',
-        icon: (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
-            </svg>
-        ),
+        icon: faTableCells,
     },
     {
         to: '/utilizatori',
         label: 'Utilizatori',
-        icon: (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-        ),
+        icon: faUsers,
     },
     {
         to: '/alimente',
         label: 'Gestionare Alimente',
-        icon: (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 4 0 0 0 2-2V6l-3-4z" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <path d="M16 10a4 4 0 0 1-8 0" />
-            </svg>
-        ),
+        icon: faBasketShopping,
     },
     {
         to: '/exercitii',
         label: 'Gestionare Exerciții',
-        icon: (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6.5 6.5h11" /><path d="M17.5 17.5h-11" />
-                <path d="M3 12h3l2-4 4 8 2-4 3 0" />
-            </svg>
-        ),
+        icon: faDumbbell,
     },
 ];
 
 export default function Sidebar() {
     return (
         <aside className="sidebar">
+
+            {/* Zona logo — iconita + numele aplicatiei + subtitlul */}
             <div className="sidebar-logo">
                 <div className="logo-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                    </svg>
+                    <FontAwesomeIcon icon={faHeartPulse} style={{ width: 20, height: 20 }} />
                 </div>
                 <div className="logo-text">
                     <span className="logo-name">SănătateApp</span>
@@ -62,24 +58,32 @@ export default function Sidebar() {
                 </div>
             </div>
 
+            {/* Navigarea principala — se genereaza din lista navItems */}
             <nav className="sidebar-nav">
                 <span className="nav-section-label">Navigare</span>
                 {navItems.map((item) => (
                     <NavLink
                         key={item.to}
                         to={item.to}
+                        // Functie care returneaza clasa CSS — adauga "nav-link--active" pe link-ul curent
                         className={({ isActive }) =>
                             'nav-link' + (isActive ? ' nav-link--active' : '')
                         }
                     >
-                        <span className="nav-icon">{item.icon}</span>
+                        {/* Containerul iconiței */}
+                        <span className="nav-icon">
+                            <FontAwesomeIcon icon={item.icon} style={{ width: 18, height: 18 }} />
+                        </span>
+                        {/* Eticheta textului */}
                         <span>{item.label}</span>
                     </NavLink>
                 ))}
             </nav>
 
+            {/* Footer sidebar — informatii despre administratorul logat */}
             <div className="sidebar-footer">
                 <div className="admin-chip">
+                    {/* Avatar cu initiala numelui */}
                     <div className="admin-avatar">A</div>
                     <div className="admin-info">
                         <span className="admin-name">Administrator</span>

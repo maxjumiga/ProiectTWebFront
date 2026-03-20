@@ -1,42 +1,61 @@
+/* ============================================================
+   Header.css — Bara de sus a aplicatiei (header)
+   Continut: titlul paginii + subtitlu (stanga) | data curenta (dreapta).
+   flex-shrink:0 previne compresia header-ului cand pagina e lunga.
+   ============================================================ */
+
+/* Containerul headerului — bara alba fixa sub sidebar */
 .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    /* Titlu stanga, data dreapta */
     padding: 16px 32px;
     background: var(--bg-card);
+    /* Alb — contrasteaza cu fundalul paginii */
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
+    /* Nu se comprima vertical cand pagina are mult continut */
     gap: 16px;
     box-shadow: var(--shadow-xs);
+    /* Umbra subtila spre pagina */
 }
 
+/* Coloana stanga: titlul + subtitlul paginii */
 .header-left {
     display: flex;
     flex-direction: column;
+    /* Titlul deasupra, subtitlul jos */
     gap: 2px;
 }
 
+/* Titlul principal al paginii (ex: "Panou Principal") */
 .header-title {
     font-size: 19px;
     font-weight: 700;
     color: var(--text-primary);
     letter-spacing: -0.02em;
+    /* Literele usor mai apropiate — aspect modern */
     line-height: 1;
 }
 
+/* Subtitlul paginii (ex: "Bine ai venit inapoi, Administrator") */
 .header-subtitle {
     font-size: 12.5px;
     color: var(--text-muted);
     font-weight: 400;
 }
 
+/* Coloana dreapta: zona pentru data si alte elemente */
 .header-right {
     display: flex;
     align-items: center;
     gap: 12px;
     flex-shrink: 0;
+    /* Nu se comprima la ecrane mici */
 }
 
+/* Pastila cu iconita calendar + data curenta formatata in romana */
 .header-date {
     display: flex;
     align-items: center;
@@ -44,12 +63,15 @@
     font-size: 12.5px;
     color: var(--text-secondary);
     background: var(--bg-input);
+    /* Fundal subtil, diferit de alb */
     border: 1px solid var(--border);
     padding: 7px 13px;
     border-radius: var(--radius-md);
     text-transform: capitalize;
+    /* Prima litera din zi/luna devine majuscula */
 }
 
+/* Badge-ul verde "Online" sau alt status — disponibil dar nefolosit momentan */
 .header-badge {
     display: flex;
     align-items: center;
@@ -63,15 +85,19 @@
     border-radius: var(--radius-md);
 }
 
+/* Punctul pulsant verde din badge-ul de status */
 .header-badge-dot {
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background: var(--green);
     box-shadow: 0 0 6px var(--green);
+    /* Stralucire verde */
     animation: pulse-dot 2s ease-in-out infinite;
+    /* Pulsatie continua */
 }
 
+/* Animatia de pulsatie — opacitate si scala se modifica ritmic */
 @keyframes pulse-dot {
 
     0%,
@@ -83,5 +109,6 @@
     50% {
         opacity: 0.6;
         transform: scale(1.3);
+        /* Se mareste la jumatatea ciclului */
     }
 }
