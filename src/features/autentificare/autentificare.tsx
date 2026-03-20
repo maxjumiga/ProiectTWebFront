@@ -20,6 +20,14 @@ const LoginPage: React.FC = () => {
             return;
         }
 
+        // Verificare credentiale admin — daca match, acces direct in panoul admin
+        if (email.trim() === 'admin@sanatate.ro' && password === 'admin2026') {
+            sessionStorage.setItem('isAdminAuthenticated', 'true');
+            sessionStorage.setItem('isAuthenticated', 'true');
+            navigate('/admin');
+            return;
+        }
+
         let users: Record<string, any> = {};
         try {
             users = JSON.parse(localStorage.getItem('users') || '{}');

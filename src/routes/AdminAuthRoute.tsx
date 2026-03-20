@@ -12,8 +12,8 @@ export default function AdminAuthRoute() {
     const isAdminAuthenticated = sessionStorage.getItem('isAdminAuthenticated') === 'true';
 
     if (!isAdminAuthenticated) {
-        // Necautentificat ca admin → redirect la pagina de login admin
-        return <Navigate to="/admin/login" replace />;
+        // Necautentificat ca admin → redirect la pagina de login comuna (/login)
+        return <Navigate to="/login" replace />;
     }
 
     return <Outlet />;

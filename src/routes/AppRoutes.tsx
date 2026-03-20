@@ -27,7 +27,7 @@ import AdminDashboard from '../pages/Dashboard';
 import UserManagement from '../pages/utilizatori/UserManagement';
 import GestionareAlimente from '../pages/alimente/GestionareAlimente';
 import GestionareExercitii from '../pages/exercitii/GestionareExercitii';
-import AdminLogin from '../pages/admin/AdminLogin';
+
 import AdminAuthRoute from './AdminAuthRoute';
 
 // Layout-ul panoului admin: Sidebar fix + Header + continut pagina
@@ -66,9 +66,6 @@ export default function AppRoutes() {
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/calendar" element={<Calendar />} />
                 </Route>
-
-                {/* Admin Login — pagina publica de autentificare admin */}
-                <Route path="/admin/login" element={<AdminLogin />} />
 
                 {/* Admin Panel Routes — protejate de AdminAuthRoute (isAdminAuthenticated) */}
                 <Route element={<AdminAuthRoute />}>
