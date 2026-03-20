@@ -10,12 +10,12 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 // -- Pagini colegi --
 import Landing from '../pages/landing/Landing';
-import Autentificare from '../features/autentificare/Autentificare';
-import Inregistrare from '../features/inregistrare/Inregistrare';
+import Autentificare from '../features/autentificare/autentificare';
+import Inregistrare from '../features/inregistrare/inregistrare';
 import Dashboard from '../pages/Dashboard/Dashboard';
-import Profile from '../pages/Dashboard/profile/Profil';
+import Profile from '../pages/Dashboard/profile/profil';
 import Settings from '../pages/Dashboard/settings/Settings';
-import Calendar from '../pages/Dashboard/calendar/Calendar';
+import Calendar from '../pages/Dashboard/calendar/calendar';
 import Onboarding from '../features/onboarding/Onboarding';
 import AuthRoute from './AuthRoute';
 import GuestRoute from './GuestRoute';
@@ -23,6 +23,7 @@ import GuestRoute from './GuestRoute';
 // -- Pagini admin (JumigaMaximilian) --
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
+import AdminDashboard from '../pages/Dashboard';
 import UserManagement from '../pages/utilizatori/UserManagement';
 import GestionareAlimente from '../pages/alimente/GestionareAlimente';
 import GestionareExercitii from '../pages/exercitii/GestionareExercitii';
@@ -64,6 +65,7 @@ export default function AppRoutes() {
                     <Route path="/calendar" element={<Calendar />} />
 
                     {/* Admin Panel Routes (JumigaMaximilian) — cu layout Sidebar + Header */}
+                    <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
                     <Route path="/utilizatori" element={<AdminLayout><UserManagement /></AdminLayout>} />
                     <Route path="/alimente" element={<AdminLayout><GestionareAlimente /></AdminLayout>} />
                     <Route path="/exercitii" element={<AdminLayout><GestionareExercitii /></AdminLayout>} />

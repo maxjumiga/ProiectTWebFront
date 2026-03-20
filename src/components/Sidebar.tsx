@@ -22,7 +22,7 @@ import './Sidebar.css';
 // Lista de elemente de navigare — fiecare are o cale URL, eticheta si iconita
 const navItems = [
     {
-        to: '/dashboard',
+        to: '/admin',
         label: 'Panou Principal',
         icon: faTableCells,
     },

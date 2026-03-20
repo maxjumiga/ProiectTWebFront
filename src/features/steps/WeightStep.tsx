@@ -9,7 +9,7 @@ export default function WeightStep({ weightValue, onWeightChange, onNext, onBack
     const scrollRef = useRef<HTMLDivElement>(null);
     const itemHeight = 60; // pixel height of each row
     const [isScrolling, setIsScrolling] = useState(false);
-    const scrollTimeout = useRef<ReturnType<typeof setTimeout>>();
+    const scrollTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     const internalWeight = weightValue || 70; // kg
 
@@ -63,7 +63,8 @@ export default function WeightStep({ weightValue, onWeightChange, onNext, onBack
     };
 
     const handleScroll = (e: UIEvent<HTMLDivElement>) => {
-        const idx = Math.round(e.currentTarget.scrollTop / itemHeight);
+        const currentScrollTop = e.currentTarget.scrollTop; // capturat inainte de callback async
+        const idx = Math.round(currentScrollTop / itemHeight);
         const selected = items[idx];
 
         if (selected !== activeVal && selected >= minVal && selected <= maxVal) {
@@ -76,9 +77,10 @@ export default function WeightStep({ weightValue, onWeightChange, onNext, onBack
         if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
         scrollTimeout.current = setTimeout(() => {
             setIsScrolling(false);
-            // Snap exactly after scroll ends
-            const exactIdx = Math.round(e.currentTarget.scrollTop / itemHeight);
-            e.currentTarget.scrollTo({
+            // Snap exact dupa ce scroll-ul se termina - folosim ref, nu e.currentTarget (care e null dupa 400ms)
+            if (!scrollRef.current) return;
+            const exactIdx = Math.round(scrollRef.current.scrollTop / itemHeight);
+            scrollRef.current.scrollTo({
                 top: exactIdx * itemHeight,
                 behavior: 'smooth'
             });
