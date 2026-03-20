@@ -1,9 +1,9 @@
 // ============================================================
 // AppRoutes.tsx — Sistemul central de rutare al aplicatiei
-// Contine atat rutele publice/auth ale colegilor (Landing,
-// Login, Register, Onboarding, Dashboard user, Profile etc.)
-// cat si rutele panoului admin (Utilizatori, Alimente, Exercitii)
-// cu layout-ul sau Sidebar + Header.
+// Contine rutele publice/auth ale colegilor (Landing, Login,
+// Register, Onboarding, Dashboard user, Profile, Settings,
+// Calendar) cat si rutele panoului admin (JumigaMaximilian)
+// protejate de AdminAuthRoute cu login propriu la /admin/login.
 // ============================================================
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
@@ -27,8 +27,10 @@ import AdminDashboard from '../pages/Dashboard';
 import UserManagement from '../pages/utilizatori/UserManagement';
 import GestionareAlimente from '../pages/alimente/GestionareAlimente';
 import GestionareExercitii from '../pages/exercitii/GestionareExercitii';
+import AdminLogin from '../pages/admin/AdminLogin';
+import AdminAuthRoute from './AdminAuthRoute';
 
-// Layout-ul panoului admin: Sidebar fix + Header + continut
+// Layout-ul panoului admin: Sidebar fix + Header + continut pagina
 function AdminLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className="app-shell">
@@ -56,15 +58,20 @@ export default function AppRoutes() {
                     <Route path="/register" element={<Inregistrare />} />
                 </Route>
 
-                {/* Protected Routes — utilizator autentificat */}
+                {/* Protected Routes — utilizator autentificat (colegi) */}
                 <Route element={<AuthRoute />}>
                     <Route path="/onboarding" element={<Onboarding />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/calendar" element={<Calendar />} />
+                </Route>
 
-                    {/* Admin Panel Routes (JumigaMaximilian) — cu layout Sidebar + Header */}
+                {/* Admin Login — pagina publica de autentificare admin */}
+                <Route path="/admin/login" element={<AdminLogin />} />
+
+                {/* Admin Panel Routes — protejate de AdminAuthRoute (isAdminAuthenticated) */}
+                <Route element={<AdminAuthRoute />}>
                     <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
                     <Route path="/utilizatori" element={<AdminLayout><UserManagement /></AdminLayout>} />
                     <Route path="/alimente" element={<AdminLayout><GestionareAlimente /></AdminLayout>} />
