@@ -17,7 +17,7 @@ import {
     faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import "./Profil.css";
+import "./profil.css";
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
