@@ -1,5 +1,5 @@
 // ============================================================
-// features/alimente/AlimentModal.tsx — Modal adaugare/editare aliment
+// features/food/FoodModal.tsx — Modal adaugare/editare aliment
 // Componenta reutilizabila pentru ambele operatii (add si edit).
 // Titlul si butonul de salvare se schimba dinamic prin props.
 // Formularul contine:

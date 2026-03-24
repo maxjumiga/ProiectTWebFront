@@ -1,5 +1,5 @@
 // ============================================================
-// features/exercitii/ExercitiiTable.tsx — Tabelul cu exercitii
+// features/exercises/ExercisesTable.tsx — Tabelul cu exercitii
 // Componenta de prezentare care afiseaza lista de exercitii filtrate.
 // Nu gestioneaza starea — logica ramane in GestionareExercitii.tsx
 // Fiecare rand contine:

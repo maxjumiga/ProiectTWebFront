@@ -1,5 +1,5 @@
 // ============================================================
-// features/alimente/alimenteConstants.ts
+// features/food/foodConstants.ts
 // Constante, tipuri si functii ajutatoare pentru modulul Alimente.
 // Centralizate intr-un fisier dedicat pentru a fi reutilizate usor
 // in AlimenteTable, AlimentModal si GestionareAlimente.

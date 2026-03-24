@@ -1,5 +1,5 @@
 // ============================================================
-// pages/admin/AdminLogin.tsx — Pagina de autentificare admin
+// pages/adminLogin/AdminLogin.tsx — Pagina de autentificare admin
 // Pagina separata de login dedicata exclusiv administratorilor.
 // Credentiale hardcoded (fara backend): admin@sanatate.ro / admin2026
 // La autentificare reusita, seteaza sessionStorage si redirectioneaza

@@ -1,5 +1,5 @@
 // ============================================================
-// features/utilizatori/UtilizatoriTable.tsx — Tabelul cu utilizatori
+// features/users/UsersTable.tsx — Tabelul cu utilizatori
 // Componenta de prezentare (presentational) care primeste datele
 // deja filtrate prin props si le afiseaza intr-un tabel.
 // Nu gestioneaza starea — aceasta ramane in UserManagement.tsx

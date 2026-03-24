@@ -1,5 +1,5 @@
 // ============================================================
-// pages/utilizatori/UserManagement.tsx — Pagina gestionare utilizatori
+// pages/users/UserManagement.tsx — Pagina gestionare utilizatori
 // Permite administratorului sa:
 //   - Caute utilizatori dupa nume sau email
 //   - Filtreze dupa rol (admin/user) si status (activ/inactiv)
@@ -14,7 +14,7 @@ import type { User, Role } from '../../types';
 import SearchBar from '../../components/SearchBar';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 import CustomSelect from '../../components/CustomSelect';
-import UtilizatoriTable from '../../features/utilizatori/UtilizatoriTable';
+import UtilizatoriTable from '../../features/users/UsersTable';
 import '../UserManagement.css';
 
 // Optiunile pentru filtrul de rol (include "Toate rolurile" ca optiune implicita)

@@ -9,7 +9,7 @@ import {
     faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import "./Dashboard.css";
+import "./UserDashboard.css";
 const username = "Ion Popescu";
 
 const initials = username
@@ -142,7 +142,7 @@ const bmiBarPos = (bmi: number) => `${Math.min(Math.max((bmi - 15) / 25, 0), 1) 
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
-const Dashboard: React.FC = () => {
+const UserDashboard: React.FC = () => {
     const navigate = useNavigate();
     const [waterMl, setWaterMl] = useState(1200);
     const [height, setHeight] = useState(170);
@@ -363,4 +363,4 @@ const Dashboard: React.FC = () => {
     );
 };
 
-export default Dashboard;
+export default UserDashboard;

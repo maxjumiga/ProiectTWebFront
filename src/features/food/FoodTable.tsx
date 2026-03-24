@@ -1,5 +1,5 @@
 // ============================================================
-// features/alimente/AlimenteTable.tsx — Tabelul cu alimente
+// features/food/FoodTable.tsx — Tabelul cu alimente
 // Componenta de prezentare care afiseaza lista de alimente filtrate.
 // Nu gestioneaza starea — logica ramane in GestionareAlimente.tsx
 // Fiecare rand contine:

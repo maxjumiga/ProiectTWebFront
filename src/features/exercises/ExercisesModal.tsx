@@ -1,5 +1,5 @@
 // ============================================================
-// features/exercitii/ExercitiiModal.tsx — Modal adaugare/editare exercitiu
+// features/exercises/ExercisesModal.tsx — Modal adaugare/editare exercitiu
 // Componenta reutilizabila pentru ambele operatii (add si edit).
 // Formularul contine:
 //   - Camp text pentru numele exercitiului (obligatoriu)

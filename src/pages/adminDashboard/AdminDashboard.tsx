@@ -19,7 +19,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { mockUsers } from '../data/mockData';
 import StatsCard from '../components/StatsCard';
-import './Dashboard.css';
+import './AdminDashboard.css';
 
 // Calculeaza primul minut al saptamanii curente (duminica la 00:00)
 function startOfWeek(date: Date) {
@@ -35,7 +35,7 @@ function startOfMonth(date: Date) {
     return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
-export default function Dashboard() {
+export default function AdminDashboard() {
     const now = new Date();
 
     // Calculam toate statisticile dintr-o singura trecere prin mockUsers

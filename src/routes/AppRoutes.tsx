@@ -10,12 +10,12 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 // -- Pagini colegi --
 import Landing from '../pages/landing/Landing';
-import Autentificare from '../features/autentificare/autentificare';
-import Inregistrare from '../features/inregistrare/inregistrare';
-import Dashboard from '../pages/Dashboard/Dashboard';
-import Profile from '../pages/Dashboard/profile/profil';
-import Settings from '../pages/Dashboard/settings/Settings';
-import Calendar from '../pages/Dashboard/calendar/calendar';
+import Autentificare from '../features/authentication/Authentication';
+import Inregistrare from '../features/registration/Registration';
+import Dashboard from '../pages/userDashboard/UserDashboard';
+import Profile from '../pages/userDashboard/profile/Profile';
+import Settings from '../pages/userDashboard/settings/Settings';
+import Calendar from '../pages/userDashboard/calendar/Calendar';
 import Onboarding from '../features/onboarding/Onboarding';
 import AuthRoute from './AuthRoute';
 import GuestRoute from './GuestRoute';
@@ -23,10 +23,10 @@ import GuestRoute from './GuestRoute';
 // -- Pagini admin (JumigaMaximilian) --
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
-import AdminDashboard from '../pages/Dashboard';
-import UserManagement from '../pages/utilizatori/UserManagement';
-import GestionareAlimente from '../pages/alimente/GestionareAlimente';
-import GestionareExercitii from '../pages/exercitii/GestionareExercitii';
+import AdminDashboard from '../pages/adminDashboard/AdminDashboard';
+import UserManagement from '../pages/users/UserManagement';
+import GestionareAlimente from '../pages/food/FoodManagement';
+import GestionareExercitii from '../pages/exercises/ExercisesManagement';
 
 import AdminAuthRoute from './AdminAuthRoute';
 

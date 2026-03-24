@@ -1,5 +1,5 @@
 // ============================================================
-// pages/exercitii/GestionareExercitii.tsx — Pagina gestionare exercitii
+// pages/exercises/ExercisesManagement.tsx — Pagina gestionare exercitii
 // Permite administratorului sa:
 //   - Caute exercitii dupa nume sau descriere
 //   - Filtreze dupa grupa musculara (piept, spate, picioare etc.)
@@ -17,16 +17,16 @@ import type { Exercitiu } from '../../types';
 import SearchBar from '../../components/SearchBar';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 import CustomSelect from '../../components/CustomSelect';
-import ExercitiiTable from '../../features/exercitii/ExercitiiTable';
-import ExercitiiModal from '../../features/exercitii/ExercitiiModal';
+import ExercitiiTable from '../../features/exercises/ExercisesTable';
+import ExercitiiModal from '../../features/exercises/ExercisesModal';
 import {
     grupMuscularFilterOptions,
     emptyExercitiiForm,
     validateExercitiiForm,
     generateId,
     type ExercitiiForm,
-} from '../../features/exercitii/exercitiiConstants';
-import './GestionareExercitii.css';
+} from '../../features/exercises/exercisesConstants';
+import './ExercisesManagement.css';
 
 export default function GestionareExercitii() {
     // Lista completa de exercitii (in-memory, porneste goala)

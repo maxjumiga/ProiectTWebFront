@@ -1,5 +1,5 @@
 // ============================================================
-// pages/alimente/GestionareAlimente.tsx — Pagina gestionare alimente
+// pages/food/FoodManagement.tsx — Pagina gestionare alimente
 // Permite administratorului sa:
 //   - Caute alimente dupa nume
 //   - Filtreze dupa categorie (fructe, legume, carne etc.)
@@ -17,15 +17,15 @@ import type { Aliment } from '../../types';
 import SearchBar from '../../components/SearchBar';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 import CustomSelect from '../../components/CustomSelect';
-import AlimenteTable from '../../features/alimente/AlimenteTable';
-import AlimentModal from '../../features/alimente/AlimentModal';
+import AlimenteTable from '../../features/food/FoodTable';
+import AlimentModal from '../../features/food/FoodModal';
 import {
     categorieFilterOptions,
     emptyAlimentForm,
     validateAlimentForm,
     generateId,
     type AlimentForm,
-} from '../../features/alimente/alimenteConstants';
+} from '../../features/food/foodConstants';
 import '../GestionareAlimente.css';
 
 export default function GestionareAlimente() {

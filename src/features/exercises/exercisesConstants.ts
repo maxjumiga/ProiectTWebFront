@@ -1,5 +1,5 @@
 // ============================================================
-// features/exercitii/exercitiiConstants.ts
+// features/exercises/exercisesConstants.ts
 // Constante, tipuri si functii ajutatoare pentru modulul Exercitii.
 // Centralizate intr-un fisier dedicat pentru a fi reutilizate usor
 // in ExercitiiTable, ExercitiiModal si GestionareExercitii.
