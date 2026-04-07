@@ -8,7 +8,7 @@ import {
     faEyeSlash
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import "./Inregistrare.css";
+import "./Registration.css";
 
 const UserIcon = () => (
     <FontAwesomeIcon icon={faUser} className="input-icon" />

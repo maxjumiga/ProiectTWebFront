@@ -89,7 +89,7 @@
 .step-sub-label {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #42448A;
+    color: #42448A !important;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
@@ -97,13 +97,15 @@
 .step-title {
     font-size: 1.875rem;
     font-weight: 800;
-    color: #1E1F35;
     margin-top: 0.5rem;
+    background: linear-gradient(135deg, #42448A 0%, #6366f1 50%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .step-desc {
-    color: #475569;
-    /* slate-600 */
+    color: #475569 !important;
     font-size: 0.875rem;
     margin-top: 0.25rem;
 }

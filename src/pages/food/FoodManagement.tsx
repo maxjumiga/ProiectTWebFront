@@ -26,7 +26,7 @@ import {
     generateId,
     type AlimentForm,
 } from '../../features/food/foodConstants';
-import '../GestionareAlimente.css';
+import './FoodManagement.css';
 
 export default function GestionareAlimente() {
     // Lista completa de alimente (in-memory, porneste goala)

@@ -4,7 +4,7 @@ import {
     faEnvelope,
     faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
-import "./Recuperare-parola.css";
+import "./ForgotPassword.css";
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
 

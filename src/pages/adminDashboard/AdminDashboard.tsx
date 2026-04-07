@@ -17,8 +17,8 @@ import {
     faCircleCheck,    // Iconita card Utilizatori Activi
     faArrowRight,     // Sageata "Vezi toti"
 } from '@fortawesome/free-solid-svg-icons';
-import { mockUsers } from '../data/mockData';
-import StatsCard from '../components/StatsCard';
+import { mockUsers } from '../../data/mockData';
+import StatsCard from '../../components/StatsCard';
 import './AdminDashboard.css';
 
 // Calculeaza primul minut al saptamanii curente (duminica la 00:00)

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import "./Autentificare.css";
+import "./Authentication.css";
 
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState("");

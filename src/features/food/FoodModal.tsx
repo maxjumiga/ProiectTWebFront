@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCheck } from '@fortawesome/free-solid-svg-icons';
 import type { Categorie } from '../../types';
 import CustomSelect from '../../components/CustomSelect';
-import { categorieOptions, type AlimentForm } from './alimenteConstants';
+import { categorieOptions, type AlimentForm } from './foodConstants';
 
 // Componenta interna pentru inputurile nutritionale (proteine, carbohidrati, grasimi)
 // Extrasa ca sub-componenta pentru a evita repetarea codului

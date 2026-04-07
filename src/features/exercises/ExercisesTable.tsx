@@ -21,7 +21,7 @@ import {
     dificultateColorClass,
     type GrupMuscular,
     type DificultateExercitiu,
-} from './exercitiiConstants';
+} from './exercisesConstants';
 
 // Proprietatile primite de la GestionareExercitii
 interface ExercitiiTableProps {

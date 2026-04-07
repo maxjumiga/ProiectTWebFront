@@ -12,8 +12,8 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCheck } from '@fortawesome/free-solid-svg-icons';
-import type { GrupMuscular, DificultateExercitiu, ExercitiiForm } from './exercitiiConstants';
-import { grupMuscularOptions, dificultateOptions } from './exercitiiConstants';
+import type { GrupMuscular, DificultateExercitiu, ExercitiiForm } from './exercisesConstants';
+import { grupMuscularOptions, dificultateOptions } from './exercisesConstants';
 import CustomSelect from '../../components/CustomSelect';
 
 // Proprietatile primite de la GestionareExercitii

@@ -12,7 +12,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import type { Aliment } from '../../types';
-import { categorieLabel, categorieColorClass } from './alimenteConstants';
+import { categorieLabel, categorieColorClass } from './foodConstants';
 
 // Proprietatile primite de la GestionareAlimente
 interface AlimenteTableProps {
