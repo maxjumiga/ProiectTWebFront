@@ -5,12 +5,30 @@ import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./Authentication.css";
 
+// ─── Seed mock test account on first load ─────────────────────────────────────
+const MOCK_ACCOUNT_KEY = '__mockAccountSeeded__';
+const seedMockAccount = () => {
+    if (localStorage.getItem(MOCK_ACCOUNT_KEY)) return;
+    let users: Record<string, any> = {};
+    try { users = JSON.parse(localStorage.getItem('users') || '{}'); } catch {}
+    users['test@test.com'] = {
+        password: 'test1234',
+        username: 'Test User',
+        onboardingCompleted: true,
+        onboardingData: { height: 175, weight: 70, age: 25, goal: 'Maintain weight', gender: 'male' },
+    };
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem(MOCK_ACCOUNT_KEY, '1');
+};
+
 const LoginPage: React.FC = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("test@test.com");
+    const [password, setPassword] = useState("test1234");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    React.useEffect(() => { seedMockAccount(); }, []);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

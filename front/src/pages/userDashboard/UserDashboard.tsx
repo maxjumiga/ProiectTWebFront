@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faHouse,
@@ -7,11 +7,17 @@ import {
     faBell,
     faUser,
     faMagnifyingGlass,
+    faXmark,
+    faPlus,
+    faMinus,
+    faDroplet,
+    faFire,
+    faDumbbell,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./UserDashboard.css";
-const username = "Ion Popescu";
 
+const username = "Ion Popescu";
 const initials = username
     .split(" ")
     .map((w) => w[0])
@@ -22,33 +28,83 @@ const initials = username
 // ─── Chart Data ───────────────────────────────────────────────────────────────
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const CAL_DATA = [1650, 2100, 1800, 2350, 1950, 2200, 1420];
-const WAT_DATA = [1800, 2400, 2000, 2800, 2200, 2600, 1600]; // ml
+const WAT_DATA = [1800, 2400, 2000, 2800, 2200, 2600, 1600];
 
-// ─── Sparkline ────────────────────────────────────────────────────────────────
-const Sparkline = ({ data, color }: { data: number[]; color: string }) => {
-    const mn = Math.min(...data), mx = Math.max(...data);
-    const n = (v: number) => (v - mn) / (mx - mn || 1);
-    const W = 200, H = 46, P = 3;
-    const pts = data.map((v, i) => ({
-        x: P + (i / (data.length - 1)) * (W - P * 2),
-        y: H - P - n(v) * (H - P * 2),
-    }));
-    const line = pts.map(p => `${p.x},${p.y}`).join(" ");
-    const area = `${pts[0].x},${H} ${line} ${pts[pts.length - 1].x},${H}`;
-    return (
-        <svg className="db-sparkline" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
-            <defs>
-                <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={color} stopOpacity="0.22" />
-                    <stop offset="100%" stopColor={color} stopOpacity="0" />
-                </linearGradient>
-            </defs>
-            <polygon points={area} fill="url(#sg)" />
-            <polyline points={line} fill="none" stroke={color} strokeWidth="2"
-                strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    );
-};
+// ─── Mock Food Data ───────────────────────────────────────────────────────────
+interface FoodItem {
+    id: number;
+    name: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    vitaminC: number;
+    fiber: number;
+    unit: string;
+}
+
+const FOOD_DATABASE: FoodItem[] = [
+    { id: 1,  name: "Chicken Breast",  calories: 165, protein: 31,  carbs: 0,   fat: 3.6, vitaminC: 0,  fiber: 0,   unit: "100g" },
+    { id: 2,  name: "Brown Rice",       calories: 216, protein: 5,   carbs: 45,  fat: 1.8, vitaminC: 0,  fiber: 3.5, unit: "100g" },
+    { id: 3,  name: "Broccoli",         calories: 34,  protein: 2.8, carbs: 7,   fat: 0.4, vitaminC: 89, fiber: 2.6, unit: "100g" },
+    { id: 4,  name: "Whole Egg",        calories: 155, protein: 13,  carbs: 1.1, fat: 11,  vitaminC: 0,  fiber: 0,   unit: "100g" },
+    { id: 5,  name: "Oatmeal",          calories: 389, protein: 17,  carbs: 66,  fat: 7,   vitaminC: 0,  fiber: 10,  unit: "100g" },
+    { id: 6,  name: "Salmon",           calories: 208, protein: 20,  carbs: 0,   fat: 13,  vitaminC: 3,  fiber: 0,   unit: "100g" },
+    { id: 7,  name: "Sweet Potato",     calories: 86,  protein: 1.6, carbs: 20,  fat: 0.1, vitaminC: 19, fiber: 3,   unit: "100g" },
+    { id: 8,  name: "Greek Yogurt",     calories: 59,  protein: 10,  carbs: 3.6, fat: 0.4, vitaminC: 1,  fiber: 0,   unit: "100g" },
+    { id: 9,  name: "Banana",           calories: 89,  protein: 1.1, carbs: 23,  fat: 0.3, vitaminC: 8,  fiber: 2.6, unit: "100g" },
+    { id: 10, name: "Almonds",          calories: 579, protein: 21,  carbs: 22,  fat: 50,  vitaminC: 0,  fiber: 12,  unit: "100g" },
+];
+
+type MealTime = "Breakfast" | "Lunch" | "Dinner" | "Snack";
+
+interface FoodLog {
+    food: FoodItem;
+    mealTime: MealTime;
+    grams: number;
+}
+
+// ─── Mock Exercise Data ───────────────────────────────────────────────────────
+interface ExerciseItem {
+    id: number;
+    name: string;
+    category: string;
+    muscleGroup: string;
+}
+
+const EXERCISE_DATABASE: ExerciseItem[] = [
+    { id: 1,  name: "Bench Press",      category: "Strength",    muscleGroup: "Chest" },
+    { id: 2,  name: "Squat",            category: "Strength",    muscleGroup: "Legs" },
+    { id: 3,  name: "Deadlift",         category: "Strength",    muscleGroup: "Full Body" },
+    { id: 4,  name: "Pull-Up",          category: "Strength",    muscleGroup: "Back" },
+    { id: 5,  name: "Overhead Press",   category: "Strength",    muscleGroup: "Shoulders" },
+    { id: 6,  name: "Barbell Row",      category: "Strength",    muscleGroup: "Back" },
+    { id: 7,  name: "Running",          category: "Cardio",      muscleGroup: "Full Body" },
+    { id: 8,  name: "Cycling",          category: "Cardio",      muscleGroup: "Legs" },
+    { id: 9,  name: "Jump Rope",        category: "Cardio",      muscleGroup: "Full Body" },
+    { id: 10, name: "Plank",            category: "Core",        muscleGroup: "Core" },
+    { id: 11, name: "Leg Press",        category: "Strength",    muscleGroup: "Legs" },
+    { id: 12, name: "Dumbbell Curl",    category: "Strength",    muscleGroup: "Biceps" },
+    { id: 13, name: "Tricep Dip",       category: "Strength",    muscleGroup: "Triceps" },
+    { id: 14, name: "Lunges",           category: "Strength",    muscleGroup: "Legs" },
+    { id: 15, name: "Mountain Climbers",category: "Cardio",      muscleGroup: "Full Body" },
+];
+
+type WorkoutType = "Strength" | "Cardio" | "Stretching" | "Endurance" | "Core" | "HIIT";
+
+interface WorkoutExerciseLog {
+    exercise: ExerciseItem;
+    sets: number;
+    reps: number;
+}
+
+interface WorkoutLog {
+    name: string;
+    type: WorkoutType;
+    from: string;
+    to: string;
+    exercises: WorkoutExerciseLog[];
+}
 
 // ─── Bar Chart ────────────────────────────────────────────────────────────────
 const BarChart = () => {
@@ -94,7 +150,7 @@ const BarChart = () => {
 
 // ─── Water Bottle ─────────────────────────────────────────────────────────────
 const WaterBottle = ({ pct }: { pct: number }) => {
-    const bH = 68, bW = 28, cH = 9, cW = 13, bY = cH;
+    const bH = 68, bW = 28, cH = 9, bY = cH;
     const fH = bH * Math.min(pct, 1);
     const fY = bY + bH - fH;
     return (
@@ -106,18 +162,13 @@ const WaterBottle = ({ pct }: { pct: number }) => {
                     <stop offset="100%" stopColor="#0ea5e9" />
                 </linearGradient>
             </defs>
-            {/* Cap */}
-            <rect x={(42 - cW) / 2} y="2" width={cW} height={cH} rx="3" fill="#cbd5e1" />
-            {/* Body */}
+            <rect x={(42 - 13) / 2} y="2" width={13} height={cH} rx="3" fill="#cbd5e1" />
             <rect x="7" y={bY} width={bW} height={bH} rx="5"
                 fill="#f4f6fb" stroke="#e4e7f0" strokeWidth="1.5" />
-            {/* Fill */}
             <rect x="7" y={fY} width={bW} height={fH}
                 fill="url(#wf)" clipPath="url(#bc)"
                 style={{ transition: "all 0.5s ease" }} />
-            {/* Shine */}
             <rect x="11" y={bY + 5} width="3" height={bH - 10} rx="1.5" fill="white" opacity="0.3" />
-            {/* Tick marks */}
             {[0.33, 0.66].map((v, i) => (
                 <line key={i} x1="7" x2="15"
                     y1={bY + bH - bH * v} y2={bY + bH - bH * v}
@@ -129,35 +180,678 @@ const WaterBottle = ({ pct }: { pct: number }) => {
 
 // ─── BMI helpers ──────────────────────────────────────────────────────────────
 const calcBMI = (h: number, w: number) => w / ((h / 100) ** 2);
-
 const bmiStatus = (bmi: number) => {
     if (bmi < 18.5) return { label: "Underweight", bg: "#bfdbfe", color: "#1d4ed8" };
-    if (bmi < 25) return { label: "Healthy", bg: "#bbf7d0", color: "#065f46" };
-    if (bmi < 30) return { label: "Overweight", bg: "#fed7aa", color: "#9a3412" };
+    if (bmi < 25)   return { label: "Healthy",     bg: "#bbf7d0", color: "#065f46" };
+    if (bmi < 30)   return { label: "Overweight",  bg: "#fed7aa", color: "#9a3412" };
     return { label: "Obese", bg: "#fecdd3", color: "#9f1239" };
 };
-
-// position on gradient bar: 15-40 → 0-100%
 const bmiBarPos = (bmi: number) => `${Math.min(Math.max((bmi - 15) / 25, 0), 1) * 100}%`;
 
-// ─── Dashboard ────────────────────────────────────────────────────────────────
+// ─── Calories Modal ───────────────────────────────────────────────────────────
+interface CaloriesModalProps {
+    foodLog: FoodLog[];
+    onClose: () => void;
+    onAddFood: (log: FoodLog) => void;
+}
 
+const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFood }) => {
+    const [search, setSearch] = useState("");
+    const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
+    const [mealTime, setMealTime] = useState<MealTime>("Breakfast");
+    const [grams, setGrams] = useState(100);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropRef = useRef<HTMLDivElement>(null);
+
+    const filtered = FOOD_DATABASE.filter(f =>
+        f.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
+                setDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handler);
+        return () => document.removeEventListener("mousedown", handler);
+    }, []);
+
+    const handleAdd = () => {
+        if (!selectedFood || grams <= 0) return;
+        onAddFood({ food: selectedFood, mealTime, grams });
+        setSelectedFood(null);
+        setSearch("");
+        setGrams(100);
+    };
+
+    const macro = (val: number) => ((val * grams) / 100).toFixed(1);
+
+    const groupedLog: Record<MealTime, FoodLog[]> = {
+        Breakfast: foodLog.filter(l => l.mealTime === "Breakfast"),
+        Lunch:     foodLog.filter(l => l.mealTime === "Lunch"),
+        Dinner:    foodLog.filter(l => l.mealTime === "Dinner"),
+        Snack:     foodLog.filter(l => l.mealTime === "Snack"),
+    };
+
+    const mealIcons: Record<MealTime, string> = {
+        Breakfast: "🌅",
+        Lunch:     "☀️",
+        Dinner:    "🌙",
+        Snack:     "🍎",
+    };
+
+    return (
+        <div className="db-modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+            <div className="db-modal-card db-modal-wide">
+                <div className="db-modal-header">
+                    <div className="db-modal-title">
+                        <span className="db-modal-icon cal-icon">🔥</span>
+                        Calories Consumed Today
+                    </div>
+                    <button className="db-modal-close" onClick={onClose} type="button">
+                        <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                </div>
+
+                <div className="db-modal-body">
+                    {/* Today's log */}
+                    {foodLog.length > 0 && (
+                        <div className="db-modal-section">
+                            <div className="db-modal-section-title">
+                                📋 Today's Food Log
+                            </div>
+                            {(["Breakfast", "Lunch", "Dinner", "Snack"] as MealTime[]).map(meal => (
+                                groupedLog[meal].length > 0 && (
+                                    <div key={meal} className="meal-group">
+                                        <div className="meal-group-label">
+                                            {mealIcons[meal]} {meal}
+                                        </div>
+                                        {groupedLog[meal].map((log, i) => {
+                                            const factor = log.grams / 100;
+                                            const kcal = Math.round(log.food.calories * factor);
+                                            return (
+                                                <div className="food-log-item" key={i}>
+                                                    <div className="food-log-name">{log.food.name}</div>
+                                                    <div className="food-log-meta">
+                                                        <span className="food-log-grams">{log.grams}g</span>
+                                                        <span className="food-log-kcal">{kcal} kcal</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Add food form */}
+                    <div className="db-modal-section">
+                        <div className="db-modal-section-title">➕ Add Food</div>
+
+                        {/* Food search — full width */}
+                        <div className="add-food-grid">
+                            <div className="add-food-search-wrap" ref={dropRef}>
+                                <div className="add-food-input-row">
+                                    <FontAwesomeIcon icon={faMagnifyingGlass} className="search-prefix-icon" />
+                                    <input
+                                        type="text"
+                                        className="db-input"
+                                        placeholder="Search food (e.g. Chicken Breast)…"
+                                        value={search}
+                                        onFocus={() => setDropdownOpen(true)}
+                                        onChange={e => {
+                                            setSearch(e.target.value);
+                                            setSelectedFood(null);
+                                            setDropdownOpen(true);
+                                        }}
+                                    />
+                                </div>
+                                {dropdownOpen && filtered.length > 0 && (
+                                    <div className="food-dropdown">
+                                        {filtered.map(f => (
+                                            <div
+                                                key={f.id}
+                                                className="food-dropdown-item"
+                                                onClick={() => {
+                                                    setSelectedFood(f);
+                                                    setSearch(f.name);
+                                                    setDropdownOpen(false);
+                                                }}
+                                            >
+                                                <span className="food-dropdown-name">{f.name}</span>
+                                                <span className="food-dropdown-cal">{f.calories} kcal/{f.unit}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Meal time + Grams — side by side */}
+                            <div className="add-food-sub-row">
+                                <div className="add-food-field">
+                                    <label className="db-field-label">Meal Time</label>
+                                    <select
+                                        className="db-select"
+                                        value={mealTime}
+                                        onChange={e => setMealTime(e.target.value as MealTime)}
+                                    >
+                                        <option value="Breakfast">🌅 Breakfast</option>
+                                        <option value="Lunch">☀️ Lunch</option>
+                                        <option value="Dinner">🌙 Dinner</option>
+                                        <option value="Snack">🍎 Snack</option>
+                                    </select>
+                                </div>
+                                <div className="add-food-field">
+                                    <label className="db-field-label">Quantity (grams)</label>
+                                    <input
+                                        type="number"
+                                        className="db-input"
+                                        min={1}
+                                        max={2000}
+                                        value={grams}
+                                        onChange={e => setGrams(Number(e.target.value))}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Macro preview */}
+                        {selectedFood && (
+                            <div className="macro-preview">
+                                <div className="macro-preview-title">Nutritional values for {grams}g</div>
+                                <div className="macro-grid">
+                                    <div className="macro-chip cal-chip">
+                                        <span className="macro-val">{macro(selectedFood.calories)}</span>
+                                        <span className="macro-lbl">kcal</span>
+                                    </div>
+                                    <div className="macro-chip prot-chip">
+                                        <span className="macro-val">{macro(selectedFood.protein)}g</span>
+                                        <span className="macro-lbl">Protein</span>
+                                    </div>
+                                    <div className="macro-chip carb-chip">
+                                        <span className="macro-val">{macro(selectedFood.carbs)}g</span>
+                                        <span className="macro-lbl">Carbs</span>
+                                    </div>
+                                    <div className="macro-chip fat-chip">
+                                        <span className="macro-val">{macro(selectedFood.fat)}g</span>
+                                        <span className="macro-lbl">Fat</span>
+                                    </div>
+                                    <div className="macro-chip vitc-chip">
+                                        <span className="macro-val">{macro(selectedFood.vitaminC)}mg</span>
+                                        <span className="macro-lbl">Vit. C</span>
+                                    </div>
+                                    <div className="macro-chip fiber-chip">
+                                        <span className="macro-val">{macro(selectedFood.fiber)}g</span>
+                                        <span className="macro-lbl">Fiber</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div style={{ marginTop: "8px" }}>
+                            <button
+                                className="db-btn-primary"
+                                onClick={handleAdd}
+                                disabled={!selectedFood || grams <= 0}
+                            >
+                                <FontAwesomeIcon icon={faPlus} /> Add to Log
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// ─── Water Modal ──────────────────────────────────────────────────────────────
+interface WaterModalProps {
+    waterMl: number;
+    waterMax: number;
+    onClose: () => void;
+    onUpdate: (ml: number) => void;
+}
+
+const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onUpdate }) => {
+    const [customStr, setCustomStr] = useState("");
+    const customVal = parseInt(customStr, 10);
+    const customOk  = !isNaN(customVal) && customVal > 0;
+    const pct = Math.min((waterMl / waterMax) * 100, 100);
+
+    const add = (ml: number) => { onUpdate(Math.min(waterMl + ml, waterMax)); }
+    const sub = (ml: number) => { onUpdate(Math.max(waterMl - ml, 0)); }
+
+    const getHydrationStatus = () => {
+        if (pct >= 100) return { label: "Goal Reached! 🎉", color: "#10b981" };
+        if (pct >= 66)  return { label: "Almost there!", color: "#f97316" };
+        if (pct >= 33)  return { label: "Keep it up!", color: "#0ea5e9" };
+        return { label: "Stay hydrated!", color: "#6366f1" };
+    };
+
+    const hydStatus = getHydrationStatus();
+
+    const presets = [
+        { label: "Espresso", ml: 50,  icon: "☕" },
+        { label: "Glass",    ml: 200, icon: "🥤" },
+        { label: "Bottle",   ml: 500, icon: "💧" },
+        { label: "Large",    ml: 750, icon: "🫙" },
+    ];
+
+    return (
+        <div className="db-modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+            <div className="db-modal-card">
+                <div className="db-modal-header">
+                    <div className="db-modal-title">
+                        <span className="db-modal-icon water-icon">💧</span>
+                        Water Consumed Today
+                    </div>
+                    <button className="db-modal-close" onClick={onClose} type="button">
+                        <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                </div>
+
+                <div className="db-modal-body">
+                    {/* Status */}
+                    <div className="db-modal-section water-status-section">
+                        <div className="water-modal-top">
+                            <WaterBottle pct={waterMl / waterMax} />
+                            <div className="water-modal-stats">
+                                <div className="water-modal-big">
+                                    {waterMl.toLocaleString("en-US")}
+                                    <em>ml</em>
+                                </div>
+                                <div className="water-modal-sub">
+                                    of <strong>{waterMax.toLocaleString("en-US")} ml</strong> daily goal
+                                </div>
+                                <div className="water-modal-prog-wrap">
+                                    <div className="water-modal-prog">
+                                        <div className="water-modal-prog-fill" style={{ width: `${pct}%` }} />
+                                    </div>
+                                    <div className="water-modal-pct" style={{ color: hydStatus.color }}>
+                                        {pct.toFixed(0)}%
+                                    </div>
+                                </div>
+                                <div className="water-hydration-badge" style={{ color: hydStatus.color }}>
+                                    {hydStatus.label}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Quick add presets */}
+                    <div className="db-modal-section">
+                        <div className="db-modal-section-title">⚡ Quick Add</div>
+                        <div className="water-preset-grid">
+                            {presets.map(p => (
+                                <button key={p.label} className="water-preset-btn" onClick={() => add(p.ml)}>
+                                    <span className="preset-icon">{p.icon}</span>
+                                    <span className="preset-label">{p.label}</span>
+                                    <span className="preset-ml">+{p.ml} ml</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Custom amount */}
+                    <div className="db-modal-section">
+                        <div className="db-modal-section-title">📏 Custom Amount</div>
+                        <div className="water-custom-row">
+                            <div className="water-custom-input-wrap">
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    className="db-input water-custom-input"
+                                    placeholder="ml"
+                                    value={customStr}
+                                    onChange={e => {
+                                        const v = e.target.value.replace(/[^0-9]/g, '');
+                                        setCustomStr(v);
+                                    }}
+                                />
+                            </div>
+                            <button
+                                className="water-action-btn water-action-add"
+                                onClick={() => { add(customVal); setCustomStr(''); }}
+                                disabled={!customOk}
+                            >
+                                + Add
+                            </button>
+                            <button
+                                className="water-action-btn water-action-remove"
+                                onClick={() => { sub(customVal); setCustomStr(''); }}
+                                disabled={!customOk}
+                            >
+                                − Remove
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Reset */}
+                    <button className="db-btn-ghost" onClick={() => onUpdate(0)}>
+                        Reset today's water intake
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// ─── Workouts Modal ───────────────────────────────────────────────────────────
+interface WorkoutsModalProps {
+    workouts: WorkoutLog[];
+    onClose: () => void;
+    onAddWorkout: (w: WorkoutLog) => void;
+}
+
+const formatDuration = (from: string, to: string) => {
+    const [fh, fm] = from.split(":").map(Number);
+    const [th, tm] = to.split(":").map(Number);
+    const mins = (th * 60 + tm) - (fh * 60 + fm);
+    if (mins <= 0) return "—";
+    if (mins < 60) return `${mins} min`;
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return m > 0 ? `${h}h ${m}min` : `${h}h`;
+};
+
+const WORKOUT_TYPE_COLORS: Record<WorkoutType, { bg: string; color: string }> = {
+    Strength:   { bg: "rgba(239,68,68,0.1)",    color: "#dc2626" },
+    Cardio:     { bg: "rgba(16,185,129,0.1)",   color: "#059669" },
+    Stretching: { bg: "rgba(168,85,247,0.1)",   color: "#9333ea" },
+    Endurance:  { bg: "rgba(234,179,8,0.1)",    color: "#b45309" },
+    Core:       { bg: "rgba(99,102,241,0.1)",   color: "#6366f1" },
+    HIIT:       { bg: "rgba(249,115,22,0.1)",   color: "#f97316" },
+};
+
+const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts, onClose, onAddWorkout }) => {
+    const [name, setName] = useState("");
+    const [type, setType] = useState<WorkoutType>("Strength");
+    const [from, setFrom] = useState("08:00");
+    const [to, setTo]     = useState("09:00");
+
+    const [exSearch, setExSearch]     = useState("");
+    const [exDropOpen, setExDropOpen] = useState(false);
+    const [exSets, setExSets]         = useState(3);
+    const [exReps, setExReps]         = useState(10);
+    const [exercises, setExercises]   = useState<WorkoutExerciseLog[]>([]);
+    const [pendingEx, setPendingEx]   = useState<ExerciseItem | null>(null);
+    const exDropRef = useRef<HTMLDivElement>(null);
+
+    const filteredEx = EXERCISE_DATABASE.filter(e =>
+        e.name.toLowerCase().includes(exSearch.toLowerCase())
+    );
+
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (exDropRef.current && !exDropRef.current.contains(e.target as Node)) {
+                setExDropOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handler);
+        return () => document.removeEventListener("mousedown", handler);
+    }, []);
+
+    const addExercise = () => {
+        if (!pendingEx) return;
+        setExercises(prev => [...prev, { exercise: pendingEx, sets: exSets, reps: exReps }]);
+        setPendingEx(null);
+        setExSearch("");
+        setExSets(3);
+        setExReps(10);
+    };
+
+    const removeExercise = (idx: number) => {
+        setExercises(prev => prev.filter((_, i) => i !== idx));
+    };
+
+    const handleSave = () => {
+        if (!name.trim()) return;
+        onAddWorkout({ name: name.trim(), type, from, to, exercises });
+        setName(""); setType("Strength");
+        setFrom("08:00"); setTo("09:00");
+        setExercises([]);
+    };
+
+    return (
+        <div className="db-modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+            <div className="db-modal-card db-modal-wide">
+                <div className="db-modal-header">
+                    <div className="db-modal-title">
+                        <span className="db-modal-icon workout-icon">🏋️</span>
+                        My Workouts
+                    </div>
+                    <button className="db-modal-close" onClick={onClose} type="button">
+                        <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                </div>
+
+                <div className="db-modal-body">
+                    {/* Past workouts */}
+                    {workouts.length > 0 && (
+                        <div className="db-modal-section">
+                            <div className="db-modal-section-title">📂 Recorded Workouts</div>
+                            <div className="workout-log-list">
+                                {workouts.map((w, i) => {
+                                    const tc = WORKOUT_TYPE_COLORS[w.type];
+                                    return (
+                                        <div className="workout-log-item" key={i}>
+                                            <div className="workout-log-top">
+                                                <span className="workout-log-name">{w.name}</span>
+                                                <span className="workout-type-badge-db" style={{ background: tc.bg, color: tc.color }}>{w.type}</span>
+                                                <span className="workout-log-time">{w.from} – {w.to} <em>({formatDuration(w.from, w.to)})</em></span>
+                                            </div>
+                                            {w.exercises.length > 0 && (
+                                                <div className="workout-log-exercises">
+                                                    {w.exercises.map((ex, j) => (
+                                                        <span className="workout-ex-chip" key={j}>
+                                                            {ex.exercise.name} · {ex.sets}×{ex.reps}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* New workout */}
+                    <div className="db-modal-section">
+                        <div className="db-modal-section-title">➕ Log New Workout</div>
+
+                        {/* Name + Type */}
+                        <div className="wk-form-row">
+                            <div className="wk-form-field wk-grow">
+                                <label className="db-field-label">Workout Name</label>
+                                <input
+                                    type="text"
+                                    className="db-input"
+                                    placeholder="e.g. Upper body, Morning run…"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                />
+                            </div>
+                            <div className="wk-form-field">
+                                <label className="db-field-label">Type</label>
+                                <select
+                                    className="db-select"
+                                    value={type}
+                                    onChange={e => setType(e.target.value as WorkoutType)}
+                                >
+                                    <option value="Strength">💪 Strength</option>
+                                    <option value="Cardio">🏃 Cardio</option>
+                                    <option value="Stretching">🧘 Stretching</option>
+                                    <option value="Endurance">🚴 Endurance</option>
+                                    <option value="Core">🎯 Core</option>
+                                    <option value="HIIT">⚡ HIIT</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Time */}
+                        <div className="wk-form-row">
+                            <div className="wk-form-field">
+                                <label className="db-field-label">Start Time</label>
+                                <input
+                                    type="time"
+                                    className="db-input"
+                                    value={from}
+                                    onChange={e => setFrom(e.target.value)}
+                                />
+                            </div>
+                            <div className="wk-form-field">
+                                <label className="db-field-label">End Time</label>
+                                <input
+                                    type="time"
+                                    className="db-input"
+                                    value={to}
+                                    onChange={e => setTo(e.target.value)}
+                                />
+                            </div>
+                            {from && to && (
+                                <div className="wk-duration-badge">
+                                    ⏱ {formatDuration(from, to)}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Exercises */}
+                    <div className="db-modal-section">
+                        <div className="db-modal-section-title">🏋️ Exercises</div>
+
+                        {exercises.length > 0 && (
+                            <div className="ex-log-list">
+                                {exercises.map((ex, i) => (
+                                    <div className="ex-log-item" key={i}>
+                                        <span className="ex-log-cat" style={{
+                                            background: WORKOUT_TYPE_COLORS[ex.exercise.category as WorkoutType]?.bg || "rgba(99,102,241,0.1)",
+                                            color: WORKOUT_TYPE_COLORS[ex.exercise.category as WorkoutType]?.color || "#6366f1"
+                                        }}>{ex.exercise.category}</span>
+                                        <span className="ex-log-name">{ex.exercise.name}</span>
+                                        <span className="ex-log-meta">{ex.sets} sets × {ex.reps} reps</span>
+                                        <button className="ex-remove-btn" onClick={() => removeExercise(i)}>
+                                            <FontAwesomeIcon icon={faXmark} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Add exercise */}
+                        <div className="ex-add-row">
+                            <div className="ex-search-wrap" ref={exDropRef}>
+                                <div className="add-food-input-row">
+                                    <FontAwesomeIcon icon={faMagnifyingGlass} className="search-prefix-icon" />
+                                    <input
+                                        type="text"
+                                        className="db-input"
+                                        placeholder="Search exercise…"
+                                        value={exSearch}
+                                        onFocus={() => setExDropOpen(true)}
+                                        onChange={e => {
+                                            setExSearch(e.target.value);
+                                            setPendingEx(null);
+                                            setExDropOpen(true);
+                                        }}
+                                    />
+                                </div>
+                                {exDropOpen && filteredEx.length > 0 && (
+                                    <div className="food-dropdown">
+                                        {filteredEx.map(ex => (
+                                            <div
+                                                key={ex.id}
+                                                className="food-dropdown-item"
+                                                onClick={() => {
+                                                    setPendingEx(ex);
+                                                    setExSearch(ex.name);
+                                                    setExDropOpen(false);
+                                                }}
+                                            >
+                                                <span className="food-dropdown-name">{ex.name}</span>
+                                                <span className="food-dropdown-cal">{ex.category} · {ex.muscleGroup}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="ex-sets-reps">
+                                <div className="wk-form-field">
+                                    <label className="db-field-label">Sets</label>
+                                    <input
+                                        type="number"
+                                        className="db-input ex-num-input"
+                                        min={1} max={20}
+                                        value={exSets}
+                                        onChange={e => setExSets(Number(e.target.value))}
+                                    />
+                                </div>
+                                <div className="wk-form-field">
+                                    <label className="db-field-label">Reps</label>
+                                    <input
+                                        type="number"
+                                        className="db-input ex-num-input"
+                                        min={1} max={200}
+                                        value={exReps}
+                                        onChange={e => setExReps(Number(e.target.value))}
+                                    />
+                                </div>
+                                <button
+                                    className="db-btn-secondary ex-add-btn"
+                                    onClick={addExercise}
+                                    disabled={!pendingEx}
+                                >
+                                    <FontAwesomeIcon icon={faPlus} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button
+                        className="db-btn-primary"
+                        onClick={handleSave}
+                        disabled={!name.trim()}
+                    >
+                        <FontAwesomeIcon icon={faDumbbell} /> Save Workout
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
 const UserDashboard: React.FC = () => {
     const navigate = useNavigate();
-    const [waterMl, setWaterMl] = useState(1200);
-    const [height, setHeight] = useState(170);
-    const [weight, setWeight] = useState(72);
+    const [waterMl, setWaterMl] = useState(0);
+    const [height, setHeight]   = useState(170);
+    const [weight, setWeight]   = useState(72);
+
+    // Modal states
+    const [calModal,     setCalModal]     = useState(false);
+    const [waterModal,   setWaterModal]   = useState(false);
+    const [workoutModal, setWorkoutModal] = useState(false);
+
+    // Food log state
+    const [foodLog, setFoodLog]     = useState<FoodLog[]>([]);
+    // Workout log state
+    const [workouts, setWorkouts]   = useState<WorkoutLog[]>([]);
 
     const WATER_MAX = 3000;
-    const CAL_GOAL = 2200;
-    const todayCal = CAL_DATA[CAL_DATA.length - 1];
-    const calPct = Math.round((todayCal / CAL_GOAL) * 100);
-    const waterPct = waterMl / WATER_MAX;
+    const CAL_GOAL  = 2200;
+    const todayCal  = 0;
+    const totalFoodCal = foodLog.reduce((sum, log) => sum + Math.round(log.food.calories * log.grams / 100), 0);
+    const calPct    = Math.round(((todayCal + totalFoodCal) / CAL_GOAL) * 100);
+    const waterPct  = waterMl / WATER_MAX;
 
-    const bmi = calcBMI(height, weight);
+    const bmi    = calcBMI(height, weight);
     const status = bmiStatus(bmi);
 
-    const today = new Date();
+    const today   = new Date();
     const dateStr = today.toLocaleDateString("en-US", {
         weekday: "long", year: "numeric", month: "long", day: "numeric",
     });
@@ -213,11 +907,18 @@ const UserDashboard: React.FC = () => {
                 {/* Stats row */}
                 <div className="db-stats-row">
 
-                    {/* Calories */}
-                    <div className="db-card">
-                        <div className="db-card-lbl">Calories consumed today</div>
+                    {/* Calories — clickable */}
+                    <div
+                        className="db-card db-card-clickable"
+                        onClick={() => setCalModal(true)}
+                        title="Click to log food"
+                    >
+                        <div className="db-card-lbl">
+                            <FontAwesomeIcon icon={faFire} style={{ color: "#f97316", marginRight: 6 }} />
+                            Calories consumed today
+                        </div>
                         <div className="cal-top">
-                            <div className="cal-num">{todayCal.toLocaleString("en-US")}<em>kcal</em></div>
+                            <div className="cal-num">{(todayCal + totalFoodCal).toLocaleString("en-US")}<em>kcal</em></div>
                             <div className="cal-pill">{calPct}%</div>
                         </div>
                         <div className="cal-sub">
@@ -226,12 +927,21 @@ const UserDashboard: React.FC = () => {
                         <div className="cal-prog">
                             <div className="cal-prog-fill" style={{ width: `${Math.min(calPct, 100)}%` }} />
                         </div>
-                        <Sparkline data={CAL_DATA} color="#f97316" />
+                        <div className="db-card-click-hint">
+                            <FontAwesomeIcon icon={faPlus} /> Log food
+                        </div>
                     </div>
 
-                    {/* Water */}
-                    <div className="db-card">
-                        <div className="db-card-lbl">Water consumed today</div>
+                    {/* Water — clickable */}
+                    <div
+                        className="db-card db-card-clickable"
+                        onClick={() => setWaterModal(true)}
+                        title="Click to log water"
+                    >
+                        <div className="db-card-lbl">
+                            <FontAwesomeIcon icon={faDroplet} style={{ color: "#60b8f5", marginRight: 6 }} />
+                            Water consumed today
+                        </div>
                         <div className="water-body">
                             <div className="water-bottle-wrap">
                                 <WaterBottle pct={waterPct} />
@@ -242,12 +952,10 @@ const UserDashboard: React.FC = () => {
                                 <div className="water-prog">
                                     <div className="water-prog-fill" style={{ width: `${Math.min(waterPct * 100, 100)}%` }} />
                                 </div>
-                                <div className="water-btns">
-                                    <button className="wbtn" onClick={() => setWaterMl(p => Math.min(p + 250, WATER_MAX))}>+250 ml</button>
-                                    <button className="wbtn primary" onClick={() => setWaterMl(p => Math.min(p + 500, WATER_MAX))}>+500 ml</button>
-                                    <button className="wbtn" onClick={() => setWaterMl(p => Math.max(p - 250, 0))}>−</button>
-                                </div>
                             </div>
+                        </div>
+                        <div className="db-card-click-hint">
+                            <FontAwesomeIcon icon={faDroplet} /> Log water
                         </div>
                     </div>
                 </div>
@@ -257,7 +965,7 @@ const UserDashboard: React.FC = () => {
                     <div className="chart-hdr">
                         <span className="db-card-lbl">Weekly progress</span>
                         <div className="chart-legend">
-                            <div className="legend-item"><span style={{ background: "#f97316" }} className="legend-dot" />Calorii</div>
+                            <div className="legend-item"><span style={{ background: "#f97316" }} className="legend-dot" />Calories</div>
                             <div className="legend-item"><span style={{ background: "#38bdf8" }} className="legend-dot" />Water</div>
                         </div>
                     </div>
@@ -267,15 +975,42 @@ const UserDashboard: React.FC = () => {
                 {/* Bottom row */}
                 <div className="db-bottom-row">
 
-                    {/* Appointments */}
-                    <div className="db-card">
-                        <div className="db-card-lbl">My Workouts</div>
-                        <div className="db-card-sublbl">Last workout:</div>
-                        <div className="appt-row">
-
+                    {/* Workouts — clickable */}
+                    <div
+                        className="db-card db-card-clickable"
+                        onClick={() => setWorkoutModal(true)}
+                        title="Click to log workout"
+                    >
+                        <div className="db-card-lbl">
+                            <FontAwesomeIcon icon={faDumbbell} style={{ color: "#6366f1", marginRight: 6 }} />
+                            My Workouts
                         </div>
-                        <div className="appt-row">
 
+                        {workouts.length === 0 ? (
+                            <div className="workout-empty-state">
+                                <div className="workout-empty-icon">🏋️</div>
+                                <div className="workout-empty-text">No workouts logged yet</div>
+                                <div className="workout-empty-sub">Click to add your first workout</div>
+                            </div>
+                        ) : (
+                            <div className="workout-preview-list">
+                                {workouts.slice(-2).map((w, i) => {
+                                    const tc = WORKOUT_TYPE_COLORS[w.type];
+                                    return (
+                                        <div className="workout-preview-item" key={i}>
+                                            <span className="workout-type-badge-db" style={{ background: tc.bg, color: tc.color }}>{w.type}</span>
+                                            <span className="workout-preview-name">{w.name}</span>
+                                            <span className="workout-preview-time">{w.from} – {w.to}</span>
+                                        </div>
+                                    );
+                                })}
+                                {workouts.length > 2 && (
+                                    <div className="workout-more">+{workouts.length - 2} more workouts</div>
+                                )}
+                            </div>
+                        )}
+                        <div className="db-card-click-hint">
+                            <FontAwesomeIcon icon={faPlus} /> Log workout
                         </div>
                     </div>
 
@@ -288,7 +1023,7 @@ const UserDashboard: React.FC = () => {
                                     <div className="qs-ico" style={{ background: "var(--cal-soft)" }}>🔥</div>
                                     <span className="qs-lbl">Calories this week</span>
                                 </div>
-                                <span className="qs-val">13.470</span>
+                                <span className="qs-val">13,470</span>
                             </div>
                             <div className="qs-row">
                                 <div className="qs-left">
@@ -360,6 +1095,30 @@ const UserDashboard: React.FC = () => {
                     </div>
                 </div>
             </aside>
+
+            {/* ── MODALS ── */}
+            {calModal && (
+                <CaloriesModal
+                    foodLog={foodLog}
+                    onClose={() => setCalModal(false)}
+                    onAddFood={log => setFoodLog(prev => [...prev, log])}
+                />
+            )}
+            {waterModal && (
+                <WaterModal
+                    waterMl={waterMl}
+                    waterMax={WATER_MAX}
+                    onClose={() => setWaterModal(false)}
+                    onUpdate={setWaterMl}
+                />
+            )}
+            {workoutModal && (
+                <WorkoutsModal
+                    workouts={workouts}
+                    onClose={() => setWorkoutModal(false)}
+                    onAddWorkout={w => setWorkouts(prev => [...prev, w])}
+                />
+            )}
 
         </div>
     );

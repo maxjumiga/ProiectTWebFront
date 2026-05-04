@@ -20,8 +20,8 @@ export const mockUsers: User[] = [
     },
     {
         id: '2',
-        name: 'Maria Popescu',
-        email: 'maria.popescu@email.ro',
+        name: 'Danu Chitanu',
+        email: 'danuchitanu@email.ro',
         role: 'user',
         status: 'activ',
         joinedAt: '2025-11-12',
