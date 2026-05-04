@@ -2,13 +2,17 @@ import { motion } from 'framer-motion';
 import type { Goal } from '../../types/onboarding';
 import './Steps.css';
 
+import { faFire, faBalanceScale, faDumbbell } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 interface Props { value: Goal | null; onChange: (v: Goal) => void; onNext: () => void; onBack: () => void; }
 
-const options: { value: Goal; label: string; desc: string; emoji: string }[] = [
-    { value: 'lose', label: 'Lose Weight', desc: 'Burn fat, reduce body weight', emoji: '🔥' },
-    { value: 'maintain', label: 'Stay in Shape', desc: 'Maintain my current physique', emoji: '⚖️' },
-    { value: 'gain', label: 'Build Muscle', desc: 'Increase strength & muscle mass', emoji: '💪' },
+const options: { value: Goal; label: string; desc: string; icon: any; colorClass: string }[] = [
+    { value: 'lose', label: 'Lose Weight', desc: 'Burn fat, reduce body weight', icon: faFire, colorClass: 'lose' },
+    { value: 'maintain', label: 'Stay in Shape', desc: 'Maintain my current physique', icon: faBalanceScale, colorClass: 'maintain' },
+    { value: 'gain', label: 'Build Muscle', desc: 'Increase strength & muscle mass', icon: faDumbbell, colorClass: 'gain' },
 ];
+
 
 export default function GoalStep({ value, onChange, onNext, onBack }: Props) {
     return (
@@ -34,11 +38,14 @@ export default function GoalStep({ value, onChange, onNext, onBack }: Props) {
                         onClick={() => onChange(opt.value)}
                         className={`option-btn ${value === opt.value ? 'selected' : 'normal'}`}
                     >
-                        <span className="option-emoji">{opt.emoji}</span>
+                        <div className={`option-icon-box ${opt.colorClass}`}>
+                            <FontAwesomeIcon icon={opt.icon} />
+                        </div>
                         <div className="option-text">
                             <p className="option-label">{opt.label}</p>
                             <p className="option-sub">{opt.desc}</p>
                         </div>
+
                         {value === opt.value && (
                             <motion.div
                                 initial={{ scale: 0 }}

@@ -17,9 +17,7 @@ export default function WelcomeStep({ onNext }: Props) {
                 transition={{ delay: 0.1, duration: 0.5, ease: 'backOut' }}
                 className="welcome-icon-box"
             >
-                <svg viewBox="0 0 32 32">
-                    <path d="M4 16a2 2 0 0 1 2-2h2V9a1 1 0 0 1 2 0v10a1 1 0 0 1-2 0v-1H6a2 2 0 0 1-2-2ZM24 9a1 1 0 0 1 2 0v14a1 1 0 0 1-2 0v-5h-2a2 2 0 0 1 0-4h2V9ZM12 7a1 1 0 0 1 1 1v16a1 1 0 0 1-2 0V8a1 1 0 0 1 1-1ZM19 5a1 1 0 0 1 1 1v20a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1Z" />
-                </svg>
+                <img src="/OmniTrackLogo.png" alt="OmniTrack Logo" />
             </motion.div>
 
             <motion.h1

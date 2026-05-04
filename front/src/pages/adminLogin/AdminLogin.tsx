@@ -64,7 +64,7 @@ export default function AdminLogin() {
                 {/* Header card */}
                 <div className="admin-login-header">
                     <div className="admin-login-logo">
-                        <FontAwesomeIcon icon={faHeartPulse} />
+                        <img src="/favicon.svg" alt="OmniTrack Logo" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
                     </div>
                     <h1 className="admin-login-title">OmniTrack</h1>
                     <p className="admin-login-subtitle">Administration Panel</p>

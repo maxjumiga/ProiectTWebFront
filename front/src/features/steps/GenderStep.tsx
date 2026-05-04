@@ -2,12 +2,16 @@ import { motion } from 'framer-motion';
 import type { Gender } from '../../types/onboarding';
 import './Steps.css';
 
+import { faMars, faVenus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 interface Props { value: Gender | null; onChange: (v: Gender) => void; onNext: () => void; onBack: () => void; }
 
-const options: { value: Gender; label: string; desc: string; emoji: string; colorClass: string }[] = [
-    { value: 'male', label: 'Male', desc: 'Biological male', emoji: '♂', colorClass: 'male' },
-    { value: 'female', label: 'Female', desc: 'Biological female', emoji: '♀', colorClass: 'female' },
+const options: { value: Gender; label: string; desc: string; icon: any; colorClass: string }[] = [
+    { value: 'male', label: 'Male', desc: 'Biological male', icon: faMars, colorClass: 'male' },
+    { value: 'female', label: 'Female', desc: 'Biological female', icon: faVenus, colorClass: 'female' },
 ];
+
 
 export default function GenderStep({ value, onChange, onNext, onBack }: Props) {
     return (
@@ -33,11 +37,14 @@ export default function GenderStep({ value, onChange, onNext, onBack }: Props) {
                         onClick={() => onChange(opt.value)}
                         className={`option-btn ${value === opt.value ? 'selected' : 'normal'}`}
                     >
-                        <span className={`option-emoji ${opt.colorClass}`}>{opt.emoji}</span>
+                        <div className={`option-icon-box ${opt.colorClass}`}>
+                            <FontAwesomeIcon icon={opt.icon} />
+                        </div>
                         <div className="option-text">
                             <p className="option-label">{opt.label}</p>
                             <p className="option-sub">{opt.desc}</p>
                         </div>
+
                         {value === opt.value && (
                             <motion.div
                                 initial={{ scale: 0 }}

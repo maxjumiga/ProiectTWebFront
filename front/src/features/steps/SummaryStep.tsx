@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion';
 import type { OnboardingData } from '../../types/onboarding';
 import { calcBMI, calcBMR, calcTDEE, goalCalories, goalLabel, heightDisplay, bmiCategory } from '../../utils/calculations';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './Steps.css';
+
 
 interface Props { data: OnboardingData; onComplete: () => void; onBack: () => void; }
 
@@ -80,8 +83,9 @@ export default function SummaryStep({ data, onComplete, onBack }: Props) {
                     onClick={onComplete}
                     className="btn-complete"
                 >
-                    Go to Dashboard 🚀
+                    Go to Dashboard <FontAwesomeIcon icon={faArrowRight} style={{ marginLeft: '8px' }} />
                 </motion.button>
+
             </div>
         </motion.div>
     );

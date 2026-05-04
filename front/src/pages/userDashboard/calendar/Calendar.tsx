@@ -387,7 +387,9 @@ const CalendarPage: React.FC = () => {
 
             {/* ── SIDEBAR ── */}
             <aside className="cal-sidebar">
-                <div className="cal-logo"></div>
+                <div className="cal-logo">
+                    <img src="/favicon.svg" alt="OmniTrack Logo" />
+                </div>
                 <nav className="cal-nav">
                     <button className="cal-nav-btn" onClick={() => navigate('/dashboard')} title="Home">
                         <FontAwesomeIcon icon={faHouse} />

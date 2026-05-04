@@ -167,7 +167,9 @@ const UserDashboard: React.FC = () => {
 
             {/* ── SIDEBAR ── */}
             <aside className="db-sidebar">
-                <div className="db-logo"></div>
+                <div className="db-logo">
+                    <img src="/favicon.svg" alt="OmniTrack Logo" style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
+                </div>
 
                 <nav className="db-nav">
                     <button className="db-nav-btn active" onClick={() => navigate('/dashboard')} title="Home">

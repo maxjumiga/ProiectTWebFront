@@ -17,23 +17,24 @@
 }
 
 .welcome-icon-box {
-    width: 5rem;
-    height: 5rem;
-    border-radius: 1rem;
-    background-color: #42448A;
+    width: 8.5rem;
+    height: 8.5rem;
+    border-radius: 50%;
+    background-color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 50px rgba(66, 68, 138, 0.3);
+    box-shadow: 0 10px 30px rgba(66, 68, 138, 0.1);
     margin-bottom: 2.5rem;
     margin-left: auto;
     margin-right: auto;
+    padding: 0.75rem;
 }
 
-.welcome-icon-box svg {
-    width: 2.5rem;
-    height: 2.5rem;
-    fill: #ffffff;
+.welcome-icon-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .welcome-title {
@@ -145,20 +146,28 @@
     background-color: rgba(66, 68, 138, 0.1);
 }
 
-.option-emoji {
-    font-size: 1.5rem;
-    width: 2.25rem;
-    text-align: center;
-    font-weight: 700;
+.option-icon-box {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
 }
 
-.option-emoji.male {
-    color: #5BB6F5;
+.option-icon-box.male { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.option-icon-box.female { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+.option-icon-box.lose { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.option-icon-box.maintain { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.option-icon-box.gain { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+.option-btn.selected .option-icon-box {
+    background: #42448A;
+    color: #ffffff;
 }
 
-.option-emoji.female {
-    color: #FCAF79;
-}
 
 .option-text {
     flex: 1;
@@ -566,40 +575,45 @@
 }
 
 .stat-card.blue {
-    background-color: rgba(59, 130, 246, 0.1);
-    border-color: rgba(59, 130, 246, 0.2);
+    background-color: #3b82f6;
+    border-color: #2563eb;
+    color: #ffffff !important;
 }
 
 .stat-card.orange {
-    background-color: rgba(249, 115, 22, 0.1);
-    border-color: rgba(249, 115, 22, 0.2);
+    background-color: #f97316;
+    border-color: #ea580c;
+    color: #ffffff !important;
 }
 
 .stat-card.violet {
-    background-color: rgba(139, 92, 246, 0.1);
-    border-color: rgba(66, 68, 138, 0.2);
+    background-color: #8b5cf6;
+    border-color: #7c3aed;
+    color: #ffffff !important;
 }
 
 .stat-label {
-    color: #475569;
+    color: rgba(255, 255, 255, 0.9) !important;
     font-size: 0.75rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 0.25rem;
 }
 
 .stat-value {
-    color: #1E1F35;
-    font-weight: 700;
-    font-size: 1.25rem;
+    color: #ffffff !important;
+    font-weight: 800;
+    font-size: 1.35rem;
     line-height: 1.25;
 }
 
 .stat-sub {
-    color: #334155;
+    color: rgba(255, 255, 255, 0.8) !important;
     font-size: 0.75rem;
     margin-top: 0.25rem;
 }
+
 
 .profile-card {
     background-color: #ffffff;

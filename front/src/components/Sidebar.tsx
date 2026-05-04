@@ -50,7 +50,7 @@ export default function Sidebar() {
             {/* Zona logo — iconita + numele aplicatiei + subtitlul */}
             <div className="sidebar-logo">
                 <div className="logo-icon">
-                    <FontAwesomeIcon icon={faHeartPulse} style={{ width: 20, height: 20 }} />
+                    <img src="/favicon.svg" alt="OmniTrack Logo" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
                 </div>
                 <div className="logo-text">
                     <span className="logo-name">OmniTrack</span>

@@ -42,7 +42,9 @@ const ProfilePage: React.FC = () => {
         <div className="profile-root">
             {/* ── Sidebar ── */}
             <aside className="db-sidebar">
-                <div className="db-logo"></div>
+                <div className="db-logo">
+                    <img src="/favicon.svg" alt="OmniTrack Logo" />
+                </div>
                 <nav className="db-nav">
                     <button className="db-nav-btn" onClick={() => navigate('/dashboard')} title="Dashboard">
                         <FontAwesomeIcon icon={faHouse} />

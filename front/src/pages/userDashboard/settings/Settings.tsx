@@ -115,7 +115,9 @@ const SettingsPage: React.FC = () => {
 
             {/* ── Sidebar ── */}
             <aside className="db-sidebar">
-                <div className="db-logo"></div>
+                <div className="db-logo">
+                    <img src="/favicon.svg" alt="OmniTrack Logo" />
+                </div>
                 <nav className="db-nav">
                     <button className="db-nav-btn" onClick={() => navigate('/dashboard')} title="Home"><FontAwesomeIcon icon={faHouse} /></button>
                     <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Calendar"><FontAwesomeIcon icon={faCalendarDays} /></button>

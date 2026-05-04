@@ -63,12 +63,43 @@
 }
 
 .db-logo {
-    width: 50px;
-    height: 50px;
-    background-image: url("../assets/logo.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    width: 58px;
+    height: 58px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    margin-bottom: 24px;
+    flex-shrink: 0;
+}
+
+.db-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cal-logo {
+    width: 44px;
+    height: 44px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    margin-bottom: 24px;
+    flex-shrink: 0;
+}
+
+.cal-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .db-nav {
