@@ -39,34 +39,34 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({ onBack, onSu
         <div className="recovery-page">
             <button className="back-btn" onClick={onBack} type="button">
                 <span className="back-arrow">←</span>
-                Înapoi
+                Back
             </button>
 
             <div className="recovery-wrapper">
                 <div className="recovery-card">
 
                     <div className="recovery-header">
-                        <h1 className="recovery-title">Recuperare parolă</h1>
-                        <p className="recovery-subtitle">Introdu adresa de email asociată contului tău.</p>
+                        <h1 className="recovery-title">Password recovery</h1>
+                        <p className="recovery-subtitle">Enter the email address associated with your account.</p>
                     </div>
 
                     <div className="info-box">
                         <InfoIcon />
                         <p className="info-box-text">
-                            Îți vom trimite un <strong>cod de verificare</strong> din 6 cifre pe adresa ta de email.
-                            Codul este valabil <strong>10 minute</strong> și poate fi folosit o singură dată.
+                            We will send a 6-digit <strong>verification code</strong> to your email address.
+                            The code is valid for <strong>10 minutes</strong> and can be used only once.
                         </p>
                     </div>
 
                     <form onSubmit={handleSubmit} autoComplete="off">
                         <div className="form-group">
-                            <label className="form-label" htmlFor="recovery-email">Adresă email</label>
+                            <label className="form-label" htmlFor="recovery-email">Email address</label>
                             <div className="input-wrapper">
                                 <input
                                     id="recovery-email"
                                     className="form-input"
                                     type="email"
-                                    placeholder="exemplu@gmail.com"
+                                    placeholder="example@gmail.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     autoComplete="off"
@@ -76,14 +76,14 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({ onBack, onSu
                         </div>
 
                         <button className="submit-btn" type="submit" disabled={!email.trim()}>
-                            Trimite cod de verificare
+                            Send verification code
                         </button>
                     </form>
 
                     <div className="form-footer">
-                        <span>Ți-ai amintit parola?</span>
+                        <span>Remembered your password?</span>
                         <button className="footer-link" onClick={onBack} type="button">
-                            Autentifică-te
+                            Log in
                         </button>
                     </div>
 
@@ -106,7 +106,7 @@ interface VerifyCodeProps {
 }
 
 export const VerifyCodePage: React.FC<VerifyCodeProps> = ({
-    email = "exemplu@gmail.com",
+    email = "example@gmail.com",
     onBack,
     onSubmit,
     onResend,
@@ -178,16 +178,16 @@ export const VerifyCodePage: React.FC<VerifyCodeProps> = ({
         <div className="recovery-page">
             <button className="back-btn" onClick={onBack} type="button">
                 <span className="back-arrow">←</span>
-                Înapoii
+                Back
             </button>
 
             <div className="recovery-wrapper">
                 <div className="recovery-card">
 
                     <div className="recovery-header">
-                        <h1 className="recovery-title">Verifică email-ul</h1>
+                        <h1 className="recovery-title">Verify email</h1>
                         <p className="recovery-subtitle">
-                            Am trimis un cod de 6 cifre la adresa:
+                            We sent a 6-digit code to the address:
                         </p>
                         <div className="email-pill">
                             <MailBadgeIcon />
@@ -197,7 +197,7 @@ export const VerifyCodePage: React.FC<VerifyCodeProps> = ({
 
                     <form onSubmit={handleSubmit} autoComplete="off">
                         <div className="form-group">
-                            <label className="form-label">Cod de verificare</label>
+                            <label className="form-label">Verification code</label>
                             <div className="otp-group" onPaste={handlePaste}>
                                 {digits.map((d, i) => (
                                     <input
@@ -215,22 +215,22 @@ export const VerifyCodePage: React.FC<VerifyCodeProps> = ({
                                 ))}
                             </div>
                             {hasError && (
-                                <p className="input-error-msg">⚠ Cod incorect. Înceacă din nou.</p>
+                                <p className="input-error-msg">⚠ Incorrect code. Try again.</p>
                             )}
                         </div>
 
                         <button className="submit-btn" type="submit" disabled={!isComplete}>
-                            Verifică codul
+                            Verify code
                         </button>
                     </form>
 
                     <div className="resend-row">
-                        <span>Nu ai primit codul?</span>
+                        <span>Didn't receive the code?</span>
                         {timer > 0 ? (
-                            <span className="resend-timer">Retrimite în {formatTimer(timer)}</span>
+                            <span className="resend-timer">Resend in {formatTimer(timer)}</span>
                         ) : (
                             <button className="resend-btn" onClick={handleResend} type="button">
-                                Retrimite cod
+                                Resend code
                             </button>
                         )}
                     </div>

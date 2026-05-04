@@ -12,10 +12,10 @@ import './Header.css';
 
 // Map intre caile URL si titlurile corespunzatoare afisate in header
 const routeTitles: Record<string, { title: string; subtitle: string }> = {
-    '/admin': { title: 'Panou Principal', subtitle: 'Bine ai venit înapoi, Administrator' },
-    '/utilizatori': { title: 'Gestionare Utilizatori', subtitle: 'Administrează conturile utilizatorilor' },
-    '/alimente': { title: 'Gestionare Alimente', subtitle: 'Administrează baza de date cu alimente' },
-    '/exercitii': { title: 'Gestionare Exerciții', subtitle: 'Administrează baza de date cu exerciții' },
+    '/admin': { title: 'Main Panel', subtitle: 'Welcome back, Administrator' },
+    '/users': { title: 'User Management', subtitle: 'Manage user accounts' },
+    '/food': { title: 'Food Management', subtitle: 'Manage the food database' },
+    '/exercises': { title: 'Exercises Management', subtitle: 'Manage the exercises database' },
 };
 
 export default function Header() {
@@ -25,7 +25,7 @@ export default function Header() {
     const meta = routeTitles[pathname] ?? { title: 'Admin Panel', subtitle: '' };
 
     // Data curenta formatata in romana (ex: "Vineri, 20 Martie 2026")
-    const today = new Date().toLocaleDateString('ro-RO', {
+    const today = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -57,7 +57,7 @@ export default function Header() {
                 <button
                     className="header-logout-btn"
                     onClick={handleLogout}
-                    title="Deconectare din panoul admin"
+                    title="Logout from admin panel"
                 >
                     <FontAwesomeIcon icon={faRightFromBracket} />
                     <span>Logout</span>

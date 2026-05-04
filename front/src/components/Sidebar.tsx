@@ -23,22 +23,22 @@ import './Sidebar.css';
 const navItems = [
     {
         to: '/admin',
-        label: 'Panou Principal',
+        label: 'Main Panel',
         icon: faTableCells,
     },
     {
-        to: '/utilizatori',
-        label: 'Utilizatori',
+        to: '/users',
+        label: 'Users',
         icon: faUsers,
     },
     {
-        to: '/alimente',
-        label: 'Gestionare Alimente',
+        to: '/food',
+        label: 'Food Management',
         icon: faBasketShopping,
     },
     {
-        to: '/exercitii',
-        label: 'Gestionare Exerciții',
+        to: '/exercises',
+        label: 'Exercises Management',
         icon: faDumbbell,
     },
 ];
@@ -53,14 +53,14 @@ export default function Sidebar() {
                     <FontAwesomeIcon icon={faHeartPulse} style={{ width: 20, height: 20 }} />
                 </div>
                 <div className="logo-text">
-                    <span className="logo-name">SănătateApp</span>
-                    <span className="logo-sub">Panou Admin</span>
+                    <span className="logo-name">OmniTrack</span>
+                    <span className="logo-sub">Admin Panel</span>
                 </div>
             </div>
 
             {/* Navigarea principala — se genereaza din lista navItems */}
             <nav className="sidebar-nav">
-                <span className="nav-section-label">Navigare</span>
+                <span className="nav-section-label">Navigation</span>
                 {navItems.map((item) => (
                     <NavLink
                         key={item.to}

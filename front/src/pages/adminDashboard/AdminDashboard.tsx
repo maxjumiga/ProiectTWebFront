@@ -70,31 +70,31 @@ export default function AdminDashboard() {
             <div className="stats-grid">
                 <StatsCard
                     icon={<FontAwesomeIcon icon={faUsers} style={{ width: 22, height: 22 }} />}
-                    label="Total Utilizatori"
+                    label="Total Users"
                     value={stats.total}
                     color="blue"
-                    trend={`${stats.admins} administratori · ${stats.total - stats.admins} utilizatori`}
+                    trend={`${stats.admins} administrators · ${stats.total - stats.admins} users`}
                 />
                 <StatsCard
                     icon={<FontAwesomeIcon icon={faArrowTrendUp} style={{ width: 22, height: 22 }} />}
-                    label="Această Săptămână"
+                    label="This Week"
                     value={stats.thisWeek}
                     color="green"
-                    trend="Utilizatori înregistrați recent"
+                    trend="Recently registered users"
                 />
                 <StatsCard
                     icon={<FontAwesomeIcon icon={faCalendarDays} style={{ width: 22, height: 22 }} />}
-                    label="Această Lună"
+                    label="This Month"
                     value={stats.thisMonth}
                     color="amber"
-                    trend="Utilizatori înregistrați luna curentă"
+                    trend="Users registered this month"
                 />
                 <StatsCard
                     icon={<FontAwesomeIcon icon={faCircleCheck} style={{ width: 22, height: 22 }} />}
-                    label="Utilizatori Activi"
+                    label="Active Users"
                     value={stats.activi}
                     color="purple"
-                    trend={`${stats.inactivi} inactivi`}
+                    trend={`${stats.inactivi} inactive`}
                 />
             </div>
 
@@ -102,12 +102,12 @@ export default function AdminDashboard() {
             <div className="dashboard-section">
                 <div className="section-header">
                     <div>
-                        <h2 className="section-title">Utilizatori Recenți</h2>
-                        <p className="section-sub">Ultimii 5 utilizatori înregistrați</p>
+                        <h2 className="section-title">Recent Users</h2>
+                        <p className="section-sub">Last 5 registered users</p>
                     </div>
                     {/* Link catre pagina completa de utilizatori */}
-                    <Link to="/utilizatori" className="btn-link">
-                        Vezi toți
+                    <Link to="/users" className="btn-link">
+                        View all
                         <FontAwesomeIcon icon={faArrowRight} style={{ width: 14, height: 14 }} />
                     </Link>
                 </div>
@@ -116,10 +116,10 @@ export default function AdminDashboard() {
                     <table className="data-table">
                         <thead>
                             <tr>
-                                <th>Utilizator</th>
-                                <th>Rol</th>
+                                <th>User</th>
+                                <th>Role</th>
                                 <th>Status</th>
-                                <th>Data înregistrării</th>
+                                <th>Registration Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -136,11 +136,11 @@ export default function AdminDashboard() {
                                         </div>
                                     </td>
                                     {/* Badge colorat pentru rol */}
-                                    <td><span className={`badge ${u.role}`}>{u.role === 'admin' ? 'Admin' : 'Utilizator'}</span></td>
+                                    <td><span className={`badge ${u.role}`}>{u.role === 'admin' ? 'Admin' : 'User'}</span></td>
                                     {/* Badge colorat pentru status */}
-                                    <td><span className={`badge ${u.status}`}>{u.status === 'activ' ? 'Activ' : 'Inactiv'}</span></td>
-                                    {/* Data formatata in romana */}
-                                    <td className="date-cell">{new Date(u.joinedAt).toLocaleDateString('ro-RO')}</td>
+                                    <td><span className={`badge ${u.status}`}>{u.status === 'activ' ? 'Active' : 'Inactive'}</span></td>
+                                    {/* Data formatata in engleza */}
+                                    <td className="date-cell">{new Date(u.joinedAt).toLocaleDateString('en-US')}</td>
                                 </tr>
                             ))}
                         </tbody>

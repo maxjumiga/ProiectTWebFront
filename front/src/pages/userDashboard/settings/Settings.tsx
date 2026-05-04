@@ -102,12 +102,12 @@ const SettingsPage: React.FC = () => {
 
     // ── Nav items ──
     const navItems: { id: NavSection; label: string; icon: React.ReactNode }[] = [
-        { id: "notificari", label: "Notificări", icon: <FontAwesomeIcon icon={faBell} /> },
-        { id: "aspect", label: "Aspect & Temă", icon: <FontAwesomeIcon icon={faPalette} /> },
-        { id: "limba", label: "Limbă & Regiune", icon: <FontAwesomeIcon icon={faGlobe} /> },
-        { id: "securitate", label: "Securitate", icon: <FontAwesomeIcon icon={faShield} /> },
-        { id: "date", label: "Date & Confidenț.", icon: <FontAwesomeIcon icon={faDatabase} /> },
-        { id: "cont", label: "Cont", icon: <FontAwesomeIcon icon={faUser} /> },
+        { id: "notificari", label: "Notifications", icon: <FontAwesomeIcon icon={faBell} /> },
+        { id: "aspect", label: "Appearance & Theme", icon: <FontAwesomeIcon icon={faPalette} /> },
+        { id: "limba", label: "Language & Region", icon: <FontAwesomeIcon icon={faGlobe} /> },
+        { id: "securitate", label: "Security", icon: <FontAwesomeIcon icon={faShield} /> },
+        { id: "date", label: "Data & Privacy", icon: <FontAwesomeIcon icon={faDatabase} /> },
+        { id: "cont", label: "Account", icon: <FontAwesomeIcon icon={faUser} /> },
     ];
 
     return (
@@ -117,10 +117,10 @@ const SettingsPage: React.FC = () => {
             <aside className="db-sidebar">
                 <div className="db-logo"></div>
                 <nav className="db-nav">
-                    <button className="db-nav-btn" onClick={() => navigate('/dashboard')} title="Acasă"><FontAwesomeIcon icon={faHouse} /></button>
-                    <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Statistici"><FontAwesomeIcon icon={faCalendarDays} /></button>
-                    <button className="db-nav-btn" onClick={() => navigate('/profile')} title="Profil"><FontAwesomeIcon icon={faUser} /></button>
-                    <button className="db-nav-btn active" onClick={() => navigate('/settings')} title="Setări"><FontAwesomeIcon icon={faUserGear} /></button>
+                    <button className="db-nav-btn" onClick={() => navigate('/dashboard')} title="Home"><FontAwesomeIcon icon={faHouse} /></button>
+                    <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Calendar"><FontAwesomeIcon icon={faCalendarDays} /></button>
+                    <button className="db-nav-btn" onClick={() => navigate('/profile')} title="Profile"><FontAwesomeIcon icon={faUser} /></button>
+                    <button className="db-nav-btn active" onClick={() => navigate('/settings')} title="Settings"><FontAwesomeIcon icon={faUserGear} /></button>
                 </nav>
                 <div className="db-sidebar-bottom">
                     <button className="db-avatar" onClick={() => navigate('/profile')}>{initials}</button>
@@ -129,7 +129,7 @@ const SettingsPage: React.FC = () => {
 
             {/* ── Settings nav panel ── */}
             <nav className="settings-nav-panel">
-                <div className="settings-nav-title">Setări</div>
+                <div className="settings-nav-title">Settings</div>
                 {navItems.map(item => (
                     <button
                         key={item.id}
@@ -141,14 +141,14 @@ const SettingsPage: React.FC = () => {
                     </button>
                 ))}
                 <div className="snav-spacer" />
-                <div className="settings-nav-title">Sistem</div>
+                <div className="settings-nav-title">System</div>
                 <button className="snav-btn danger" onClick={() => {
                     localStorage.removeItem('user');
                     sessionStorage.removeItem('isAuthenticated');
                     navigate('/login');
                 }}>
                     <FontAwesomeIcon icon={faRightFromBracket} />
-                    Deconectare
+                    Sign out
                 </button>
             </nav>
 
@@ -157,33 +157,33 @@ const SettingsPage: React.FC = () => {
                 <div className="settings-header">
                     <div>
                         <h1>
-                            {navItems.find(n => n.id === activeNav)?.label ?? "Setări"}
+                            {navItems.find(n => n.id === activeNav)?.label ?? "Settings"}
                         </h1>
-                        <p>GESTIONEAZĂ PREFERINȚELE TALE</p>
+                        <p>MANAGE YOUR PREFERENCES</p>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                         <span className={`saved-indicator${saved ? " visible" : ""}`}>
-                            <FontAwesomeIcon icon={faCheck} /> Salvat
+                            <FontAwesomeIcon icon={faCheck} /> Saved
                         </span>
                         <button className="save-btn" onClick={handleSave}>
                             <FontAwesomeIcon icon={faFloppyDisk} />
-                            Salvează modificările
+                            Save changes
                         </button>
                     </div>
                 </div>
 
-                {/* ══ NOTIFICĂRI ══ */}
+                {/* ══ NOTIFICATIONS ══ */}
                 {activeNav === "notificari" && (
                     <>
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faBell} />Canale de notificare</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faBell} />Notification channels</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico blue"><FontAwesomeIcon icon={faEnvelope} /></div>
                                         <div>
-                                            <div className="s-lbl">Notificări pe email</div>
-                                            <div className="s-sub">Primești rezumate și alerte pe adresa ta de Gmail</div>
+                                            <div className="s-lbl">Email notifications</div>
+                                            <div className="s-sub">Receive summaries and alerts on your Gmail</div>
                                         </div>
                                     </div>
                                     <Toggle checked={notifEmail} onChange={() => setNotifEmail(v => !v)} />
@@ -192,8 +192,8 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico purple"><FontAwesomeIcon icon={faBolt} /></div>
                                         <div>
-                                            <div className="s-lbl">Notificări push</div>
-                                            <div className="s-sub">Alerte în timp real direct în browser</div>
+                                            <div className="s-lbl">Push notifications</div>
+                                            <div className="s-sub">Real-time alerts directly in browser</div>
                                         </div>
                                     </div>
                                     <Toggle checked={notifPush} onChange={() => setNotifPush(v => !v)} />
@@ -202,14 +202,14 @@ const SettingsPage: React.FC = () => {
                         </div>
 
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faBullseye} />Ce vrei să primești</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faBullseye} />What you want to receive</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico orange"><FontAwesomeIcon icon={faCalendarDays} /></div>
                                         <div>
-                                            <div className="s-lbl">Raport săptămânal</div>
-                                            <div className="s-sub">Rezumat cu progresul tău din ultima săptămână</div>
+                                            <div className="s-lbl">Weekly report</div>
+                                            <div className="s-sub">Summary of your progress from the last week</div>
                                         </div>
                                     </div>
                                     <Toggle checked={notifReport} onChange={() => setNotifReport(v => !v)} />
@@ -218,8 +218,8 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico green"><FontAwesomeIcon icon={faBell} /></div>
                                         <div>
-                                            <div className="s-lbl">Memento programări</div>
-                                            <div className="s-sub">Reamintire cu 24h înainte de o programare</div>
+                                            <div className="s-lbl">Appointment reminder</div>
+                                            <div className="s-sub">Reminder 24h before an appointment</div>
                                         </div>
                                     </div>
                                     <Toggle checked={notifAppt} onChange={() => setNotifAppt(v => !v)} />
@@ -228,8 +228,8 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico gray"><FontAwesomeIcon icon={faBolt} /></div>
                                         <div>
-                                            <div className="s-lbl">Sfaturi de sănătate</div>
-                                            <div className="s-sub">Tips zilnice personalizate pe baza profilului tău</div>
+                                            <div className="s-lbl">Health tips</div>
+                                            <div className="s-sub">Daily personalized tips based on your profile</div>
                                         </div>
                                     </div>
                                     <Toggle checked={notifTips} onChange={() => setNotifTips(v => !v)} />
@@ -238,21 +238,21 @@ const SettingsPage: React.FC = () => {
                         </div>
 
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faEnvelope} />Frecvență email</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faEnvelope} />Email frequency</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico blue"><FontAwesomeIcon icon={faEnvelope} /></div>
                                         <div>
-                                            <div className="s-lbl">Frecvență rezumate</div>
-                                            <div className="s-sub">Cât de des vrei să primești email-uri de rezumat</div>
+                                            <div className="s-lbl">Summary frequency</div>
+                                            <div className="s-sub">How often you want to receive summary emails</div>
                                         </div>
                                     </div>
                                     <select className="s-select">
                                         <option>Zilnic</option>
-                                        <option selected>Săptămânal</option>
+                                        <option selected>Weekly</option>
                                         <option>Lunar</option>
-                                        <option>Niciodată</option>
+                                        <option>Never</option>
                                     </select>
                                 </div>
                             </div>
@@ -264,14 +264,14 @@ const SettingsPage: React.FC = () => {
                 {activeNav === "aspect" && (
                     <>
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faMoon} />Temă</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faMoon} />Theme</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico gray">{darkMode ? <FontAwesomeIcon icon={faMoon} /> : <FontAwesomeIcon icon={faSun} />}</div>
                                         <div>
-                                            <div className="s-lbl">Mod întunecat</div>
-                                            <div className="s-sub">Activează tema dark pentru confort vizual nocturn</div>
+                                            <div className="s-lbl">Dark mode</div>
+                                            <div className="s-sub">Enable dark theme for night visual comfort</div>
                                         </div>
                                     </div>
                                     <Toggle checked={darkMode} onChange={() => setDarkMode(v => !v)} />
@@ -280,8 +280,8 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico purple"><FontAwesomeIcon icon={faBolt} /></div>
                                         <div>
-                                            <div className="s-lbl">Animații interfață</div>
-                                            <div className="s-sub">Tranziții și efecte animate la navigare</div>
+                                            <div className="s-lbl">Interface animations</div>
+                                            <div className="s-sub">Transitions and animated effects during navigation</div>
                                         </div>
                                     </div>
                                     <Toggle checked={animations} onChange={() => setAnimations(v => !v)} />
@@ -290,8 +290,8 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico blue"><FontAwesomeIcon icon={faGear} /></div>
                                         <div>
-                                            <div className="s-lbl">Mod compact</div>
-                                            <div className="s-sub">Reduce spațiile pentru mai mult conținut vizibil</div>
+                                            <div className="s-lbl">Compact mode</div>
+                                            <div className="s-sub">Reduces spacing for more visible content</div>
                                         </div>
                                     </div>
                                     <Toggle checked={compactMode} onChange={() => setCompactMode(v => !v)} />
@@ -300,7 +300,7 @@ const SettingsPage: React.FC = () => {
                         </div>
 
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faPalette} />Culoare accent</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faPalette} />Accent color</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
@@ -308,8 +308,8 @@ const SettingsPage: React.FC = () => {
                                             <FontAwesomeIcon icon={faPalette} />
                                         </div>
                                         <div>
-                                            <div className="s-lbl">Culoarea principală</div>
-                                            <div className="s-sub">Afectează butoanele, link-urile și elementele active</div>
+                                            <div className="s-lbl">Primary color</div>
+                                            <div className="s-sub">Affects buttons, links and active elements</div>
                                         </div>
                                     </div>
                                     <div className="accent-colors">
@@ -327,14 +327,14 @@ const SettingsPage: React.FC = () => {
                         </div>
 
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faTextHeight} />Dimensiune text</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faTextHeight} />Text size</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico orange"><FontAwesomeIcon icon={faFont} /></div>
                                         <div>
-                                            <div className="s-lbl">Mărime font</div>
-                                            <div className="s-sub">Ajustează dimensiunea textului în interfață</div>
+                                            <div className="s-lbl">Font size</div>
+                                            <div className="s-sub">Adjust interface text size</div>
                                         </div>
                                     </div>
                                     <div className="s-slider-wrap">
@@ -352,18 +352,18 @@ const SettingsPage: React.FC = () => {
                     </>
                 )}
 
-                {/* ══ LIMBĂ ══ */}
+                {/* ══ LANGUAGE ══ */}
                 {activeNav === "limba" && (
                     <>
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faGlobe} />Limbă & afișare</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faGlobe} />Language & display</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico blue"><FontAwesomeIcon icon={faLanguage} /></div>
                                         <div>
-                                            <div className="s-lbl">Limba aplicației</div>
-                                            <div className="s-sub">Limba în care este afișată interfața</div>
+                                            <div className="s-lbl">App language</div>
+                                            <div className="s-sub">Interface display language</div>
                                         </div>
                                     </div>
                                     <select className="s-select" value={language} onChange={e => setLanguage(e.target.value)}>
@@ -377,14 +377,14 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico purple"><FontAwesomeIcon icon={faClock} /></div>
                                         <div>
-                                            <div className="s-lbl">Fus orar</div>
-                                            <div className="s-sub">Fusul orar folosit pentru date și ore</div>
+                                            <div className="s-lbl">Timezone</div>
+                                            <div className="s-sub">Timezone used for dates and times</div>
                                         </div>
                                     </div>
                                     <select className="s-select" value={timezone} onChange={e => setTimezone(e.target.value)}>
-                                        <option value="Europe/Bucharest">Europa/București</option>
-                                        <option value="Europe/London">Europa/Londra</option>
-                                        <option value="Europe/Paris">Europa/Paris</option>
+                                        <option value="Europe/Bucharest">Europe/Bucharest</option>
+                                        <option value="Europe/London">Europe/London</option>
+                                        <option value="Europe/Paris">Europe/Paris</option>
                                         <option value="America/New_York">America/New York</option>
                                     </select>
                                 </div>
@@ -392,14 +392,14 @@ const SettingsPage: React.FC = () => {
                         </div>
 
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faBullseye} />Unități & format</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faBullseye} />Units & format</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico green"><FontAwesomeIcon icon={faBullseye} /></div>
                                         <div>
-                                            <div className="s-lbl">Sistem de unități</div>
-                                            <div className="s-sub">Metric (kg, cm) sau Imperial (lbs, ft)</div>
+                                            <div className="s-lbl">Units system</div>
+                                            <div className="s-sub">Metric (kg, cm) or Imperial (lbs, ft)</div>
                                         </div>
                                     </div>
                                     <select className="s-select" value={units} onChange={e => setUnits(e.target.value)}>
@@ -411,8 +411,8 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico orange"><FontAwesomeIcon icon={faGlobe} /></div>
                                         <div>
-                                            <div className="s-lbl">Format dată</div>
-                                            <div className="s-sub">Modul în care sunt afișate datele calendaristice</div>
+                                            <div className="s-lbl">Date format</div>
+                                            <div className="s-sub">The way calendar dates are displayed</div>
                                         </div>
                                     </div>
                                     <select className="s-select" value={dateFormat} onChange={e => setDateFormat(e.target.value)}>
@@ -430,14 +430,14 @@ const SettingsPage: React.FC = () => {
                 {activeNav === "securitate" && (
                     <>
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faShield} />Autentificare</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faShield} />Authentication</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className={`s-ico ${twoFA ? "green" : "red"}`}><FontAwesomeIcon icon={faShield} /></div>
                                         <div>
-                                            <div className="s-lbl">Autentificare în 2 pași (2FA)</div>
-                                            <div className="s-sub">{twoFA ? "Activat — contul tău este protejat suplimentar" : "Dezactivat — recomandăm să activezi 2FA"}</div>
+                                            <div className="s-lbl">Two-factor authentication (2FA)</div>
+                                            <div className="s-sub">{twoFA ? "Enabled — your account is extra protected" : "Disabled — we recommend enabling 2FA"}</div>
                                         </div>
                                     </div>
                                     <Toggle checked={twoFA} onChange={() => setTwoFA(v => !v)} />
@@ -446,8 +446,8 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico blue"><FontAwesomeIcon icon={faBell} /></div>
                                         <div>
-                                            <div className="s-lbl">Alerte de autentificare</div>
-                                            <div className="s-sub">Primești email la fiecare logare nouă detectată</div>
+                                            <div className="s-lbl">Login alerts</div>
+                                            <div className="s-sub">Receive email for every new detected login</div>
                                         </div>
                                     </div>
                                     <Toggle checked={loginAlerts} onChange={() => setLoginAlerts(v => !v)} />
@@ -456,60 +456,60 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico orange"><FontAwesomeIcon icon={faLock} /></div>
                                         <div>
-                                            <div className="s-lbl">Timeout sesiune</div>
-                                            <div className="s-sub">Deconectare automată după inactivitate</div>
+                                            <div className="s-lbl">Session timeout</div>
+                                            <div className="s-sub">Automatic sign out after inactivity</div>
                                         </div>
                                     </div>
                                     <select className="s-select" value={sessionTimeout} onChange={e => setSessionTimeout(e.target.value)}>
-                                        <option value="15">15 minute</option>
-                                        <option value="30">30 minute</option>
-                                        <option value="60">1 oră</option>
-                                        <option value="0">Niciodată</option>
+                                        <option value="15">15 minutes</option>
+                                        <option value="30">30 minutes</option>
+                                        <option value="60">1 hour</option>
+                                        <option value="0">Never</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faLock} />Parolă & acces</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faLock} />Password & access</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico purple"><FontAwesomeIcon icon={faLock} /></div>
                                         <div>
-                                            <div className="s-lbl">Schimbă parola</div>
-                                            <div className="s-sub">Ultima schimbare: acum 3 luni</div>
+                                            <div className="s-lbl">Change password</div>
+                                            <div className="s-sub">Last change: 3 months ago</div>
                                         </div>
                                     </div>
-                                    <button className="s-action-btn"><FontAwesomeIcon icon={faLock} />Schimbă</button>
+                                    <button className="s-action-btn"><FontAwesomeIcon icon={faLock} />Change</button>
                                 </div>
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico gray"><FontAwesomeIcon icon={faDatabase} /></div>
                                         <div>
-                                            <div className="s-lbl">Sesiuni active</div>
-                                            <div className="s-sub">2 dispozitive conectate în prezent</div>
+                                            <div className="s-lbl">Active sessions</div>
+                                            <div className="s-sub">2 devices currently connected</div>
                                         </div>
                                     </div>
-                                    <button className="s-action-btn danger"><FontAwesomeIcon icon={faRightFromBracket} />Deconectează toate</button>
+                                    <button className="s-action-btn danger"><FontAwesomeIcon icon={faRightFromBracket} />Sign out all</button>
                                 </div>
                             </div>
                         </div>
                     </>
                 )}
 
-                {/* ══ DATE & CONFIDENȚIALITATE ══ */}
+                {/* ══ DATA & PRIVACY ══ */}
                 {activeNav === "date" && (
                     <>
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faDatabase} />Stocare & backup</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faDatabase} />Storage & backup</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico green"><FontAwesomeIcon icon={faDatabase} /></div>
                                         <div>
-                                            <div className="s-lbl">Backup automat</div>
-                                            <div className="s-sub">Datele tale sunt salvate automat în cloud zilnic</div>
+                                            <div className="s-lbl">Automatic backup</div>
+                                            <div className="s-sub">Your data is automatically saved to the cloud daily</div>
                                         </div>
                                     </div>
                                     <Toggle checked={autoBackup} onChange={() => setAutoBackup(v => !v)} />
@@ -518,34 +518,34 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico blue"><FontAwesomeIcon icon={faDownload} /></div>
                                         <div>
-                                            <div className="s-lbl">Exportă datele mele</div>
-                                            <div className="s-sub">Descarcă toate datele tale în format JSON sau CSV</div>
+                                            <div className="s-lbl">Export my data</div>
+                                            <div className="s-sub">Download all your data in JSON or CSV format</div>
                                         </div>
                                     </div>
-                                    <button className="s-action-btn"><FontAwesomeIcon icon={faDownload} />Exportă</button>
+                                    <button className="s-action-btn"><FontAwesomeIcon icon={faDownload} />Export</button>
                                 </div>
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico orange"><FontAwesomeIcon icon={faArrowsRotate} /></div>
                                         <div>
-                                            <div className="s-lbl">Ultimul backup</div>
-                                            <div className="s-sub">Astăzi, 06:30 — 12.4 MB</div>
+                                            <div className="s-lbl">Last backup</div>
+                                            <div className="s-sub">Today, 06:30 — 12.4 MB</div>
                                         </div>
                                     </div>
-                                    <button className="s-action-btn"><FontAwesomeIcon icon={faArrowsRotate} />Backup acum</button>
+                                    <button className="s-action-btn"><FontAwesomeIcon icon={faArrowsRotate} />Backup now</button>
                                 </div>
                             </div>
                         </div>
 
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faShield} />Confidențialitate</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faShield} />Privacy</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico purple"><FontAwesomeIcon icon={faChartLine} /></div>
                                         <div>
-                                            <div className="s-lbl">Analize de utilizare</div>
-                                            <div className="s-sub">Ajută la îmbunătățirea aplicației prin date anonime</div>
+                                            <div className="s-lbl">Usage analytics</div>
+                                            <div className="s-sub">Help improve the app through anonymous data</div>
                                         </div>
                                     </div>
                                     <Toggle checked={analytics} onChange={() => setAnalytics(v => !v)} />
@@ -554,8 +554,8 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico gray"><FontAwesomeIcon icon={faUser} /></div>
                                         <div>
-                                            <div className="s-lbl">Partajare date de sănătate</div>
-                                            <div className="s-sub">Permite medicilor să acceseze datele tale cu acordul tău</div>
+                                            <div className="s-lbl">Share health data</div>
+                                            <div className="s-sub">Allow doctors to access your data with your consent</div>
                                         </div>
                                     </div>
                                     <Toggle checked={shareData} onChange={() => setShareData(v => !v)} />
@@ -569,24 +569,24 @@ const SettingsPage: React.FC = () => {
                 {activeNav === "cont" && (
                     <>
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faUser} />Informații cont</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faUser} />Account information</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico blue"><FontAwesomeIcon icon={faUser} /></div>
                                         <div>
-                                            <div className="s-lbl">Nume utilizator</div>
-                                            <div className="s-sub">Vizibil în profilul tău public</div>
+                                            <div className="s-lbl">Username</div>
+                                            <div className="s-sub">Visible in your public profile</div>
                                         </div>
                                     </div>
-                                    <input className="s-input" defaultValue={username} placeholder="Nume utilizator" />
+                                    <input className="s-input" defaultValue={username} placeholder="Username" />
                                 </div>
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico purple"><FontAwesomeIcon icon={faEnvelope} /></div>
                                         <div>
-                                            <div className="s-lbl">Adresă email</div>
-                                            <div className="s-sub">Folosită pentru notificări și autentificare</div>
+                                            <div className="s-lbl">Email address</div>
+                                            <div className="s-sub">Used for notifications and authentication</div>
                                         </div>
                                     </div>
                                     <input className="s-input" defaultValue="ion.popescu@gmail.com" placeholder="Email" />
@@ -595,14 +595,14 @@ const SettingsPage: React.FC = () => {
                         </div>
 
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faBolt} />Abonament</div>
+                            <div className="section-title"><FontAwesomeIcon icon={faBolt} />Subscription</div>
                             <div className="s-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico green"><FontAwesomeIcon icon={faBolt} /></div>
                                         <div>
-                                            <div className="s-lbl">Plan curent: Free</div>
-                                            <div className="s-sub">Ai acces la funcționalitățile de bază ale aplicației</div>
+                                            <div className="s-lbl">Current plan: Free</div>
+                                            <div className="s-sub">You have access to basic app features</div>
                                         </div>
                                     </div>
                                     <button className="s-action-btn"><FontAwesomeIcon icon={faBolt} />Upgrade Pro</button>
@@ -611,8 +611,8 @@ const SettingsPage: React.FC = () => {
                                     <div className="s-row-left">
                                         <div className="s-ico gray"><FontAwesomeIcon icon={faGear} /></div>
                                         <div>
-                                            <div className="s-lbl">Versiune aplicație</div>
-                                            <div className="s-sub">Verifică dacă există actualizări disponibile</div>
+                                            <div className="s-lbl">App version</div>
+                                            <div className="s-sub">Check if there are updates available</div>
                                         </div>
                                     </div>
                                     <span className="version-badge">v1.0.0</span>
@@ -621,27 +621,27 @@ const SettingsPage: React.FC = () => {
                         </div>
 
                         <div className="settings-section">
-                            <div className="section-title" style={{ color: "var(--error)" }}><FontAwesomeIcon icon={faTrash} />Zonă periculoasă</div>
+                            <div className="section-title" style={{ color: "var(--error)" }}><FontAwesomeIcon icon={faTrash} />Danger zone</div>
                             <div className="danger-card">
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico orange"><FontAwesomeIcon icon={faArrowsRotate} /></div>
                                         <div>
-                                            <div className="s-lbl">Resetează datele</div>
-                                            <div className="s-sub">Șterge tot istoricul de calorii și apă. Ireversibil.</div>
+                                            <div className="s-lbl">Reset data</div>
+                                            <div className="s-sub">Deletes all calorie and water history. Irreversible.</div>
                                         </div>
                                     </div>
-                                    <button className="s-action-btn danger"><FontAwesomeIcon icon={faArrowsRotate} />Resetează</button>
+                                    <button className="s-action-btn danger"><FontAwesomeIcon icon={faArrowsRotate} />Reset</button>
                                 </div>
                                 <div className="s-row">
                                     <div className="s-row-left">
                                         <div className="s-ico red"><FontAwesomeIcon icon={faTrash} /></div>
                                         <div>
-                                            <div className="s-lbl">Șterge contul</div>
-                                            <div className="s-sub">Elimină permanent contul și toate datele asociate</div>
+                                            <div className="s-lbl">Delete account</div>
+                                            <div className="s-sub">Permanently removes account and all associated data</div>
                                         </div>
                                     </div>
-                                    <button className="s-action-btn danger"><FontAwesomeIcon icon={faTrash} />Șterge cont</button>
+                                    <button className="s-action-btn danger"><FontAwesomeIcon icon={faTrash} />Delete account</button>
                                 </div>
                             </div>
                         </div>
@@ -652,15 +652,15 @@ const SettingsPage: React.FC = () => {
             {/* ── Right dark panel ── */}
             <aside className="settings-right">
                 <div>
-                    <div className="sr-title">Jurnal activitate</div>
-                    <div className="sr-sub">Ultimele modificări</div>
+                    <div className="sr-title">Activity log</div>
+                    <div className="sr-sub">Last changes</div>
                     <div className="activity-log">
                         {[
-                            { color: "#10b981", text: "Notificări push activate", time: "acum" },
-                            { color: "#6366f1", text: "Limbă schimbată în Română", time: "2h" },
-                            { color: "#f97316", text: "Parolă actualizată cu succes", time: "3 zile" },
-                            { color: "#a855f7", text: "2FA activat pe cont", time: "5 zile" },
-                            { color: "#38bdf8", text: "Backup automat configurat", time: "1 săpt." },
+                            { color: "#10b981", text: "Push notifications enabled", time: "now" },
+                            { color: "#6366f1", text: "Language changed to English", time: "2h" },
+                            { color: "#f97316", text: "Password updated successfully", time: "3 days" },
+                            { color: "#a855f7", text: "2FA enabled on account", time: "5 days" },
+                            { color: "#38bdf8", text: "Automatic backup configured", time: "1 week" },
                         ].map((item, i) => (
                             <div className="log-item" key={i}>
                                 <div className="log-dot" style={{ background: item.color }} />
@@ -674,10 +674,10 @@ const SettingsPage: React.FC = () => {
                 <hr className="sr-divider" />
 
                 <div>
-                    <div className="sr-title">Stocare utilizată</div>
+                    <div className="sr-title">Used storage</div>
                     <div className="storage-bar-wrap">
                         <div className="storage-bar-info">
-                            <span className="storage-lbl">Total folosit</span>
+                            <span className="storage-lbl">Total used</span>
                             <span className="storage-val">47 / 500 MB</span>
                         </div>
                         <div className="storage-bar">
@@ -685,9 +685,9 @@ const SettingsPage: React.FC = () => {
                         </div>
                         <div className="storage-items">
                             {[
-                                { color: "#6366f1", label: "Date sănătate", val: "28 MB" },
-                                { color: "#10b981", label: "Backup-uri", val: "14 MB" },
-                                { color: "#f97316", label: "Imagini profil", val: "5 MB" },
+                                { color: "#6366f1", label: "Health data", val: "28 MB" },
+                                { color: "#10b981", label: "Backups", val: "14 MB" },
+                                { color: "#f97316", label: "Profile images", val: "5 MB" },
                             ].map((item, i) => (
                                 <div className="storage-item" key={i}>
                                     <div className="storage-item-left">
@@ -704,14 +704,14 @@ const SettingsPage: React.FC = () => {
                 <hr className="sr-divider" />
 
                 <div>
-                    <div className="sr-title">Scurtături tastatură</div>
+                    <div className="sr-title">Keyboard shortcuts</div>
                     <div className="shortcuts-list">
                         {[
-                            { label: "Salvează", keys: ["Ctrl", "S"] },
-                            { label: "Caută", keys: ["Ctrl", "K"] },
+                            { label: "Save", keys: ["Ctrl", "S"] },
+                            { label: "Search", keys: ["Ctrl", "K"] },
                             { label: "Dashboard", keys: ["Alt", "D"] },
-                            { label: "Profil", keys: ["Alt", "P"] },
-                            { label: "Setări", keys: ["Alt", "S"] },
+                            { label: "Profile", keys: ["Alt", "P"] },
+                            { label: "Settings", keys: ["Alt", "S"] },
                         ].map((sc, i) => (
                             <div className="shortcut-row" key={i}>
                                 <span className="shortcut-lbl">{sc.label}</span>

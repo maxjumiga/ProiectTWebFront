@@ -39,20 +39,20 @@ function NutrientInput({ label, value, onChange }: NutrientInputProps) {
     );
 }
 
-// Proprietatile primite de la GestionareAlimente
-interface AlimentModalProps {
-    title: string;                         // Titlul modalului (ex: "Adaugă Aliment Nou")
-    form: AlimentForm;                     // Datele curente ale formularului
-    error: string;                         // Mesajul de eroare (gol = fara eroare)
-    onFormChange: (form: AlimentForm) => void; // Callback la orice modificare din formular
-    onSave: () => void;                    // Callback la apasarea butonului de salvare
-    onClose: () => void;                   // Callback la inchidere/anulare
-    saveLabel?: string;                    // Textul butonului de salvare (default: "Salvează")
+// Properties received from FoodManagement
+interface FoodModalProps {
+    title: string;                         // Modal title (e.g., "Add New Food")
+    form: AlimentForm;                     // Current form data
+    error: string;                         // Error message (empty = no error)
+    onFormChange: (form: AlimentForm) => void; // Callback on any form change
+    onSave: () => void;                    // Callback on save button press
+    onClose: () => void;                   // Callback on close/cancel
+    saveLabel?: string;                    // Save button text (default: "Save")
 }
 
-export default function AlimentModal({
-    title, form, error, onFormChange, onSave, onClose, saveLabel = 'Salvează',
-}: AlimentModalProps) {
+export default function FoodModal({
+    title, form, error, onFormChange, onSave, onClose, saveLabel = 'Save',
+}: FoodModalProps) {
     return (
         // Overlay-ul — click pe fundal inchide modalul
         <div className="modal-overlay" onClick={onClose}>
@@ -75,18 +75,18 @@ export default function AlimentModal({
                     {/* Randul 1: Nume (flex 2) + Categorie (flex 1) */}
                     <div className="form-row-2">
                         <div className="form-group" style={{ flex: 2 }}>
-                            <label>Nume aliment <span className="req">*</span></label>
+                            <label>Food name <span className="req">*</span></label>
                             <input
                                 className="form-input"
                                 type="text"
-                                placeholder="ex: Măr, Piept de pui..."
+                                placeholder="e.g.: Apple, Chicken breast..."
                                 value={form.nume}
                                 // Spread operator (...form) pastreaza celelalte campuri neschimbate
                                 onChange={e => onFormChange({ ...form, nume: e.target.value })}
                             />
                         </div>
                         <div className="form-group" style={{ flex: 1 }}>
-                            <label>Categorie</label>
+                            <label>Category</label>
                             <CustomSelect
                                 value={form.categorie}
                                 onChange={val => onFormChange({ ...form, categorie: val as Categorie })}
@@ -98,13 +98,13 @@ export default function AlimentModal({
 
                     {/* Separator sectiune valorile nutritionale */}
                     <div className="ga-section-label">
-                        Valori nutriționale <span className="ga-per">per 100g</span>
+                        Nutritional values <span className="ga-per">per 100g</span>
                     </div>
 
                     {/* Randul 2: Calorii + Proteine + Carbohidrati + Grasimi */}
                     <div className="form-row">
                         <div className="form-group">
-                            <label>Calorii <span className="ga-unit">(kcal)</span></label>
+                            <label>Calories <span className="ga-unit">(kcal)</span></label>
                             <input
                                 className="form-input"
                                 type="number"
@@ -115,15 +115,15 @@ export default function AlimentModal({
                             />
                         </div>
                         {/* Refolosim componenta NutrientInput pentru celelalte 3 macronutriente */}
-                        <NutrientInput label="Proteine" value={form.proteine} onChange={v => onFormChange({ ...form, proteine: v })} />
-                        <NutrientInput label="Carbohidrați" value={form.carbohidrati} onChange={v => onFormChange({ ...form, carbohidrati: v })} />
-                        <NutrientInput label="Grăsimi" value={form.grasimi} onChange={v => onFormChange({ ...form, grasimi: v })} />
+                        <NutrientInput label="Protein" value={form.proteine} onChange={v => onFormChange({ ...form, proteine: v })} />
+                        <NutrientInput label="Carbs" value={form.carbohidrati} onChange={v => onFormChange({ ...form, carbohidrati: v })} />
+                        <NutrientInput label="Fats" value={form.grasimi} onChange={v => onFormChange({ ...form, grasimi: v })} />
                     </div>
                 </div>
 
                 {/* Footer: butoanele Anuleaza si Salveaza */}
                 <div className="modal-footer">
-                    <button className="btn-ghost" onClick={onClose}>Anulează</button>
+                    <button className="btn-ghost" onClick={onClose}>Cancel</button>
                     <button className="btn-primary" onClick={onSave}>
                         <FontAwesomeIcon icon={faCheck} style={{ width: 14, height: 14 }} />
                         {saveLabel}

@@ -15,29 +15,29 @@ import type { User } from '../../types';
 import CustomSelect from '../../components/CustomSelect';
 
 // Optiunile disponibile pentru schimbarea rolului unui utilizator
-const roleOptions = [{ value: 'user', label: 'Utilizator' }, { value: 'admin', label: 'Admin' }];
+const roleOptions = [{ value: 'user', label: 'User' }, { value: 'admin', label: 'Admin' }];
 
 // Map de culori pentru badge-urile de rol in dropdown inline
 const roleColorMap: Record<string, string> = { admin: 'admin', user: 'user' };
 
-// Proprietatile primite de la pagina parinte (UserManagement)
-interface UtilizatoriTableProps {
-    filtered: User[];                            // Lista de utilizatori deja filtrata
-    onRoleChange: (id: string, role: string) => void; // Callback pentru schimbare rol
-    onDelete: (id: string) => void;              // Callback pentru initierea stergerii
+// Properties received from the parent page (UserManagement)
+interface UsersTableProps {
+    filtered: User[];                            // Already filtered list of users
+    onRoleChange: (id: string, role: string) => void; // Callback for role change
+    onDelete: (id: string) => void;              // Callback for initiating deletion
 }
 
-export default function UtilizatoriTable({ filtered, onRoleChange, onDelete }: UtilizatoriTableProps) {
+export default function UsersTable({ filtered, onRoleChange, onDelete }: UsersTableProps) {
     return (
         <div className="um-card">
             <div className="table-wrap">
                 <table className="data-table">
                     <thead>
                         <tr>
-                            <th>Utilizator</th>
-                            <th>Rol</th>
-                            <th>Data înregistrării</th>
-                            <th style={{ textAlign: 'right' }}>Acțiuni</th>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Registration Date</th>
+                            <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,7 +46,7 @@ export default function UtilizatoriTable({ filtered, onRoleChange, onDelete }: U
                             <tr>
                                 <td colSpan={4} className="um-empty">
                                     <FontAwesomeIcon icon={faMagnifyingGlass} style={{ width: 40, height: 40, opacity: 0.3 }} />
-                                    <span>Niciun utilizator găsit</span>
+                                    <span>No users found</span>
                                 </td>
                             </tr>
                         ) : (
@@ -76,7 +76,7 @@ export default function UtilizatoriTable({ filtered, onRoleChange, onDelete }: U
                                     </td>
 
                                     {/* Data formatata in romana */}
-                                    <td className="date-cell">{new Date(u.joinedAt).toLocaleDateString('ro-RO')}</td>
+                                    <td className="date-cell">{new Date(u.joinedAt).toLocaleDateString('en-US')}</td>
 
                                     {/* Actiunile disponibile: doar stergere pentru utilizatori */}
                                     <td>
@@ -84,10 +84,10 @@ export default function UtilizatoriTable({ filtered, onRoleChange, onDelete }: U
                                             <button
                                                 className="btn-danger-sm"
                                                 onClick={() => onDelete(u.id)} // Deschide modalul de confirmare
-                                                title="Șterge utilizator"
+                                                title="Delete user"
                                             >
                                                 <FontAwesomeIcon icon={faTrash} style={{ width: 13, height: 13 }} />
-                                                Șterge
+                                                Delete
                                             </button>
                                         </div>
                                     </td>

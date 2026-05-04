@@ -9,31 +9,31 @@ import type { Categorie } from '../../types';
 
 // Optiunile pentru dropdown-ul de categorie in formularul de adaugare/editare
 export const categorieOptions: { value: string; label: string }[] = [
-    { value: 'fructe', label: 'Fructe' },
-    { value: 'legume', label: 'Legume' },
-    { value: 'carne', label: 'Carne' },
-    { value: 'lactate', label: 'Lactate' },
-    { value: 'cereale', label: 'Cereale' },
-    { value: 'bauturi', label: 'Băuturi' },
-    { value: 'altele', label: 'Altele' },
+    { value: 'fructe', label: 'Fruits' },
+    { value: 'legume', label: 'Vegetables' },
+    { value: 'carne', label: 'Meat' },
+    { value: 'lactate', label: 'Dairy' },
+    { value: 'cereale', label: 'Grains' },
+    { value: 'bauturi', label: 'Beverages' },
+    { value: 'altele', label: 'Other' },
 ];
 
 // Optiunile pentru filtrul de categorie — include "Toate categoriile" ca prima optiune
 // Foloseste spread (...) pentru a adauga categorieOptions fara duplicare
 export const categorieFilterOptions = [
-    { value: 'all', label: 'Toate categoriile' },
+    { value: 'all', label: 'All categories' },
     ...categorieOptions,
 ];
 
 // Map: valoare categorie → text afisat in interfata (pentru tabel si badge-uri)
 export const categorieLabel: Record<Categorie, string> = {
-    fructe: 'Fructe',
-    legume: 'Legume',
-    carne: 'Carne',
-    lactate: 'Lactate',
-    cereale: 'Cereale',
-    bauturi: 'Băuturi',
-    altele: 'Altele',
+    fructe: 'Fruits',
+    legume: 'Vegetables',
+    carne: 'Meat',
+    lactate: 'Dairy',
+    cereale: 'Grains',
+    bauturi: 'Beverages',
+    altele: 'Other',
 };
 
 // Map: valoare categorie → clasa CSS pentru culoarea badge-ului / avatarului
@@ -71,9 +71,9 @@ export const emptyAlimentForm = (): AlimentForm => ({
 // Valideaza datele din formular inainte de salvare
 // Returneaza un string cu eroarea sau '' daca totul e valid
 export function validateAlimentForm(form: AlimentForm): string {
-    if (!form.nume.trim()) return 'Numele alimentului este obligatoriu.';
+    if (!form.nume.trim()) return 'Food name is required.';
     if (form.calorii < 0 || form.proteine < 0 || form.carbohidrati < 0 || form.grasimi < 0)
-        return 'Valorile nutriționale nu pot fi negative.';
+        return 'Nutritional values cannot be negative.';
     return ''; // Valid
 }
 

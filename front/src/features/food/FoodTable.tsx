@@ -14,28 +14,28 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import type { Aliment } from '../../types';
 import { categorieLabel, categorieColorClass } from './foodConstants';
 
-// Proprietatile primite de la GestionareAlimente
-interface AlimenteTableProps {
-    alimente: Aliment[];                 // Lista completa (pentru ref)
-    filtered: Aliment[];                 // Lista filtrata de afisat
-    onEdit: (a: Aliment) => void;        // Callback pentru deschiderea modalului de editare
-    onDelete: (id: string) => void;      // Callback pentru initierea stergerii
+// Properties received from FoodManagement
+interface FoodTableProps {
+    alimente: Aliment[];                 // Full list (for ref)
+    filtered: Aliment[];                 // Filtered list to display
+    onEdit: (a: Aliment) => void;        // Callback for opening the edit modal
+    onDelete: (id: string) => void;      // Callback for initiating deletion
 }
 
-export default function AlimenteTable({ filtered, onEdit, onDelete }: AlimenteTableProps) {
+export default function FoodTable({ filtered, onEdit, onDelete }: FoodTableProps) {
     return (
         <div className="um-card">
             <div className="table-wrap">
                 <table className="data-table">
                     <thead>
                         <tr>
-                            <th>Aliment</th>
-                            <th>Categorie</th>
-                            <th>Calorii</th>
-                            <th>Proteine</th>
-                            <th>Carbohidrați</th>
-                            <th>Grăsimi</th>
-                            <th style={{ textAlign: 'right' }}>Acțiuni</th>
+                            <th>Food</th>
+                            <th>Category</th>
+                            <th>Calories</th>
+                            <th>Protein</th>
+                            <th>Carbs</th>
+                            <th>Fats</th>
+                            <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,19 +77,19 @@ export default function AlimenteTable({ filtered, onEdit, onDelete }: AlimenteTa
                                             <button
                                                 className="btn-edit-sm"
                                                 onClick={() => onEdit(a)}
-                                                title="Editează aliment"
+                                                title="Edit food"
                                             >
                                                 <FontAwesomeIcon icon={faPenToSquare} style={{ width: 13, height: 13 }} />
-                                                Editează
+                                                Edit
                                             </button>
                                             {/* Buton Stergere — deschide modalul de confirmare */}
                                             <button
                                                 className="btn-danger-sm"
                                                 onClick={() => onDelete(a.id)}
-                                                title="Șterge aliment"
+                                                title="Delete food"
                                             >
                                                 <FontAwesomeIcon icon={faTrash} style={{ width: 13, height: 13 }} />
-                                                Șterge
+                                                Delete
                                             </button>
                                         </div>
                                     </td>

@@ -21,7 +21,7 @@ import './AdminLogin.css';
 
 // Credentiale admin hardcoded (frontend-only, fara backend)
 const ADMIN_CREDENTIALS = {
-    email: 'admin@sanatate.ro',
+    email: 'admin@omnitrack.ro',
     password: 'admin2026',
 };
 
@@ -48,7 +48,7 @@ export default function AdminLogin() {
                 sessionStorage.setItem('isAdminAuthenticated', 'true');
                 navigate('/admin', { replace: true });
             } else {
-                setError('Email sau parolă incorectă.');
+                setError('Incorrect email or password.');
                 setLoading(false);
             }
         }, 600);
@@ -66,14 +66,14 @@ export default function AdminLogin() {
                     <div className="admin-login-logo">
                         <FontAwesomeIcon icon={faHeartPulse} />
                     </div>
-                    <h1 className="admin-login-title">SănătateApp</h1>
-                    <p className="admin-login-subtitle">Panou Administrare</p>
+                    <h1 className="admin-login-title">OmniTrack</h1>
+                    <p className="admin-login-subtitle">Administration Panel</p>
                 </div>
 
                 {/* Badge admin */}
                 <div className="admin-login-badge">
                     <FontAwesomeIcon icon={faShieldHalved} />
-                    <span>Acces restricționat — Administratori</span>
+                    <span>Restricted access — Administrators only</span>
                 </div>
 
                 {/* Formular */}
@@ -81,13 +81,13 @@ export default function AdminLogin() {
 
                     {/* Email */}
                     <div className="admin-form-group">
-                        <label htmlFor="admin-email">Email administrator</label>
+                        <label htmlFor="admin-email">Administrator email</label>
                         <div className="admin-input-wrap">
                             <FontAwesomeIcon icon={faEnvelope} className="admin-input-icon" />
                             <input
                                 id="admin-email"
                                 type="email"
-                                placeholder="admin@sanatate.ro"
+                                placeholder="admin@omnitrack.ro"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
@@ -99,7 +99,7 @@ export default function AdminLogin() {
 
                     {/* Parola */}
                     <div className="admin-form-group">
-                        <label htmlFor="admin-password">Parolă</label>
+                        <label htmlFor="admin-password">Password</label>
                         <div className="admin-input-wrap">
                             <FontAwesomeIcon icon={faLock} className="admin-input-icon" />
                             <input
@@ -117,7 +117,7 @@ export default function AdminLogin() {
                                 className="admin-password-toggle"
                                 onClick={() => setShowPassword(!showPassword)}
                                 tabIndex={-1}
-                                aria-label={showPassword ? 'Ascunde parola' : 'Afișează parola'}
+                                aria-label={showPassword ? 'Hide password' : 'Show password'}
                             >
                                 <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                             </button>
@@ -140,13 +140,13 @@ export default function AdminLogin() {
                         {loading ? (
                             <span className="admin-login-spinner" />
                         ) : (
-                            'Autentificare'
+                            'Sign in'
                         )}
                     </button>
                 </form>
 
                 <p className="admin-login-footer">
-                    Nu ești administrator? <a href="/">Înapoi la aplicație</a>
+                    Not an administrator? <a href="/">Back to app</a>
                 </p>
             </div>
         </div>

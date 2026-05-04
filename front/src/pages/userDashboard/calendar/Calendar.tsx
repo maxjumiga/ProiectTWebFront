@@ -34,9 +34,9 @@ interface DayData {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const WORKOUT_TYPE_LABELS: Record<WorkoutType, string> = {
-    forta: "Forță",
+    forta: "Strength",
     stretching: "Stretching",
-    rezistenta: "Rezistență",
+    rezistenta: "Endurance",
     cardio: "Cardio",
 };
 
@@ -47,12 +47,12 @@ const WORKOUT_COLORS: Record<WorkoutType, string> = {
     cardio: "#059669",
 };
 
-const MONTH_NAMES_RO = [
-    "Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie",
-    "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie",
+const MONTH_NAMES_EN = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
 ];
 
-const WEEKDAY_ABBR = ["Lun", "Mar", "Mie", "Joi", "Vin", "Sâm", "Dum"];
+const WEEKDAY_ABBR = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const username = "Ion Popescu";
 const initials = username.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
@@ -96,7 +96,7 @@ function generateMockData(): Record<string, DayData> {
             offset: 0,
             data: {
                 calories: 1420, calGoal: 2200, waterMl: 1600, waterGoal: 3000,
-                workouts: [{ type: "stretching", label: "Yoga dimineață", from: "07:00", to: "07:40" }],
+                workouts: [{ type: "stretching", label: "Morning Yoga", from: "07:00", to: "07:40" }],
             },
         },
         {
@@ -120,7 +120,7 @@ function generateMockData(): Record<string, DayData> {
             offset: 6,
             data: {
                 calories: 2350, calGoal: 2200, waterMl: 2800, waterGoal: 3000,
-                workouts: [{ type: "cardio", label: "Alergare în parc", from: "06:15", to: "07:00" }],
+                workouts: [{ type: "cardio", label: "Running in the park", from: "06:15", to: "07:00" }],
             },
         },
         {
@@ -128,8 +128,8 @@ function generateMockData(): Record<string, DayData> {
             data: {
                 calories: 1950, calGoal: 2200, waterMl: 2200, waterGoal: 3000,
                 workouts: [
-                    { type: "rezistenta", label: "Ciclu rezistență", from: "18:00", to: "19:10" },
-                    { type: "stretching", label: "Yoga seară", from: "20:00", to: "20:30" },
+                    { type: "rezistenta", label: "Endurance cycle", from: "18:00", to: "19:10" },
+                    { type: "stretching", label: "Evening Yoga", from: "20:00", to: "20:30" },
                 ],
             },
         },
@@ -138,8 +138,8 @@ function generateMockData(): Record<string, DayData> {
             data: {
                 calories: 2200, calGoal: 2200, waterMl: 3000, waterGoal: 3000,
                 workouts: [
-                    { type: "forta", label: "Picioare & core", from: "09:00", to: "10:20" },
-                    { type: "cardio", label: "Ciclism", from: "17:30", to: "18:15" },
+                    { type: "forta", label: "Legs & core", from: "09:00", to: "10:20" },
+                    { type: "cardio", label: "Cycling", from: "17:30", to: "18:15" },
                 ],
             },
         },
@@ -154,7 +154,7 @@ function generateMockData(): Record<string, DayData> {
             offset: 16,
             data: {
                 calories: 2080, calGoal: 2200, waterMl: 2600, waterGoal: 3000,
-                workouts: [{ type: "cardio", label: "Înnot", from: "07:00", to: "07:55" }],
+                workouts: [{ type: "cardio", label: "Swimming", from: "07:00", to: "07:55" }],
             },
         },
     ];
@@ -202,7 +202,7 @@ interface DayModalProps {
 }
 
 const DayModal: React.FC<DayModalProps> = ({ date, data, onClose }) => {
-    const dateStr = date.toLocaleDateString("ro-RO", {
+    const dateStr = date.toLocaleDateString("en-US", {
         weekday: "long", day: "numeric", month: "long", year: "numeric",
     });
 
@@ -220,7 +220,7 @@ const DayModal: React.FC<DayModalProps> = ({ date, data, onClose }) => {
                     {!data ? (
                         <div className="modal-empty">
                             <div className="modal-empty-icon">📋</div>
-                            <div>Nu există date înregistrate pentru această zi.</div>
+                            <div>No data recorded for this day.</div>
                         </div>
                     ) : (
                         <>
@@ -228,15 +228,15 @@ const DayModal: React.FC<DayModalProps> = ({ date, data, onClose }) => {
                             <div className="modal-section">
                                 <div className="modal-section-title">
                                     <span className="section-icon">🔥</span>
-                                    Calorii consumate
+                                    Calories consumed
                                 </div>
                                 <div className="modal-cal-row">
-                                    <span className="modal-cal-num">{data.calories.toLocaleString("ro-RO")}</span>
+                                    <span className="modal-cal-num">{data.calories.toLocaleString("en-US")}</span>
                                     <span className="modal-cal-unit">kcal</span>
                                 </div>
                                 <div className="modal-cal-goal">
-                                    Obiectiv: <strong>{data.calGoal.toLocaleString("ro-RO")} kcal</strong>
-                                    &nbsp;({Math.round((data.calories / data.calGoal) * 100)}% atins)
+                                    Goal: <strong>{data.calGoal.toLocaleString("en-US")} kcal</strong>
+                                    &nbsp;({Math.round((data.calories / data.calGoal) * 100)}% reached)
                                 </div>
                                 <div className="modal-prog-bar">
                                     <div className="modal-prog-fill"
@@ -248,15 +248,15 @@ const DayModal: React.FC<DayModalProps> = ({ date, data, onClose }) => {
                             <div className="modal-section modal-water-bg">
                                 <div className="modal-section-title">
                                     <span className="section-icon">💧</span>
-                                    Apă băută
+                                    Water intake
                                 </div>
                                 <div className="modal-water-row">
-                                    <span className="modal-water-num">{data.waterMl.toLocaleString("ro-RO")}</span>
+                                    <span className="modal-water-num">{data.waterMl.toLocaleString("en-US")}</span>
                                     <span className="modal-cal-unit">ml</span>
                                 </div>
                                 <div className="modal-cal-goal">
-                                    Obiectiv: <strong>{data.waterGoal.toLocaleString("ro-RO")} ml</strong>
-                                    &nbsp;({Math.round((data.waterMl / data.waterGoal) * 100)}% atins)
+                                    Goal: <strong>{data.waterGoal.toLocaleString("en-US")} ml</strong>
+                                    &nbsp;({Math.round((data.waterMl / data.waterGoal) * 100)}% reached)
                                 </div>
                                 <div className="modal-prog-bar">
                                     <div className="modal-prog-fill water-fill"
@@ -268,11 +268,11 @@ const DayModal: React.FC<DayModalProps> = ({ date, data, onClose }) => {
                             <div className="modal-section">
                                 <div className="modal-section-title">
                                     <span className="section-icon">🏋️</span>
-                                    Antrenamente ({data.workouts.length})
+                                    Workouts ({data.workouts.length})
                                 </div>
                                 {data.workouts.length === 0 ? (
                                     <div style={{ fontSize: "13px", color: "var(--text-muted)" }}>
-                                        Niciun antrenament înregistrat.
+                                        No workouts recorded.
                                     </div>
                                 ) : (
                                     <div className="workout-list">
@@ -378,7 +378,7 @@ const CalendarPage: React.FC = () => {
     const calPct = avgCal / 2200;
     const waterPct = avgWater / 3000;
 
-    const dateStr = now.toLocaleDateString("ro-RO", {
+    const dateStr = now.toLocaleDateString("en-US", {
         weekday: "long", year: "numeric", month: "long", day: "numeric",
     });
 
@@ -389,16 +389,16 @@ const CalendarPage: React.FC = () => {
             <aside className="cal-sidebar">
                 <div className="cal-logo"></div>
                 <nav className="cal-nav">
-                    <button className="cal-nav-btn" onClick={() => navigate('/dashboard')} title="Acasă">
+                    <button className="cal-nav-btn" onClick={() => navigate('/dashboard')} title="Home">
                         <FontAwesomeIcon icon={faHouse} />
                     </button>
                     <button className="cal-nav-btn active" title="Calendar">
                         <FontAwesomeIcon icon={faCalendarDays} />
                     </button>
-                    <button className="cal-nav-btn" onClick={() => navigate('/profile')} title="Profil">
+                    <button className="cal-nav-btn" onClick={() => navigate('/profile')} title="Profile">
                         <FontAwesomeIcon icon={faUser} />
                     </button>
-                    <button className="cal-nav-btn" onClick={() => navigate('/settings')} title="Setări">
+                    <button className="cal-nav-btn" onClick={() => navigate('/settings')} title="Settings">
                         <FontAwesomeIcon icon={faUserGear} />
                     </button>
                 </nav>
@@ -424,7 +424,7 @@ const CalendarPage: React.FC = () => {
                         <FontAwesomeIcon icon={faChevronLeft} />
                     </button>
                     <div className="cal-month-title">
-                        {MONTH_NAMES_RO[month]} {year}
+                        {MONTH_NAMES_EN[month]} {year}
                     </div>
                     <button className="cal-nav-arrow" onClick={goForward} type="button">
                         <FontAwesomeIcon icon={faChevronRight} />
@@ -458,14 +458,14 @@ const CalendarPage: React.FC = () => {
                                     {data && (
                                         <div className="cal-day-indicators">
                                             <div className="cal-day-pill cal">
-                                                🔥 {data.calories.toLocaleString("ro-RO")} kcal
+                                                🔥 {data.calories.toLocaleString("en-US")} kcal
                                             </div>
                                             <div className="cal-day-pill water">
                                                 💧 {(data.waterMl / 1000).toFixed(1)} L
                                             </div>
                                             {data.workouts.length > 0 && (
                                                 <div className="cal-day-pill workout">
-                                                    🏋️ {data.workouts.length} antren.
+                                                    🏋️ {data.workouts.length} workouts
                                                 </div>
                                             )}
                                         </div>
@@ -479,19 +479,19 @@ const CalendarPage: React.FC = () => {
                 {/* Bottom stats row */}
                 <div className="cal-stats-row">
                     <div className="cal-stat-card">
-                        <div className="cal-stat-lbl">Medie calorii / zi</div>
-                        <div className="cal-stat-num">{avgCal.toLocaleString("ro-RO")}<em>kcal</em></div>
-                        <div className="cal-stat-desc">{daysWithGoal} zile cu obiectiv atins</div>
+                        <div className="cal-stat-lbl">Avg calories / day</div>
+                        <div className="cal-stat-num">{avgCal.toLocaleString("en-US")}<em>kcal</em></div>
+                        <div className="cal-stat-desc">{daysWithGoal} goal days reached</div>
                     </div>
                     <div className="cal-stat-card">
-                        <div className="cal-stat-lbl">Medie apă / zi</div>
+                        <div className="cal-stat-lbl">Avg water / day</div>
                         <div className="cal-stat-num">{(avgWater / 1000).toFixed(1)}<em>L</em></div>
-                        <div className="cal-stat-desc">din 3 L obiectiv zilnic</div>
+                        <div className="cal-stat-desc">out of 3 L daily goal</div>
                     </div>
                     <div className="cal-stat-card">
-                        <div className="cal-stat-lbl">Antrenamente lună</div>
+                        <div className="cal-stat-lbl">Monthly workouts</div>
                         <div className="cal-stat-num">{totalWorkouts}<em>total</em></div>
-                        <div className="cal-stat-desc">{allEntries.length} zile active înregistrate</div>
+                        <div className="cal-stat-desc">{allEntries.length} active days recorded</div>
                     </div>
                 </div>
 
@@ -502,57 +502,57 @@ const CalendarPage: React.FC = () => {
 
                 {/* Title */}
                 <div>
-                    <div className="rp-title">Statistici lunare</div>
-                    <div className="rp-sub">Rezumat {MONTH_NAMES_RO[month].toLowerCase()} {year}</div>
+                    <div className="rp-title">Monthly stats</div>
+                    <div className="rp-sub">Summary {MONTH_NAMES_EN[month].toLowerCase()} {year}</div>
                 </div>
 
                 {/* Goal rings */}
                 <div className="rp-card">
-                    <div className="rp-label">Obiective medii</div>
+                    <div className="rp-label">Average goals</div>
                     <div className="rp-goal-row">
                         <Ring pct={calPct} color="#f97316" size={44} />
                         <div>
-                            <div className="rp-goal-info-title">Calorii</div>
-                            <div className="rp-goal-info-sub">{Math.round(calPct * 100)}% din obiectiv</div>
+                            <div className="rp-goal-info-title">Calories</div>
+                            <div className="rp-goal-info-sub">{Math.round(calPct * 100)}% of goal</div>
                         </div>
                     </div>
                     <div style={{ marginTop: "8px" }} className="rp-goal-row">
                         <Ring pct={waterPct} color="#38bdf8" size={44} />
                         <div>
-                            <div className="rp-goal-info-title">Apă</div>
-                            <div className="rp-goal-info-sub">{Math.round(waterPct * 100)}% din obiectiv</div>
+                            <div className="rp-goal-info-title">Water</div>
+                            <div className="rp-goal-info-sub">{Math.round(waterPct * 100)}% of goal</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Summary stats */}
                 <div className="rp-card">
-                    <div className="rp-label">Săptămâna curentă</div>
+                    <div className="rp-label">Current week</div>
                     <div className="rp-stat-row">
                         <div className="rp-stat-left">
                             <div className="rp-stat-ico" style={{ background: "rgba(249,115,22,0.15)" }}>🔥</div>
-                            <span className="rp-stat-lbl">Cal. medii</span>
+                            <span className="rp-stat-lbl">Avg Cal.</span>
                         </div>
-                        <span className="rp-stat-val">{avgCal.toLocaleString("ro-RO")}</span>
+                        <span className="rp-stat-val">{avgCal.toLocaleString("en-US")}</span>
                     </div>
                     <div className="rp-stat-row">
                         <div className="rp-stat-left">
                             <div className="rp-stat-ico" style={{ background: "rgba(56,189,248,0.15)" }}>💧</div>
-                            <span className="rp-stat-lbl">Apă medie</span>
+                            <span className="rp-stat-lbl">Avg Water</span>
                         </div>
                         <span className="rp-stat-val">{(avgWater / 1000).toFixed(1)} L</span>
                     </div>
                     <div className="rp-stat-row">
                         <div className="rp-stat-left">
                             <div className="rp-stat-ico" style={{ background: "rgba(16,185,129,0.15)" }}>🏋️</div>
-                            <span className="rp-stat-lbl">Antrenamente</span>
+                            <span className="rp-stat-lbl">Workouts</span>
                         </div>
                         <span className="rp-stat-val">{totalWorkouts}</span>
                     </div>
                     <div className="rp-stat-row">
                         <div className="rp-stat-left">
                             <div className="rp-stat-ico" style={{ background: "rgba(99,102,241,0.15)" }}>🎯</div>
-                            <span className="rp-stat-lbl">Zile obiectiv</span>
+                            <span className="rp-stat-lbl">Goal days</span>
                         </div>
                         <span className="rp-stat-val">{daysWithGoal} / {allEntries.length}</span>
                     </div>
@@ -560,9 +560,9 @@ const CalendarPage: React.FC = () => {
 
                 {/* Recent workouts */}
                 <div className="rp-card">
-                    <div className="rp-label">Antrenamente recente</div>
+                    <div className="rp-label">Recent workouts</div>
                     {recentWorkouts.length === 0 ? (
-                        <div style={{ fontSize: "11px", color: "var(--dark-muted)" }}>Niciun antrenament înregistrat.</div>
+                        <div style={{ fontSize: "11px", color: "var(--dark-muted)" }}>No workouts recorded.</div>
                     ) : (
                         recentWorkouts.map(({ workout: w }, i) => (
                             <div className="rp-workout-item" key={i}>
@@ -576,7 +576,7 @@ const CalendarPage: React.FC = () => {
 
                 {/* Activity streak grid — last 28 days */}
                 <div className="rp-card">
-                    <div className="rp-label">Activitate — ultimele 28 zile</div>
+                    <div className="rp-label">Activity — last 28 days</div>
                     <div className="rp-streak-grid">
                         {streakCells.map((s, i) => (
                             <div key={i} className={`rp-streak-cell ${s}`} />
@@ -585,11 +585,11 @@ const CalendarPage: React.FC = () => {
                     <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "9px", color: "var(--dark-muted)", fontFamily: "Space Mono" }}>
                             <div style={{ width: "9px", height: "9px", borderRadius: "3px", background: "rgba(16,185,129,0.3)" }} />
-                            Activ
+                            Active
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "9px", color: "var(--dark-muted)", fontFamily: "Space Mono" }}>
                             <div style={{ width: "9px", height: "9px", borderRadius: "3px", background: "rgba(255,255,255,0.05)" }} />
-                            Inactiv
+                            Inactive
                         </div>
                     </div>
                 </div>

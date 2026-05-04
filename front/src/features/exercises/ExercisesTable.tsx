@@ -23,26 +23,26 @@ import {
     type DificultateExercitiu,
 } from './exercisesConstants';
 
-// Proprietatile primite de la GestionareExercitii
-interface ExercitiiTableProps {
-    filtered: Exercitiu[];                // Lista de exercitii deja filtrata
-    onEdit: (e: Exercitiu) => void;       // Callback pentru deschidere modal editare
-    onDelete: (id: string) => void;       // Callback pentru initierea stergerii
+// Properties received from ExercisesManagement
+interface ExercisesTableProps {
+    filtered: Exercitiu[];                // Already filtered list of exercises
+    onEdit: (e: Exercitiu) => void;       // Callback for opening edit modal
+    onDelete: (id: string) => void;       // Callback for initiating deletion
 }
 
-export default function ExercitiiTable({ filtered, onEdit, onDelete }: ExercitiiTableProps) {
+export default function ExercisesTable({ filtered, onEdit, onDelete }: ExercisesTableProps) {
     return (
         <div className="um-card">
             <div className="table-wrap">
                 <table className="data-table">
                     <thead>
                         <tr>
-                            <th>Exercițiu</th>
-                            <th>Grupă musculară</th>
-                            <th>Dificultate</th>
-                            <th>Durată medie</th>
-                            <th>Descriere</th>
-                            <th style={{ textAlign: 'right' }}>Acțiuni</th>
+                            <th>Exercise</th>
+                            <th>Muscle Group</th>
+                            <th>Difficulty</th>
+                            <th>Avg. Duration</th>
+                            <th>Description</th>
+                            <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,18 +93,18 @@ export default function ExercitiiTable({ filtered, onEdit, onDelete }: Exercitii
                                             <button
                                                 className="btn-edit-sm"
                                                 onClick={() => onEdit(ex)}
-                                                title="Editează exercițiu"
+                                                title="Edit exercise"
                                             >
                                                 <FontAwesomeIcon icon={faPenToSquare} style={{ width: 13, height: 13 }} />
-                                                Editează
+                                                Edit
                                             </button>
                                             <button
                                                 className="btn-danger-sm"
                                                 onClick={() => onDelete(ex.id)}
-                                                title="Șterge exercițiu"
+                                                title="Delete exercise"
                                             >
                                                 <FontAwesomeIcon icon={faTrash} style={{ width: 13, height: 13 }} />
-                                                Șterge
+                                                Delete
                                             </button>
                                         </div>
                                     </td>

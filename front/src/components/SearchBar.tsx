@@ -17,7 +17,7 @@ interface SearchBarProps {
     placeholder?: string;             // Text optional placeholder (default: "Cauta...")
 }
 
-export default function SearchBar({ value, onChange, placeholder = 'Caută...' }: SearchBarProps) {
+export default function SearchBar({ value, onChange, placeholder = 'Search...' }: SearchBarProps) {
     return (
         // Containerul wrap pozitioneaza iconita si butonul absolut fata de input
         <div className="um-search-wrap">
@@ -36,7 +36,7 @@ export default function SearchBar({ value, onChange, placeholder = 'Caută...' }
 
             {/* Butonul X — apare doar daca exista text in input (conditional rendering) */}
             {value && (
-                <button className="um-search-clear" onClick={() => onChange('')} title="Șterge">
+                <button className="um-search-clear" onClick={() => onChange('')} title="Clear">
                     <FontAwesomeIcon icon={faXmark} style={{ width: 12, height: 12 }} />
                 </button>
             )}

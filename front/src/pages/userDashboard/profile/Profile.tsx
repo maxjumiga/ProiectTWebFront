@@ -47,13 +47,13 @@ const ProfilePage: React.FC = () => {
                     <button className="db-nav-btn" onClick={() => navigate('/dashboard')} title="Dashboard">
                         <FontAwesomeIcon icon={faHouse} />
                     </button>
-                    <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Programări">
+                    <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Calendar">
                         <FontAwesomeIcon icon={faCalendarDays} />
                     </button>
-                    <button className="db-nav-btn active" onClick={() => navigate('/profile')} title="Profil">
+                    <button className="db-nav-btn active" onClick={() => navigate('/profile')} title="Profile">
                         <FontAwesomeIcon icon={faUser} />
                     </button>
-                    <button className="db-nav-btn" onClick={() => navigate('/settings')} title="Setări">
+                    <button className="db-nav-btn" onClick={() => navigate('/settings')} title="Settings">
                         <FontAwesomeIcon icon={faUserGear} />
                     </button>
                 </nav>
@@ -67,14 +67,14 @@ const ProfilePage: React.FC = () => {
                 {/* Header */}
                 <div className="profile-header">
                     <div className="profile-header-left">
-                        <h1>Profilul meu</h1>
-                        <p>GESTIONEAZĂ CONTUL TĂU</p>
+                        <h1>My Profile</h1>
+                        <p>MANAGE YOUR ACCOUNT</p>
                     </div>
                     <div className="profile-header-right">
-                        <button className="ph-icon-btn" title="Notificări">
+                        <button className="ph-icon-btn" title="Notifications">
                             <FontAwesomeIcon icon={faBell} />
                         </button>
-                        <button className="ph-icon-btn" onClick={() => navigate('/settings')} title="Setări">
+                        <button className="ph-icon-btn" onClick={() => navigate('/settings')} title="Settings">
                             <FontAwesomeIcon icon={faUserGear} />
                         </button>
                     </div>
@@ -85,7 +85,7 @@ const ProfilePage: React.FC = () => {
 
                     {/* ── Card 1: Profil ── */}
                     <div className="p-card">
-                        <div className="p-card-label">Informații profil</div>
+                        <div className="p-card-label">Profile information</div>
                         <div className="profile-avatar-area">
                             <div className="profile-big-avatar">
                                 <div className="profile-big-avatar-img">
@@ -103,43 +103,43 @@ const ProfilePage: React.FC = () => {
                                     <FontAwesomeIcon icon={faEnvelope} />
                                     {email}
                                 </div>
-                                <div className="profile-member-since">Membru din Ian 2025</div>
+                                <div className="profile-member-since">Member since Jan 2025</div>
                             </div>
                         </div>
                     </div>
 
-                    {/* ── Card 2: Trăsături ── */}
+                    {/* ── Card 2: Traits ── */}
                     <div className="p-card">
-                        <div className="p-card-label">Trăsături fizice</div>
+                        <div className="p-card-label">Physical traits</div>
                         <div className="traits-grid">
                             <div className="trait-item gender">
-                                <div className="trait-label">Gen</div>
+                                <div className="trait-label">Gender</div>
                                 <div className="trait-value">M</div>
                             </div>
                             <div className="trait-item age">
-                                <div className="trait-label">Vârstă</div>
-                                <div className="trait-value">24<em>ani</em></div>
+                                <div className="trait-label">Age</div>
+                                <div className="trait-value">24<em>yrs</em></div>
                             </div>
                             <div className="trait-item height">
-                                <div className="trait-label">Înălțime</div>
+                                <div className="trait-label">Height</div>
                                 <div className="trait-value">182<em>cm</em></div>
                             </div>
                             <div className="trait-item weight">
-                                <div className="trait-label">Greutate</div>
+                                <div className="trait-label">Weight</div>
                                 <div className="trait-value">78<em>kg</em></div>
                             </div>
                         </div>
                         <div className="trait-edit-row">
                             <button className="trait-edit-btn">
                                 <FontAwesomeIcon icon={faPenToSquare} />
-                                Editează
+                                Edit
                             </button>
                         </div>
                     </div>
 
                     {/* ── Card 3: Securitate ── */}
                     <div className="p-card">
-                        <div className="p-card-label">Securitate cont</div>
+                        <div className="p-card-label">Account security</div>
 
                         {/* 2FA */}
                         <div className="security-row">
@@ -148,8 +148,8 @@ const ProfilePage: React.FC = () => {
                                     <FontAwesomeIcon icon={faShield} />
                                 </div>
                                 <div>
-                                    <div className="sec-lbl">Autentificare în 2 pași</div>
-                                    <div className="sec-sub">{twoFA ? "Activat — contul tău e protejat" : "Dezactivat — recomandat să activezi"}</div>
+                                    <div className="sec-lbl">Two-factor authentication</div>
+                                    <div className="sec-sub">{twoFA ? "Enabled — your account is protected" : "Disabled — recommended to enable"}</div>
                                 </div>
                             </div>
                             <label className="twofa-toggle">
@@ -169,7 +169,7 @@ const ProfilePage: React.FC = () => {
                                     <FontAwesomeIcon icon={faLock} />
                                 </div>
                                 <div>
-                                    <div className="sec-lbl">Parolă</div>
+                                    <div className="sec-lbl">Password</div>
                                     <div className="password-display">
                                         {showPassword ? (
                                             <span className="password-text">{fakePassword}</span>
@@ -182,7 +182,7 @@ const ProfilePage: React.FC = () => {
                             <button
                                 className="eye-toggle-btn"
                                 onClick={() => setShowPassword((v) => !v)}
-                                aria-label={showPassword ? "Ascunde parola" : "Arată parola"}
+                                aria-label={showPassword ? "Hide password" : "Show password"}
                             >
                                 <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                             </button>
@@ -190,7 +190,7 @@ const ProfilePage: React.FC = () => {
 
                         <button className="change-password-btn">
                             <FontAwesomeIcon icon={faKey} />
-                            Schimbă parola
+                            Change password
                         </button>
                     </div>
 
@@ -210,7 +210,7 @@ const ProfilePage: React.FC = () => {
                             </div>
                             <div className="act-stat">
                                 <div className="act-stat-num">91<em>%</em></div>
-                                <div className="act-stat-lbl">Consistență</div>
+                                <div className="act-stat-lbl">Consistency</div>
                             </div>
                         </div>
 
@@ -219,7 +219,7 @@ const ProfilePage: React.FC = () => {
                         <div className="goal-item">
                             <div className="goal-icon">💧</div>
                             <div className="goal-details">
-                                <div className="goal-name">Hidratare zilnică</div>
+                                <div className="goal-name">Daily hydration</div>
                                 <div className="goal-bar">
                                     <div className="goal-bar-fill" style={{ width: "74%", background: "linear-gradient(90deg, #38bdf8, #0ea5e9)" }} />
                                 </div>
@@ -229,7 +229,7 @@ const ProfilePage: React.FC = () => {
                         <div className="goal-item">
                             <div className="goal-icon">🔥</div>
                             <div className="goal-details">
-                                <div className="goal-name">Calorii arse</div>
+                                <div className="goal-name">Calories burned</div>
                                 <div className="goal-bar">
                                     <div className="goal-bar-fill" style={{ width: "58%", background: "linear-gradient(90deg, #f97316, #fb923c)" }} />
                                 </div>
@@ -239,7 +239,7 @@ const ProfilePage: React.FC = () => {
                         <div className="goal-item">
                             <div className="goal-icon">🏃</div>
                             <div className="goal-details">
-                                <div className="goal-name">Pași zilnici</div>
+                                <div className="goal-name">Daily steps</div>
                                 <div className="goal-bar">
                                     <div className="goal-bar-fill" style={{ width: "85%", background: "linear-gradient(90deg, #10b981, #34d399)" }} />
                                 </div>
@@ -254,38 +254,38 @@ const ProfilePage: React.FC = () => {
             {/* ── Right dark panel ── */}
             <aside className="profile-right">
                 <div>
-                    <div className="pr-section-title">Insigne obținute</div>
-                    <div className="pr-section-sub">REALIZĂRILE TALE</div>
+                    <div className="pr-section-title">Badges earned</div>
+                    <div className="pr-section-sub">YOUR ACHIEVEMENTS</div>
                     <div className="badge-grid">
                         <div className="badge-item">
                             <div className="badge-emoji">🏆</div>
-                            <div className="badge-name">Campion</div>
-                            <div className="badge-desc">30 zile consecutiv</div>
+                            <div className="badge-name">Champion</div>
+                            <div className="badge-desc">30 consecutive days</div>
                         </div>
                         <div className="badge-item">
                             <div className="badge-emoji">💧</div>
-                            <div className="badge-name">Hidratat</div>
-                            <div className="badge-desc">Obiectiv apă 7 zile</div>
+                            <div className="badge-name">Hydrated</div>
+                            <div className="badge-desc">Water goal 7 days</div>
                         </div>
                         <div className="badge-item">
                             <div className="badge-emoji">🔥</div>
-                            <div className="badge-name">Ardere</div>
+                            <div className="badge-name">Burner</div>
                             <div className="badge-desc">500 kcal/zi x5</div>
                         </div>
                         <div className="badge-item">
                             <div className="badge-emoji">⚡</div>
-                            <div className="badge-name">Rapid</div>
-                            <div className="badge-desc">10k pași în zi</div>
+                            <div className="badge-name">Speedy</div>
+                            <div className="badge-desc">10k steps in a day</div>
                         </div>
                         <div className="badge-item">
                             <div className="badge-emoji">🌙</div>
-                            <div className="badge-name">Nocturn</div>
-                            <div className="badge-desc">Log după ora 22</div>
+                            <div className="badge-name">Nocturnal</div>
+                            <div className="badge-desc">Log after 10pm</div>
                         </div>
                         <div className="badge-item">
                             <div className="badge-emoji">🥗</div>
-                            <div className="badge-name">Nutriție</div>
-                            <div className="badge-desc">7 zile în obiectiv</div>
+                            <div className="badge-name">Nutrition</div>
+                            <div className="badge-desc">7 days on goal</div>
                         </div>
                     </div>
                 </div>
@@ -293,27 +293,27 @@ const ProfilePage: React.FC = () => {
                 <hr className="pr-divider" />
 
                 <div>
-                    <div className="pr-section-title">Activitate recentă</div>
+                    <div className="pr-section-title">Recent activity</div>
                     <div className="activity-feed">
                         <div className="feed-item">
                             <div className="feed-dot" style={{ background: "#10b981" }} />
-                            <div className="feed-text">Obiectiv apă atins</div>
-                            <div className="feed-time">azi</div>
+                            <div className="feed-text">Water goal reached</div>
+                            <div className="feed-time">today</div>
                         </div>
                         <div className="feed-item">
                             <div className="feed-dot" style={{ background: "#6366f1" }} />
-                            <div className="feed-text">Profil actualizat</div>
-                            <div className="feed-time">ieri</div>
+                            <div className="feed-text">Profile updated</div>
+                            <div className="feed-time">yesterday</div>
                         </div>
                         <div className="feed-item">
                             <div className="feed-dot" style={{ background: "#f97316" }} />
-                            <div className="feed-text">Insignă nouă: 🏆 Campion</div>
-                            <div className="feed-time">3z</div>
+                            <div className="feed-text">New badge: 🏆 Champion</div>
+                            <div className="feed-time">3d</div>
                         </div>
                         <div className="feed-item">
                             <div className="feed-dot" style={{ background: "#a855f7" }} />
-                            <div className="feed-text">2FA activat</div>
-                            <div className="feed-time">5z</div>
+                            <div className="feed-text">2FA enabled</div>
+                            <div className="feed-time">5d</div>
                         </div>
                     </div>
                 </div>
@@ -326,7 +326,7 @@ const ProfilePage: React.FC = () => {
                     navigate('/login');
                 }}>
                     <FontAwesomeIcon icon={faRightFromBracket} />
-                    Deconectare
+                    Sign out
                 </button>
             </aside>
         </div>

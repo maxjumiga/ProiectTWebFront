@@ -20,7 +20,7 @@ const initials = username
     .slice(0, 2);
 
 // ─── Chart Data ───────────────────────────────────────────────────────────────
-const DAYS = ["Lun", "Mar", "Mie", "Joi", "Vin", "Sâm", "Dum"];
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const CAL_DATA = [1650, 2100, 1800, 2350, 1950, 2200, 1420];
 const WAT_DATA = [1800, 2400, 2000, 2800, 2200, 2600, 1600]; // ml
 
@@ -131,10 +131,10 @@ const WaterBottle = ({ pct }: { pct: number }) => {
 const calcBMI = (h: number, w: number) => w / ((h / 100) ** 2);
 
 const bmiStatus = (bmi: number) => {
-    if (bmi < 18.5) return { label: "Subponderal", bg: "#bfdbfe", color: "#1d4ed8" };
-    if (bmi < 25) return { label: "Sănătos", bg: "#bbf7d0", color: "#065f46" };
-    if (bmi < 30) return { label: "Supraponderal", bg: "#fed7aa", color: "#9a3412" };
-    return { label: "Obez", bg: "#fecdd3", color: "#9f1239" };
+    if (bmi < 18.5) return { label: "Underweight", bg: "#bfdbfe", color: "#1d4ed8" };
+    if (bmi < 25) return { label: "Healthy", bg: "#bbf7d0", color: "#065f46" };
+    if (bmi < 30) return { label: "Overweight", bg: "#fed7aa", color: "#9a3412" };
+    return { label: "Obese", bg: "#fecdd3", color: "#9f1239" };
 };
 
 // position on gradient bar: 15-40 → 0-100%
@@ -158,7 +158,7 @@ const UserDashboard: React.FC = () => {
     const status = bmiStatus(bmi);
 
     const today = new Date();
-    const dateStr = today.toLocaleDateString("ro-RO", {
+    const dateStr = today.toLocaleDateString("en-US", {
         weekday: "long", year: "numeric", month: "long", day: "numeric",
     });
 
@@ -170,16 +170,16 @@ const UserDashboard: React.FC = () => {
                 <div className="db-logo"></div>
 
                 <nav className="db-nav">
-                    <button className="db-nav-btn active" onClick={() => navigate('/dashboard')} title="Acasă">
+                    <button className="db-nav-btn active" onClick={() => navigate('/dashboard')} title="Home">
                         <FontAwesomeIcon icon={faHouse} />
                     </button>
                     <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Calendar">
                         <FontAwesomeIcon icon={faCalendarDays} />
                     </button>
-                    <button className="db-nav-btn" onClick={() => navigate('/profile')} title="Profil">
+                    <button className="db-nav-btn" onClick={() => navigate('/profile')} title="Profile">
                         <FontAwesomeIcon icon={faUser} />
                     </button>
-                    <button className="db-nav-btn" onClick={() => navigate('/settings')} title="Setări">
+                    <button className="db-nav-btn" onClick={() => navigate('/settings')} title="Settings">
                         <FontAwesomeIcon icon={faUserGear} />
                     </button>
                 </nav>
@@ -195,7 +195,7 @@ const UserDashboard: React.FC = () => {
                 {/* Header */}
                 <div className="db-header">
                     <div>
-                        <h1>Bună ziua, {username} 👋</h1>
+                        <h1>Good day, {username} 👋</h1>
                         <p>{dateStr}</p>
                     </div>
                     <div className="db-header-right">
@@ -213,13 +213,13 @@ const UserDashboard: React.FC = () => {
 
                     {/* Calories */}
                     <div className="db-card">
-                        <div className="db-card-lbl">Calorii consumate astăzi</div>
+                        <div className="db-card-lbl">Calories consumed today</div>
                         <div className="cal-top">
-                            <div className="cal-num">{todayCal.toLocaleString("ro-RO")}<em>kcal</em></div>
+                            <div className="cal-num">{todayCal.toLocaleString("en-US")}<em>kcal</em></div>
                             <div className="cal-pill">{calPct}%</div>
                         </div>
                         <div className="cal-sub">
-                            Obiectiv: <strong>{CAL_GOAL.toLocaleString("ro-RO")} kcal</strong> ({calPct}% atins)
+                            Goal: <strong>{CAL_GOAL.toLocaleString("en-US")} kcal</strong> ({calPct}% reached)
                         </div>
                         <div className="cal-prog">
                             <div className="cal-prog-fill" style={{ width: `${Math.min(calPct, 100)}%` }} />
@@ -229,14 +229,14 @@ const UserDashboard: React.FC = () => {
 
                     {/* Water */}
                     <div className="db-card">
-                        <div className="db-card-lbl">Apă băută astăzi</div>
+                        <div className="db-card-lbl">Water consumed today</div>
                         <div className="water-body">
                             <div className="water-bottle-wrap">
                                 <WaterBottle pct={waterPct} />
                             </div>
                             <div className="water-details">
-                                <div className="water-num">{waterMl.toLocaleString("ro-RO")}<em>ml</em></div>
-                                <div className="water-sub">din <strong>{WATER_MAX.toLocaleString("ro-RO")} ml</strong> zilnic</div>
+                                <div className="water-num">{waterMl.toLocaleString("en-US")}<em>ml</em></div>
+                                <div className="water-sub">of <strong>{WATER_MAX.toLocaleString("en-US")} ml</strong> daily</div>
                                 <div className="water-prog">
                                     <div className="water-prog-fill" style={{ width: `${Math.min(waterPct * 100, 100)}%` }} />
                                 </div>
@@ -253,10 +253,10 @@ const UserDashboard: React.FC = () => {
                 {/* Chart */}
                 <div className="db-card db-chart-card">
                     <div className="chart-hdr">
-                        <span className="db-card-lbl">Evoluție săptămânală</span>
+                        <span className="db-card-lbl">Weekly progress</span>
                         <div className="chart-legend">
                             <div className="legend-item"><span style={{ background: "#f97316" }} className="legend-dot" />Calorii</div>
-                            <div className="legend-item"><span style={{ background: "#38bdf8" }} className="legend-dot" />Apă băută</div>
+                            <div className="legend-item"><span style={{ background: "#38bdf8" }} className="legend-dot" />Water</div>
                         </div>
                     </div>
                     <div className="chart-box"><BarChart /></div>
@@ -267,8 +267,8 @@ const UserDashboard: React.FC = () => {
 
                     {/* Appointments */}
                     <div className="db-card">
-                        <div className="db-card-lbl">Antrenamentele mele</div>
-                        <div className="db-card-sublbl">Ultimul antrenament:</div>
+                        <div className="db-card-lbl">My Workouts</div>
+                        <div className="db-card-sublbl">Last workout:</div>
                         <div className="appt-row">
 
                         </div>
@@ -279,26 +279,26 @@ const UserDashboard: React.FC = () => {
 
                     {/* Quick stats */}
                     <div className="db-card">
-                        <div className="db-card-lbl">Statistici rapide</div>
+                        <div className="db-card-lbl">Quick stats</div>
                         <div className="qs-list">
                             <div className="qs-row">
                                 <div className="qs-left">
                                     <div className="qs-ico" style={{ background: "var(--cal-soft)" }}>🔥</div>
-                                    <span className="qs-lbl">Calorii săptămână</span>
+                                    <span className="qs-lbl">Calories this week</span>
                                 </div>
                                 <span className="qs-val">13.470</span>
                             </div>
                             <div className="qs-row">
                                 <div className="qs-left">
                                     <div className="qs-ico" style={{ background: "var(--water-soft)" }}>💧</div>
-                                    <span className="qs-lbl">Apă săptămână</span>
+                                    <span className="qs-lbl">Water this week</span>
                                 </div>
                                 <span className="qs-val">15.4 L</span>
                             </div>
                             <div className="qs-row">
                                 <div className="qs-left">
                                     <div className="qs-ico" style={{ background: "var(--green-soft)" }}>🎯</div>
-                                    <span className="qs-lbl">Zile obiectiv atins</span>
+                                    <span className="qs-lbl">Goal days reached</span>
                                 </div>
                                 <span className="qs-val">5 / 7</span>
                             </div>
@@ -311,14 +311,14 @@ const UserDashboard: React.FC = () => {
             <aside className="db-right">
                 <div>
                     <div className="bmi-title">BMI Calculator</div>
-                    <div className="bmi-sub">Calculează indicele tău de masă corporală</div>
+                    <div className="bmi-sub">Calculate your body mass index</div>
                 </div>
 
                 {/* Sliders */}
                 <div className="bmi-slider-card">
                     <div className="sl-row">
                         <div className="sl-hdr">
-                            <span className="sl-lbl">Înălțime</span>
+                            <span className="sl-lbl">Height</span>
                             <span className="sl-val">{height}<em>cm</em></span>
                         </div>
                         <input type="range" className="bmi-range"
@@ -329,7 +329,7 @@ const UserDashboard: React.FC = () => {
                     </div>
                     <div className="sl-row">
                         <div className="sl-hdr">
-                            <span className="sl-lbl">Greutate</span>
+                            <span className="sl-lbl">Weight</span>
                             <span className="sl-val">{weight}<em>kg</em></span>
                         </div>
                         <input type="range" className="bmi-range"

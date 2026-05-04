@@ -21,7 +21,7 @@ const LoginPage: React.FC = () => {
         }
 
         // Verificare credentiale admin — daca match, acces direct in panoul admin
-        if (email.trim() === 'admin@sanatate.ro' && password === 'admin2026') {
+        if (email.trim() === 'admin@omnitrack.ro' && password === 'admin2026') {
             sessionStorage.setItem('isAdminAuthenticated', 'true');
             sessionStorage.setItem('isAuthenticated', 'true');
             navigate('/admin');
@@ -59,15 +59,15 @@ const LoginPage: React.FC = () => {
         <div className="auth-container">
             <button className="back-btn" onClick={() => navigate('/')} type="button">
                 <span className="back-arrow">←</span>
-                Înapoi
+                Back
             </button>
 
             <div className="login-wrapper">
                 <div className="login-card">
 
                     <div className="login-header">
-                        <h1 className="login-title">Bun venit înapoi</h1>
-                        <p className="login-subtitle">Autentifică-te în contul tău</p>
+                        <h1 className="login-title">Welcome back</h1>
+                        <p className="login-subtitle">Sign in to your account</p>
                     </div>
 
                     {error && (
@@ -79,14 +79,14 @@ const LoginPage: React.FC = () => {
                     <form onSubmit={handleSubmit} autoComplete="off">
                         <div className="form-group">
                             <label className="form-label" htmlFor="email">
-                                Gmail / Utilizator
+                                Email / Username
                             </label>
                             <div className="input-wrapper">
                                 <input
                                     id="email"
                                     className="form-input"
                                     type="text"
-                                    placeholder="exemplu@gmail.com"
+                                    placeholder="example@gmail.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     autoComplete="username"
@@ -97,7 +97,7 @@ const LoginPage: React.FC = () => {
 
                         <div className="form-group">
                             <label className="form-label" htmlFor="password">
-                                Parolă
+                                Password
                             </label>
                             <div className="input-wrapper">
                                 <input
@@ -115,7 +115,7 @@ const LoginPage: React.FC = () => {
                                     className="eye-btn"
                                     onClick={() => setShowPassword((v) => !v)}
                                     tabIndex={-1}
-                                    aria-label={showPassword ? "Ascunde parola" : "Arată parola"}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
                                     {showPassword ? <FontAwesomeIcon icon={faEye} /> : <FontAwesomeIcon icon={faEyeSlash} />}
                                 </button>
@@ -123,24 +123,24 @@ const LoginPage: React.FC = () => {
                         </div>
 
                         <button className="submit-btn" type="submit">
-                            Autentificare
+                            Sign In
                         </button>
 
                         <div className="google-txt">
-                            SAU
+                            OR
                         </div>
 
                         <button className="submit-btn" type="button">
-                            Autentificare cu Google
+                            Sign in with Google
                         </button>
                     </form>
 
                     <div className="form-footer">
                         <button className="footer-link register" onClick={() => navigate('/register')} type="button">
-                            Înregistrare
+                            Register
                         </button>
                         <button className="footer-link muted" type="button">
-                            Ai uitat parola?
+                            Forgot password?
                         </button>
                     </div>
                 </div>

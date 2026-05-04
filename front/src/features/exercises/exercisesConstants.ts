@@ -23,39 +23,39 @@ export type DificultateExercitiu = 'incepator' | 'intermediar' | 'avansat';
 
 // Optiunile pentru dropdown-ul de grupa musculara in formular
 export const grupMuscularOptions: { value: string; label: string }[] = [
-    { value: 'piept', label: 'Piept' },
-    { value: 'spate', label: 'Spate' },
-    { value: 'umeri', label: 'Umeri' },
-    { value: 'brate', label: 'Brațe' },
-    { value: 'abdomen', label: 'Abdomen' },
-    { value: 'picioare', label: 'Picioare' },
+    { value: 'piept', label: 'Chest' },
+    { value: 'spate', label: 'Back' },
+    { value: 'umeri', label: 'Shoulders' },
+    { value: 'brate', label: 'Arms' },
+    { value: 'abdomen', label: 'Abs' },
+    { value: 'picioare', label: 'Legs' },
     { value: 'cardio', label: 'Cardio' },
-    { value: 'altele', label: 'Altele' },
+    { value: 'altele', label: 'Other' },
 ];
 
 // Optiunile pentru filtrul de grupa musculara — include "Toate grupele"
 export const grupMuscularFilterOptions = [
-    { value: 'all', label: 'Toate grupele' },
+    { value: 'all', label: 'All muscle groups' },
     ...grupMuscularOptions, // Spread: adauga toate grupele fara duplicare
 ];
 
 // Optiunile pentru dropdown-ul de dificultate in formular
 export const dificultateOptions: { value: string; label: string }[] = [
-    { value: 'incepator', label: 'Începător' },
-    { value: 'intermediar', label: 'Intermediar' },
-    { value: 'avansat', label: 'Avansat' },
+    { value: 'incepator', label: 'Beginner' },
+    { value: 'intermediar', label: 'Intermediate' },
+    { value: 'avansat', label: 'Advanced' },
 ];
 
 // Map: valoare grupa → text afisat in badge-uri si tabel
 export const grupMuscularLabel: Record<GrupMuscular, string> = {
-    piept: 'Piept',
-    spate: 'Spate',
-    umeri: 'Umeri',
-    brate: 'Brațe',
-    abdomen: 'Abdomen',
-    picioare: 'Picioare',
+    piept: 'Chest',
+    spate: 'Back',
+    umeri: 'Shoulders',
+    brate: 'Arms',
+    abdomen: 'Abs',
+    picioare: 'Legs',
     cardio: 'Cardio',
-    altele: 'Altele',
+    altele: 'Other',
 };
 
 // Map: valoare grupa → clasa CSS pentru culoarea badge-ului / avatarului
@@ -79,9 +79,9 @@ export const dificultateColorClass: Record<DificultateExercitiu, string> = {
 
 // Map: valoare dificultate → text afisat in interfata
 export const dificultateLabel: Record<DificultateExercitiu, string> = {
-    incepator: 'Începător',
-    intermediar: 'Intermediar',
-    avansat: 'Avansat',
+    incepator: 'Beginner',
+    intermediar: 'Intermediate',
+    avansat: 'Advanced',
 };
 
 // Tipul datelor din formularul de adaugare/editare exercitiu
@@ -105,8 +105,8 @@ export const emptyExercitiiForm = (): ExercitiiForm => ({
 // Valideaza datele din formular inainte de salvare
 // Returneaza un string cu eroarea sau '' daca totul e valid
 export function validateExercitiiForm(form: ExercitiiForm): string {
-    if (!form.nume.trim()) return 'Numele exercițiului este obligatoriu.';
-    if (form.durataMed < 0) return 'Durata nu poate fi negativă.';
+    if (!form.nume.trim()) return 'Exercise name is required.';
+    if (form.durataMed < 0) return 'Duration cannot be negative.';
     return ''; // Valid
 }
 

@@ -27,9 +27,9 @@ interface ExercitiiModalProps {
     saveLabel?: string;                         // Textul butonului (default: "Salvează")
 }
 
-export default function ExercitiiModal({
-    title, form, error, onFormChange, onSave, onClose, saveLabel = 'Salvează',
-}: ExercitiiModalProps) {
+export default function ExercisesModal({
+    title, form, error, onFormChange, onSave, onClose, saveLabel = 'Save',
+}: ExercisesModalProps) {
     return (
         // Overlay — click pe fundal inchide modalul
         <div className="modal-overlay" onClick={onClose}>
@@ -52,11 +52,11 @@ export default function ExercitiiModal({
                     {/* Randul 1: Numele exercitiului (pe toata latimea) */}
                     <div className="form-row">
                         <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                            <label>Nume exercițiu <span className="req">*</span></label>
+                            <label>Exercise name <span className="req">*</span></label>
                             <input
                                 className="form-input"
                                 type="text"
-                                placeholder="ex: Flotări, Genuflexiuni, Alergare..."
+                                placeholder="e.g.: Push-ups, Squats, Running..."
                                 value={form.nume}
                                 onChange={e => onFormChange({ ...form, nume: e.target.value })}
                             />
@@ -66,7 +66,7 @@ export default function ExercitiiModal({
                     {/* Randul 2: Grupa musculara + Dificultate (2 coloane) */}
                     <div className="form-row">
                         <div className="form-group">
-                            <label>Grupă musculară</label>
+                            <label>Muscle Group</label>
                             <CustomSelect
                                 value={form.grupMuscular}
                                 onChange={val => onFormChange({ ...form, grupMuscular: val as GrupMuscular })}
@@ -75,7 +75,7 @@ export default function ExercitiiModal({
                             />
                         </div>
                         <div className="form-group">
-                            <label>Dificultate</label>
+                            <label>Difficulty</label>
                             <CustomSelect
                                 value={form.dificultate}
                                 onChange={val => onFormChange({ ...form, dificultate: val as DificultateExercitiu })}
@@ -87,7 +87,7 @@ export default function ExercitiiModal({
 
                     {/* Durata medie in minute */}
                     <div className="form-group">
-                        <label>Durată medie <span className="ga-unit">(minute)</span></label>
+                        <label>Average duration <span className="ga-unit">(minutes)</span></label>
                         <input
                             className="form-input"
                             type="number"
@@ -101,11 +101,11 @@ export default function ExercitiiModal({
 
                     {/* Descriere — camp text liber, optional */}
                     <div className="form-group">
-                        <label>Descriere <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: '11px' }}>(opțional)</span></label>
+                        <label>Description <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: '11px' }}>(optional)</span></label>
                         <textarea
                             className="form-input ex-textarea"
                             rows={3}
-                            placeholder="Descrie tehnica de execuție, mușchii implicați..."
+                            placeholder="Describe the technique, muscles involved..."
                             value={form.descriere}
                             onChange={e => onFormChange({ ...form, descriere: e.target.value })}
                         />
@@ -114,7 +114,7 @@ export default function ExercitiiModal({
 
                 {/* Footer: Anuleaza + Salveaza */}
                 <div className="modal-footer">
-                    <button className="btn-ghost" onClick={onClose}>Anulează</button>
+                    <button className="btn-ghost" onClick={onClose}>Cancel</button>
                     <button className="btn-primary" onClick={onSave}>
                         <FontAwesomeIcon icon={faCheck} style={{ width: 14, height: 14 }} />
                         {saveLabel}

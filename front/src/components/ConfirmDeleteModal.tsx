@@ -26,7 +26,7 @@ export default function ConfirmDeleteModal({ itemName, onConfirm, onCancel }: Co
 
                 {/* Header-ul modala cu titlu si buton inchidere */}
                 <div className="modal-header">
-                    <h3>Confirmare ștergere</h3>
+                    <h3>Confirm deletion</h3>
                     <button className="modal-close" onClick={onCancel}>
                         <FontAwesomeIcon icon={faXmark} style={{ width: 16, height: 16 }} />
                     </button>
@@ -35,17 +35,17 @@ export default function ConfirmDeleteModal({ itemName, onConfirm, onCancel }: Co
                 {/* Corpul modala cu mesajul de avertizare */}
                 <div className="modal-body">
                     <p className="confirm-text">
-                        Ești sigur că vrei să ștergi <strong>{itemName}</strong>?{' '}
-                        Această acțiune nu poate fi anulată.
+                        Are you sure you want to delete <strong>{itemName}</strong>?{' '}
+                        This action cannot be undone.
                     </p>
                 </div>
 
                 {/* Footer-ul with butoanele de actiune */}
                 <div className="modal-footer">
                     {/* Buton anulare — inchide modalul fara sa stearga nimic */}
-                    <button className="btn-ghost" onClick={onCancel}>Anulează</button>
+                    <button className="btn-ghost" onClick={onCancel}>Cancel</button>
                     {/* Buton confirmare stergere — apeleaza onConfirm */}
-                    <button className="btn-danger" onClick={onConfirm}>Șterge</button>
+                    <button className="btn-danger" onClick={onConfirm}>Delete</button>
                 </div>
             </div>
         </div>

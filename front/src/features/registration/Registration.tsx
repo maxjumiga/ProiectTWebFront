@@ -43,7 +43,7 @@ const RegisterPage: React.FC = () => {
     const handleConfirmChange = (val: string) => {
         setConfirm(val);
         if (val && val !== password) {
-            setPasswordError("Parolele nu coincid.");
+            setPasswordError("Passwords do not match.");
         } else {
             setPasswordError("");
         }
@@ -52,7 +52,7 @@ const RegisterPage: React.FC = () => {
     const handlePasswordChange = (val: string) => {
         setPassword(val);
         if (confirmPassword && val !== confirmPassword) {
-            setPasswordError("Parolele nu coincid.");
+            setPasswordError("Passwords do not match.");
         } else {
             setPasswordError("");
         }
@@ -103,15 +103,15 @@ const RegisterPage: React.FC = () => {
         <div className="auth-container">
             <button className="back-btn" onClick={() => navigate('/')} type="button">
                 <span className="back-arrow">←</span>
-                Înapoi
+                Back
             </button>
 
             <div className="register-wrapper">
                 <div className="register-card">
 
                     <div className="register-header">
-                        <h1 className="register-title">Creează un cont</h1>
-                        <p className="register-subtitle">Completează datele de mai jos pentru a te înregistra</p>
+                        <h1 className="register-title">Create an account</h1>
+                        <p className="register-subtitle">Fill in the details below to register</p>
                     </div>
 
                     {error && (
@@ -124,13 +124,13 @@ const RegisterPage: React.FC = () => {
 
                         {/* Nickname */}
                         <div className="form-group">
-                            <label className="form-label" htmlFor="nickname">Nume utilizator</label>
+                            <label className="form-label" htmlFor="nickname">Username</label>
                             <div className="input-wrapper">
                                 <input
                                     id="nickname"
                                     className="form-input"
                                     type="text"
-                                    placeholder="ex: ion_popescu"
+                                    placeholder="e.g.: john_doe"
                                     value={nickname}
                                     onChange={(e) => setNickname(e.target.value)}
                                     autoComplete="off"
@@ -141,13 +141,13 @@ const RegisterPage: React.FC = () => {
 
                         {/* Email */}
                         <div className="form-group">
-                            <label className="form-label" htmlFor="email">Adresă Gmail</label>
+                            <label className="form-label" htmlFor="email">Email address</label>
                             <div className="input-wrapper">
                                 <input
                                     id="email"
                                     className="form-input"
                                     type="email"
-                                    placeholder="exemplu@gmail.com"
+                                    placeholder="example@gmail.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     autoComplete="off"
@@ -158,13 +158,13 @@ const RegisterPage: React.FC = () => {
 
                         {/* Password */}
                         <div className="form-group">
-                            <label className="form-label" htmlFor="password">Parolă</label>
+                            <label className="form-label" htmlFor="password">Password</label>
                             <div className="input-wrapper">
                                 <input
                                     id="password"
                                     className="form-input has-eye"
                                     type={showPassword ? "text" : "password"}
-                                    placeholder="Minim 6 caractere"
+                                    placeholder="At least 6 characters"
                                     value={password}
                                     onChange={(e) => handlePasswordChange(e.target.value)}
                                     autoComplete="new-password"
@@ -175,7 +175,7 @@ const RegisterPage: React.FC = () => {
                                     className="eye-btn"
                                     onClick={() => setShowPassword((v) => !v)}
                                     tabIndex={-1}
-                                    aria-label={showPassword ? "Ascunde parola" : "Arată parola"}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
                                     {showPassword ? <EyeClosedIcon /> : <EyeOpenIcon />}
                                 </button>
@@ -184,13 +184,13 @@ const RegisterPage: React.FC = () => {
 
                         {/* Confirm Password */}
                         <div className="form-group">
-                            <label className="form-label" htmlFor="confirmPassword">Confirmă parola</label>
+                            <label className="form-label" htmlFor="confirmPassword">Confirm password</label>
                             <div className="input-wrapper">
                                 <input
                                     id="confirmPassword"
                                     className={`form-input has-eye ${confirmStatus}`}
                                     type={showPassword ? "text" : "password"}
-                                    placeholder="Repetă parola"
+                                    placeholder="Repeat password"
                                     value={confirmPassword}
                                     onChange={(e) => handleConfirmChange(e.target.value)}
                                     autoComplete="new-password"
@@ -201,7 +201,7 @@ const RegisterPage: React.FC = () => {
                                     className="eye-btn"
                                     onClick={() => setShowPassword((v) => !v)}
                                     tabIndex={-1}
-                                    aria-label={showPassword ? "Ascunde parola" : "Arată parola"}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
                                     {showPassword ? <EyeClosedIcon /> : <EyeOpenIcon />}
                                 </button>
@@ -212,14 +212,14 @@ const RegisterPage: React.FC = () => {
                         </div>
 
                         <button className="submit-btn" type="submit" disabled={!isValid}>
-                            Înregistrare
+                            Register
                         </button>
                     </form>
 
                     <div className="form-footer">
-                        <span>Ai deja un cont?</span>
+                        <span>Already have an account?</span>
                         <button className="footer-link" onClick={() => navigate('/login')} type="button">
-                            Autentifică-te
+                            Sign in
                         </button>
                     </div>
 

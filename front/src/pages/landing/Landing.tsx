@@ -30,7 +30,7 @@ export default function Landing() {
                                 <path d="M4 16a2 2 0 0 1 2-2h2V9a1 1 0 0 1 2 0v10a1 1 0 0 1-2 0v-1H6a2 2 0 0 1-2-2ZM24 9a1 1 0 0 1 2 0v14a1 1 0 0 1-2 0v-5h-2a2 2 0 0 1 0-4h2V9ZM12 7a1 1 0 0 1 1 1v16a1 1 0 0 1-2 0V8a1 1 0 0 1 1-1ZM19 5a1 1 0 0 1 1 1v20a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1Z" />
                             </svg>
                         </div>
-                        <span className="landing-logo-text">Sănătate</span>
+                        <span className="landing-logo-text">OmniTrack</span>
                     </div>
                     <div className="landing-nav-links">
                         {isAuthenticated ? (
@@ -203,12 +203,12 @@ export default function Landing() {
                         <span className="section-badge" style={{ background: 'rgba(252, 175, 121, 0.15)', borderColor: 'rgba(252, 175, 121, 0.3)', color: '#FCAF79' }}>✦ Testimonials</span>
                         <h2 className="section-title">Success Stories</h2>
                         <span className="section-title-accent" style={{ background: 'linear-gradient(90deg, #FCAF79, #42448A)' }} />
-                        <p className="section-subtitle">Join thousands of others who have transformed their lives using Sănătate.</p>
+                        <p className="section-subtitle">Join thousands of others who have transformed their lives using OmniTrack.</p>
                     </div>
 
                     <div className="reviews-grid">
                         {[
-                            { name: "Alex Popescu", role: "Lost 15kg in 6 months", review: "Sănătate changed the way I look at my food and workouts. The personalized plans are simply incredible. I've never felt better!", rating: 5, color: "#FCAF79" },
+                            { name: "Alex Popescu", role: "Lost 15kg in 6 months", review: "OmniTrack changed the way I look at my food and workouts. The personalized plans are simply incredible. I've never felt better!", rating: 5, color: "#FCAF79" },
                             { name: "Maria Ionescu", role: "Marathon Runner", review: "The workout tracking is super clean and intuitive. I love how I can see my volume progress over the months. Highly recommended for any athlete.", rating: 5, color: "#5BB6F5" },
                             { name: "Andrei Radu", role: "Gained 5kg Muscle", review: "Best app I've used for tracking my macros and workouts in one place. The dark mode dashboard is absolutely gorgeous to use every day.", rating: 5, color: "#42448A" }
                         ].map((r, i) => (
@@ -271,7 +271,7 @@ export default function Landing() {
 
             {/* Footer */}
             <footer className="landing-footer">
-                <p>© {new Date().getFullYear()} Sănătate. All rights reserved.</p>
+                <p>© {new Date().getFullYear()} OmniTrack. All rights reserved.</p>
             </footer>
         </div>
     );

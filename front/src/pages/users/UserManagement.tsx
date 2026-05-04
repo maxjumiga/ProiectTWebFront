@@ -14,21 +14,21 @@ import type { User, Role } from '../../types';
 import SearchBar from '../../components/SearchBar';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 import CustomSelect from '../../components/CustomSelect';
-import UtilizatoriTable from '../../features/users/UsersTable';
+import UsersTable from '../../features/users/UsersTable';
 import './UserManagement.css';
 
 // Optiunile pentru filtrul de rol (include "Toate rolurile" ca optiune implicita)
 const roleFilterOptions = [
-    { value: 'all', label: 'Toate rolurile' },
+    { value: 'all', label: 'All roles' },
     { value: 'admin', label: 'Admin' },
-    { value: 'user', label: 'Utilizator' },
+    { value: 'user', label: 'User' },
 ];
 
 // Optiunile pentru filtrul de status
 const statusFilterOptions = [
-    { value: 'all', label: 'Toate statusurile' },
-    { value: 'activ', label: 'Activ' },
-    { value: 'inactiv', label: 'Inactiv' },
+    { value: 'all', label: 'All statuses' },
+    { value: 'activ', label: 'Active' },
+    { value: 'inactiv', label: 'Inactive' },
 ];
 
 export default function UserManagement() {
@@ -77,7 +77,7 @@ export default function UserManagement() {
 
             {/* Toolbar: cautare + filtre */}
             <div className="um-toolbar">
-                <SearchBar value={search} onChange={setSearch} placeholder="Caută după nume sau email..." />
+                <SearchBar value={search} onChange={setSearch} placeholder="Search by name or email..." />
                 <div className="um-filters">
                     {/* Filtrul de rol */}
                     <CustomSelect value={filterRole} onChange={setFilterRole} options={roleFilterOptions} variant="default" />
@@ -89,21 +89,21 @@ export default function UserManagement() {
             {/* Contorul: afiseaza cate rezultate sunt vizibile din total */}
             <p className="um-count">
                 {filtered.length === users.length
-                    ? `${users.length} utilizatori total`
-                    : `${filtered.length} din ${users.length} utilizatori`}
+                    ? `${users.length} users total`
+                    : `${filtered.length} of ${users.length} users`}
             </p>
 
-            {/* Tabelul cu utilizatorii filtrati */}
-            <UtilizatoriTable
+            {/* Table with filtered users */}
+            <UsersTable
                 filtered={filtered}
                 onRoleChange={changeRole}
-                onDelete={setDeleteId} // Seteaza ID-ul pentru a deschide modalul de confirmare
+                onDelete={setDeleteId} // Sets the ID to open the confirmation modal
             />
 
             {/* Modalul de confirmare stergere — apare doar cand deleteId nu e null */}
             {deleteId && (
                 <ConfirmDeleteModal
-                    itemName={`utilizatorul ${users.find(u => u.id === deleteId)?.name}`}
+                    itemName={`user ${users.find(u => u.id === deleteId)?.name}`}
                     onConfirm={handleDelete}
                     onCancel={() => setDeleteId(null)}
                 />

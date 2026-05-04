@@ -23,46 +23,48 @@ export interface SelectOption {
 interface CustomSelectProps {
     value: string;                     // Valoarea selectata curent
     onChange: (value: string) => void; // Callback apelat la selectarea unei optiuni
-    options: SelectOption[];           // Lista de optiuni disponibile
-    placeholder?: string;             // Text afisat cand nu e nimic selectat
-    variant?: 'default' | 'inline' | 'form'; // Stilul vizual al dropdown-ului
-    colorMap?: Record<string, string>; // Map: valoare → clasa CSS de culoare
+    value: string;                     // Currently selected value
+    onChange: (value: string) => void; // Callback called when an option is selected
+    options: SelectOption[];           // List of available options
+    placeholder?: string;             // Text displayed when nothing is selected
+    variant?: 'default' | 'inline' | 'form'; // Visual style of the dropdown
+    colorMap?: Record<string, string>; // Map: value → CSS color class
 }
 
 export default function CustomSelect({
     value,
     onChange,
     options,
-    placeholder = 'Selectează...',
+    placeholder = 'Select...',
     variant = 'default',
     colorMap,
 }: CustomSelectProps) {
-    // Starea de deschis/inchis a dropdown-ului
+    // Dropdown open/closed state
     const [open, setOpen] = useState(false);
 
-    // Referinta la containerul DOM pentru detectia click-ului exterior
+    // Reference to the DOM container for outside click detection
     const ref = useRef<HTMLDivElement>(null);
 
-    // Gasim optiunea selectata curent pentru a-i afisa label-ul
+    // Find the currently selected option to display its label
     const selected = options.find(o => o.value === value);
 
-    // Clasa de culoare pentru butonul trigger (ex: "admin" → "csel-color--admin")
+    // Color class for the trigger button (e.g., "admin" → "csel-color--admin")
     const colorKey = colorMap?.[value] ?? '';
 
-    // Efect: inchide dropdown-ul cand utilizatorul da click in afara lui
+    // Effect: close the dropdown when the user clicks outside it
     useEffect(() => {
         function handleClick(e: MouseEvent) {
             if (ref.current && !ref.current.contains(e.target as Node)) {
                 setOpen(false);
             }
         }
-        // Adaugam event listener global la montare
+        // Add global event listener on mount
         document.addEventListener('mousedown', handleClick);
-        // Curatam event listener-ul la demontare (cleanup)
+        // Clean up event listener on unmount
         return () => document.removeEventListener('mousedown', handleClick);
     }, []);
 
-    // Selecteaza o optiune si inchide dropdown-ul
+    // Select an option and close the dropdown
     function handleSelect(val: string) {
         onChange(val);
         setOpen(false);
@@ -71,17 +73,17 @@ export default function CustomSelect({
     return (
         <div
             ref={ref}
-            // Clasa dinamica: varianta + stare deschis (pentru animatia sagetii)
+            // Dynamic class: variant + open state (for arrow animation)
             className={`csel csel--${variant}${open ? ' csel--open' : ''}`}
         >
-            {/* Butonul trigger — deschide/inchide dropdown-ul la click */}
+            {/* Trigger button — opens/closes the dropdown on click */}
             <button
                 type="button"
                 className={`csel-trigger${colorKey ? ` csel-color--${colorKey}` : ''}`}
                 onClick={() => setOpen(prev => !prev)}
             >
                 <span className="csel-label">{selected?.label ?? placeholder}</span>
-                {/* Sageata chevron — se roteste 180° cand e deschis prin CSS */}
+                {/* Chevron arrow — rotates 180° when open via CSS */}
                 <FontAwesomeIcon
                     icon={faChevronDown}
                     className="csel-arrow"

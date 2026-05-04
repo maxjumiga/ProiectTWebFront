@@ -10,8 +10,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 // -- Pagini colegi --
 import Landing from '../pages/landing/Landing';
-import Autentificare from '../features/authentication/Authentication';
-import Inregistrare from '../features/registration/Registration';
+import LoginPage from '../features/authentication/Authentication';
+import RegisterPage from '../features/registration/Registration';
 import Dashboard from '../pages/userDashboard/UserDashboard';
 import Profile from '../pages/userDashboard/profile/Profile';
 import Settings from '../pages/userDashboard/settings/Settings';
@@ -25,8 +25,8 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import AdminDashboard from '../pages/adminDashboard/AdminDashboard';
 import UserManagement from '../pages/users/UserManagement';
-import GestionareAlimente from '../pages/food/FoodManagement';
-import GestionareExercitii from '../pages/exercises/ExercisesManagement';
+import FoodManagement from '../pages/food/FoodManagement';
+import ExercisesManagement from '../pages/exercises/ExercisesManagement';
 
 import AdminAuthRoute from './AdminAuthRoute';
 
@@ -54,8 +54,8 @@ export default function AppRoutes() {
 
                 {/* Guest Routes — doar pentru utilizatori neautentificati */}
                 <Route element={<GuestRoute />}>
-                    <Route path="/login" element={<Autentificare />} />
-                    <Route path="/register" element={<Inregistrare />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
                 </Route>
 
                 {/* Protected Routes — utilizator autentificat (colegi) */}
@@ -70,9 +70,9 @@ export default function AppRoutes() {
                 {/* Admin Panel Routes — protejate de AdminAuthRoute (isAdminAuthenticated) */}
                 <Route element={<AdminAuthRoute />}>
                     <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
-                    <Route path="/utilizatori" element={<AdminLayout><UserManagement /></AdminLayout>} />
-                    <Route path="/alimente" element={<AdminLayout><GestionareAlimente /></AdminLayout>} />
-                    <Route path="/exercitii" element={<AdminLayout><GestionareExercitii /></AdminLayout>} />
+                    <Route path="/users" element={<AdminLayout><UserManagement /></AdminLayout>} />
+                    <Route path="/food" element={<AdminLayout><FoodManagement /></AdminLayout>} />
+                    <Route path="/exercises" element={<AdminLayout><ExercisesManagement /></AdminLayout>} />
                 </Route>
 
                 {/* Fallback — orice ruta necunoscuta → Landing */}

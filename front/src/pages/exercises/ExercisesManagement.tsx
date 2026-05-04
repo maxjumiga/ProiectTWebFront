@@ -17,8 +17,8 @@ import type { Exercitiu } from '../../types';
 import SearchBar from '../../components/SearchBar';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 import CustomSelect from '../../components/CustomSelect';
-import ExercitiiTable from '../../features/exercises/ExercisesTable';
-import ExercitiiModal from '../../features/exercises/ExercisesModal';
+import ExercisesTable from '../../features/exercises/ExercisesTable';
+import ExercisesModal from '../../features/exercises/ExercisesModal';
 import {
     grupMuscularFilterOptions,
     emptyExercitiiForm,
@@ -28,7 +28,7 @@ import {
 } from '../../features/exercises/exercisesConstants';
 import './ExercisesManagement.css';
 
-export default function GestionareExercitii() {
+export default function ExercisesManagement() {
     // Lista completa de exercitii (in-memory, porneste goala)
     const [exercitii, setExercitii] = useState<Exercitiu[]>([]);
 
@@ -106,7 +106,7 @@ export default function GestionareExercitii() {
 
             {/* Toolbar: cautare + filtru grupa musculara + buton adaugare */}
             <div className="um-toolbar">
-                <SearchBar value={search} onChange={setSearch} placeholder="Caută exercițiu după nume..." />
+                <SearchBar value={search} onChange={setSearch} placeholder="Search exercise by name..." />
                 <div className="um-filters">
                     {/* Filtrul de grupa musculara — include "Toate grupele" */}
                     <CustomSelect value={filterGrup} onChange={setFilterGrup} options={grupMuscularFilterOptions} variant="default" />
@@ -114,47 +114,47 @@ export default function GestionareExercitii() {
                 {/* Butonul de adaugare — reseteaza formularul si deschide modalul */}
                 <button className="btn-primary" onClick={() => { setShowAdd(true); setAddForm(emptyExercitiiForm()); setAddError(''); }}>
                     <FontAwesomeIcon icon={faPlus} style={{ width: 14, height: 14 }} />
-                    Adaugă Exercițiu
+                    Add Exercise
                 </button>
             </div>
 
             {/* Contorul — "X exercitii" sau "X din Y exercitii" cand e filtrat */}
             <p className="um-count">
                 {filtered.length === exercitii.length
-                    ? `${exercitii.length} exerciții în bază`
-                    : `${filtered.length} din ${exercitii.length} exerciții`}
+                    ? `${exercitii.length} exercises in database`
+                    : `${filtered.length} of ${exercitii.length} exercises`}
             </p>
 
-            {/* Tabelul cu lista de exercitii filtrate */}
-            <ExercitiiTable
+            {/* Table with filtered exercises list */}
+            <ExercisesTable
                 filtered={filtered}
                 onEdit={openEdit}
                 onDelete={setDeleteId}
             />
 
-            {/* Modalul de adaugare — randat conditional */}
+            {/* Add modal — conditional rendering */}
             {showAdd && (
-                <ExercitiiModal
-                    title="Adaugă Exercițiu Nou"
+                <ExercisesModal
+                    title="Add New Exercise"
                     form={addForm}
                     error={addError}
                     onFormChange={setAddForm}
                     onSave={handleAdd}
                     onClose={() => setShowAdd(false)}
-                    saveLabel="Adaugă"
+                    saveLabel="Add"
                 />
             )}
 
-            {/* Modalul de editare — randat conditional cand editTarget nu e null */}
+            {/* Edit modal — conditional rendering when editTarget is not null */}
             {editTarget && (
-                <ExercitiiModal
-                    title="Editează Exercițiu"
+                <ExercisesModal
+                    title="Edit Exercise"
                     form={editForm}
                     error={editError}
                     onFormChange={setEditForm}
                     onSave={handleEdit}
                     onClose={() => setEditTarget(null)}
-                    saveLabel="Salvează modificările"
+                    saveLabel="Save changes"
                 />
             )}
 

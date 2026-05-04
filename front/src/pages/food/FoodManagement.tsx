@@ -17,8 +17,8 @@ import type { Aliment } from '../../types';
 import SearchBar from '../../components/SearchBar';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 import CustomSelect from '../../components/CustomSelect';
-import AlimenteTable from '../../features/food/FoodTable';
-import AlimentModal from '../../features/food/FoodModal';
+import FoodTable from '../../features/food/FoodTable';
+import FoodModal from '../../features/food/FoodModal';
 import {
     categorieFilterOptions,
     emptyAlimentForm,
@@ -28,7 +28,7 @@ import {
 } from '../../features/food/foodConstants';
 import './FoodManagement.css';
 
-export default function GestionareAlimente() {
+export default function FoodManagement() {
     // Lista completa de alimente (in-memory, porneste goala)
     const [alimente, setAlimente] = useState<Aliment[]>([]);
 
@@ -106,7 +106,7 @@ export default function GestionareAlimente() {
 
             {/* Toolbar: cautare + filtru categorie + buton adaugare */}
             <div className="um-toolbar">
-                <SearchBar value={search} onChange={setSearch} placeholder="Caută aliment după nume..." />
+                <SearchBar value={search} onChange={setSearch} placeholder="Search food by name..." />
                 <div className="um-filters">
                     {/* Filtrul de categorie — include "Toate categoriile" */}
                     <CustomSelect value={filterCat} onChange={setFilterCat} options={categorieFilterOptions} variant="default" />
@@ -114,48 +114,48 @@ export default function GestionareAlimente() {
                 {/* Butonul de adaugare — reseteaza formularul si deschide modalul */}
                 <button className="btn-primary" onClick={() => { setShowAdd(true); setAddForm(emptyAlimentForm()); setAddError(''); }}>
                     <FontAwesomeIcon icon={faPlus} style={{ width: 14, height: 14 }} />
-                    Adaugă Aliment
+                    Add Food
                 </button>
             </div>
 
             {/* Contorul — arata "X alimente" sau "X din Y alimente" cand e filtrat */}
             <p className="um-count">
                 {filtered.length === alimente.length
-                    ? `${alimente.length} alimente în bază`
-                    : `${filtered.length} din ${alimente.length} alimente`}
+                    ? `${alimente.length} foods in database`
+                    : `${filtered.length} of ${alimente.length} foods`}
             </p>
 
-            {/* Tabelul cu lista de alimente filtrate */}
-            <AlimenteTable
+            {/* Table with filtered food list */}
+            <FoodTable
                 alimente={alimente}
                 filtered={filtered}
                 onEdit={openEdit}
-                onDelete={setDeleteId} // Seteaza ID-ul pentru a deschide confirmarea
+                onDelete={setDeleteId} // Sets the ID to open the confirmation modal
             />
 
-            {/* Modalul de adaugare — randat conditional */}
+            {/* Add modal — conditional rendering */}
             {showAdd && (
-                <AlimentModal
-                    title="Adaugă Aliment Nou"
+                <FoodModal
+                    title="Add New Food"
                     form={addForm}
                     error={addError}
                     onFormChange={setAddForm}
                     onSave={handleAdd}
                     onClose={() => setShowAdd(false)}
-                    saveLabel="Adaugă"
+                    saveLabel="Add"
                 />
             )}
 
-            {/* Modalul de editare — randat conditional cand editTarget nu e null */}
+            {/* Edit modal — conditional rendering when editTarget is not null */}
             {editTarget && (
-                <AlimentModal
-                    title="Editează Aliment"
+                <FoodModal
+                    title="Edit Food"
                     form={editForm}
                     error={editError}
                     onFormChange={setEditForm}
                     onSave={handleEdit}
                     onClose={() => setEditTarget(null)}
-                    saveLabel="Salvează modificările"
+                    saveLabel="Save changes"
                 />
             )}
 
