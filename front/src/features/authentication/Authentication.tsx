@@ -10,7 +10,7 @@ const MOCK_ACCOUNT_KEY = '__mockAccountSeeded__';
 const seedMockAccount = () => {
     if (localStorage.getItem(MOCK_ACCOUNT_KEY)) return;
     let users: Record<string, any> = {};
-    try { users = JSON.parse(localStorage.getItem('users') || '{}'); } catch {}
+    try { users = JSON.parse(localStorage.getItem('users') || '{}'); } catch { }
     users['test@test.com'] = {
         password: 'test1234',
         username: 'Test User',
@@ -30,46 +30,85 @@ const LoginPage: React.FC = () => {
 
     React.useEffect(() => { seedMockAccount(); }, []);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!email || !password) {
-            setError('Please fill everything in');
+            setError("Please fill everything in");
             return;
         }
 
-        // Verificare credentiale admin — daca match, acces direct in panoul admin
-        if (email.trim() === 'admin@omnitrack.ro' && password === 'admin2026') {
-            sessionStorage.setItem('isAdminAuthenticated', 'true');
-            sessionStorage.setItem('isAuthenticated', 'true');
-            navigate('/admin');
+        // Admin local
+        if (
+            email.trim() === "admin@omnitrack.md" &&
+            password === "admin2026"
+        ) {
+            sessionStorage.setItem("isAdminAuthenticated", "true");
+            sessionStorage.setItem("isAuthenticated", "true");
+
+            navigate("/admin");
             return;
         }
 
-        let users: Record<string, any> = {};
         try {
-            users = JSON.parse(localStorage.getItem('users') || '{}');
-        } catch (e) { }
+            const response = await fetch(
+                "https://localhost:7025/api/auth/login",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                }
+            );
 
-        const userRecord = users[email];
-        if (!userRecord || userRecord.password !== password) {
-            setError('Invalid email or password');
-            return;
-        }
+            if (!response.ok) {
+                setError("Invalid email or password");
+                return;
+            }
 
-        sessionStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('user', JSON.stringify({ email }));
+            const data = await response.json();
 
-        if (userRecord.onboardingData) {
-            localStorage.setItem('onboarding', JSON.stringify(userRecord.onboardingData));
-        }
+            // JWT
+            localStorage.setItem("token", data.token);
 
-        localStorage.setItem('onboardingCompleted', userRecord.onboardingCompleted ? 'true' : 'false');
+            // user info
+            localStorage.setItem(
+                "user",
+                JSON.stringify(data.user)
+            );
 
-        if (userRecord.onboardingCompleted) {
-            navigate('/dashboard');
-        } else {
-            navigate('/onboarding');
+            sessionStorage.setItem(
+                "isAuthenticated",
+                "true"
+            );
+
+            // onboarding status
+            localStorage.setItem(
+                "onboardingCompleted",
+                data.onboardingCompleted ? "true" : "false"
+            );
+
+            // daca backend trimite onboarding data
+            if (data.onboardingData) {
+                localStorage.setItem(
+                    "onboarding",
+                    JSON.stringify(data.onboardingData)
+                );
+            }
+
+            // redirect
+            if (data.onboardingCompleted) {
+                navigate("/dashboard");
+            } else {
+                navigate("/onboarding");
+            }
+
+        } catch (err) {
+            setError("Cannot connect to server");
         }
     };
 

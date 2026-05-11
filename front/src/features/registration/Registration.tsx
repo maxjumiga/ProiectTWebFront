@@ -64,32 +64,51 @@ const RegisterPage: React.FC = () => {
         password.length >= 6 &&
         password === confirmPassword;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        setError("");
+
         if (!email || password.length < 6) {
-            setError('Invalid email or password (min 6 chars)');
+            setError("Invalid email or password");
             return;
         }
 
-        let users: Record<string, any> = {};
         try {
-            users = JSON.parse(localStorage.getItem('users') || '{}');
-        } catch (e) { }
+            const response = await fetch(
+                "https://localhost:7025/api/reg",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name: nickname,
+                        email: email,
+                        password: password
+                    })
+                }
+            );
 
-        if (users[email]) {
-            setError('User already exists. Please log in.');
-            return;
+            if (!response.ok) {
+                const message = await response.text();
+                setError(message);
+                return;
+            }
+
+            const data = await response.json();
+
+            // salvezi tokenul JWT
+            localStorage.setItem("token", data.token);
+
+            // salvezi userul
+            localStorage.setItem("user", JSON.stringify(data.user));
+
+            navigate("/onboarding");
+
+        } catch (err) {
+            setError("Cannot connect to server");
         }
-
-        users[email] = { password, onboardingCompleted: false };
-        localStorage.setItem('users', JSON.stringify(users));
-
-        sessionStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('user', JSON.stringify({ email }));
-        localStorage.setItem('onboardingCompleted', 'false');
-
-        navigate('/onboarding');
     };
 
     const confirmStatus =

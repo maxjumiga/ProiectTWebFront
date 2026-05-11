@@ -9,7 +9,6 @@ import {
     faMagnifyingGlass,
     faXmark,
     faPlus,
-    faMinus,
     faDroplet,
     faFire,
     faDumbbell,
