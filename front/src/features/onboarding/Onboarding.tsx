@@ -31,26 +31,53 @@ export default function Onboarding() {
     const next = () => setStep((s) => s + 1);
     const back = () => setStep((s) => s - 1);
 
-    const complete = () => {
-        localStorage.setItem('onboarding', JSON.stringify(data));
-        localStorage.setItem('onboardingCompleted', 'true');
-
+    const complete = async () => {
         try {
-            const currentUserStr = localStorage.getItem('user');
-            if (currentUserStr) {
-                const currentUser = JSON.parse(currentUserStr);
-                const email = currentUser.email;
-                let users = JSON.parse(localStorage.getItem('users') || '{}');
-                if (users[email]) {
-                    users[email].onboardingCompleted = true;
-                    // also store the data if desired
-                    users[email].onboardingData = data;
-                    localStorage.setItem('users', JSON.stringify(users));
-                }
-            }
-        } catch (e) { }
+            const token = localStorage.getItem("token");
 
-        navigate('/dashboard');
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+
+            const response = await fetch(
+                "https://localhost:7025/api/session/complete-onboarding",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        gender: data.gender,
+                        age: data.age,
+                        height: data.heightCm,
+                        weight: data.weightKg,
+                        goal: data.goal
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                console.error(await response.text());
+                return;
+            }
+
+            localStorage.setItem(
+                "onboardingCompleted",
+                "true"
+            );
+
+            localStorage.setItem(
+                "onboarding",
+                JSON.stringify(data)
+            );
+
+            navigate("/dashboard");
+
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const isWelcome = step === 0;

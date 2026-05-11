@@ -5,30 +5,12 @@ import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./Authentication.css";
 
-// ─── Seed mock test account on first load ─────────────────────────────────────
-const MOCK_ACCOUNT_KEY = '__mockAccountSeeded__';
-const seedMockAccount = () => {
-    if (localStorage.getItem(MOCK_ACCOUNT_KEY)) return;
-    let users: Record<string, any> = {};
-    try { users = JSON.parse(localStorage.getItem('users') || '{}'); } catch { }
-    users['test@test.com'] = {
-        password: 'test1234',
-        username: 'Test User',
-        onboardingCompleted: true,
-        onboardingData: { height: 175, weight: 70, age: 25, goal: 'Maintain weight', gender: 'male' },
-    };
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem(MOCK_ACCOUNT_KEY, '1');
-};
-
 const LoginPage: React.FC = () => {
-    const [email, setEmail] = useState("test@test.com");
-    const [password, setPassword] = useState("test1234");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
-
-    React.useEffect(() => { seedMockAccount(); }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,28 +20,16 @@ const LoginPage: React.FC = () => {
             return;
         }
 
-        // Admin local
-        if (
-            email.trim() === "admin@omnitrack.md" &&
-            password === "admin2026"
-        ) {
-            sessionStorage.setItem("isAdminAuthenticated", "true");
-            sessionStorage.setItem("isAuthenticated", "true");
-
-            navigate("/admin");
-            return;
-        }
-
         try {
             const response = await fetch(
-                "https://localhost:7025/api/auth/login",
+                "https://localhost:7025/api/session/auth",
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        email,
+                        credential: email,
                         password
                     })
                 }
@@ -76,10 +46,12 @@ const LoginPage: React.FC = () => {
             localStorage.setItem("token", data.token);
 
             // user info
-            localStorage.setItem(
-                "user",
-                JSON.stringify(data.user)
-            );
+            if (data.user) {
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(data.user)
+                );
+            }
 
             sessionStorage.setItem(
                 "isAuthenticated",
@@ -92,7 +64,7 @@ const LoginPage: React.FC = () => {
                 data.onboardingCompleted ? "true" : "false"
             );
 
-            // daca backend trimite onboarding data
+            // onboarding data
             if (data.onboardingData) {
                 localStorage.setItem(
                     "onboarding",
@@ -174,7 +146,11 @@ const LoginPage: React.FC = () => {
                                     tabIndex={-1}
                                     aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
-                                    {showPassword ? <FontAwesomeIcon icon={faEye} /> : <FontAwesomeIcon icon={faEyeSlash} />}
+                                    {showPassword ? (
+                                        <FontAwesomeIcon icon={faEye} />
+                                    ) : (
+                                        <FontAwesomeIcon icon={faEyeSlash} />
+                                    )}
                                 </button>
                             </div>
                         </div>
@@ -193,13 +169,22 @@ const LoginPage: React.FC = () => {
                     </form>
 
                     <div className="form-footer">
-                        <button className="footer-link register" onClick={() => navigate('/register')} type="button">
+                        <button
+                            className="footer-link register"
+                            onClick={() => navigate('/register')}
+                            type="button"
+                        >
                             Register
                         </button>
-                        <button className="footer-link muted" type="button">
+
+                        <button
+                            className="footer-link muted"
+                            type="button"
+                        >
                             Forgot password?
                         </button>
                     </div>
+
                 </div>
             </div>
         </div>

@@ -98,11 +98,17 @@ const RegisterPage: React.FC = () => {
 
             const data = await response.json();
 
-            // salvezi tokenul JWT
             localStorage.setItem("token", data.token);
 
-            // salvezi userul
-            localStorage.setItem("user", JSON.stringify(data.user));
+            sessionStorage.setItem(
+                "isAuthenticated",
+                "true"
+            );
+
+            localStorage.setItem(
+                "onboardingCompleted",
+                "false"
+            );
 
             navigate("/onboarding");
 
