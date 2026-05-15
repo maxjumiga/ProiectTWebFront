@@ -41,7 +41,7 @@ export default function Onboarding() {
             }
 
             const response = await fetch(
-                "https://localhost:7025/api/session/complete-onboarding",
+                "http://localhost:5004/api/session/complete-onboarding",
                 {
                     method: "POST",
                     headers: {

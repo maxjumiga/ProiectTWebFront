@@ -22,7 +22,7 @@ const LoginPage: React.FC = () => {
 
         try {
             const response = await fetch(
-                "https://localhost:7025/api/session/auth",
+                "http://localhost:5004/api/session/auth",
                 {
                     method: "POST",
                     headers: {

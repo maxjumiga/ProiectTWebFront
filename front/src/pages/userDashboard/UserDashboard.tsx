@@ -12,6 +12,9 @@ import {
     faDroplet,
     faFire,
     faDumbbell,
+    faHistory,
+    faHeartPulse,
+    faPersonWalking,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./UserDashboard.css";
@@ -59,41 +62,27 @@ interface FoodLog {
 interface ExerciseItem {
     id: number;
     name: string;
-    category: string;
-    muscleGroup: string;
+    primaryMuscleGroup: string;
+    secondaryMuscleGroup?: string;
+    difficulty: string;
+    fatigueCost: string;
 }
 
-const EXERCISE_DATABASE: ExerciseItem[] = [
-    { id: 1, name: "Bench Press", category: "Strength", muscleGroup: "Chest" },
-    { id: 2, name: "Squat", category: "Strength", muscleGroup: "Legs" },
-    { id: 3, name: "Deadlift", category: "Strength", muscleGroup: "Full Body" },
-    { id: 4, name: "Pull-Up", category: "Strength", muscleGroup: "Back" },
-    { id: 5, name: "Overhead Press", category: "Strength", muscleGroup: "Shoulders" },
-    { id: 6, name: "Barbell Row", category: "Strength", muscleGroup: "Back" },
-    { id: 7, name: "Running", category: "Cardio", muscleGroup: "Full Body" },
-    { id: 8, name: "Cycling", category: "Cardio", muscleGroup: "Legs" },
-    { id: 9, name: "Jump Rope", category: "Cardio", muscleGroup: "Full Body" },
-    { id: 10, name: "Plank", category: "Core", muscleGroup: "Core" },
-    { id: 11, name: "Leg Press", category: "Strength", muscleGroup: "Legs" },
-    { id: 12, name: "Dumbbell Curl", category: "Strength", muscleGroup: "Biceps" },
-    { id: 13, name: "Tricep Dip", category: "Strength", muscleGroup: "Triceps" },
-    { id: 14, name: "Lunges", category: "Strength", muscleGroup: "Legs" },
-    { id: 15, name: "Mountain Climbers", category: "Cardio", muscleGroup: "Full Body" },
-];
-
-type WorkoutType = "Strength" | "Cardio" | "Stretching" | "Endurance" | "Core" | "HIIT";
+type WorkoutType = "Strength" | "Cardio" | "Mobility";
 
 interface WorkoutExerciseLog {
     exercise: ExerciseItem;
     sets: number;
     reps: number;
+    weight: number;
 }
 
 interface WorkoutLog {
-    name: string;
+    id?: number;
+    date: string;
+    duration: number;
     type: WorkoutType;
-    from: string;
-    to: string;
+    label: string;
     exercises: WorkoutExerciseLog[];
 }
 
@@ -213,7 +202,7 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                 const token = localStorage.getItem("token");
 
                 const response = await fetch(
-                    `https://localhost:7025/api/UsdaFood/search-usda?query=${search}`,
+                    `http://localhost:5004/api/UsdaFood/search-usda?query=${search}`,
                     {
                         method: "GET",
                         headers: {
@@ -280,7 +269,7 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "https://localhost:7025/api/FoodLog/create",
+                "http://localhost:5004/api/FoodLog/create",
                 {
                     method: "POST",
                     headers: {
@@ -413,7 +402,7 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                                                         const token = localStorage.getItem("token");
 
                                                         const response = await fetch(
-                                                            `https://localhost:7025/api/UsdaFood/${f.id}`,
+                                                            `http://localhost:5004/api/UsdaFood/${f.id}`,
                                                             {
                                                                 method: "GET",
                                                                 headers: {
@@ -558,7 +547,7 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "https://localhost:7025/api/WaterLog/add",
+                "http://localhost:5004/api/WaterLog/add",
                 {
                     method: "POST",
                     headers: {
@@ -588,7 +577,7 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "https://localhost:7025/api/WaterLog/remove",
+                "http://localhost:5004/api/WaterLog/remove",
                 {
                     method: "POST",
                     headers: {
@@ -735,285 +724,421 @@ interface WorkoutsModalProps {
     onAddWorkout: (w: WorkoutLog) => void;
 }
 
-const formatDuration = (from: string, to: string) => {
-    const [fh, fm] = from.split(":").map(Number);
-    const [th, tm] = to.split(":").map(Number);
-    const mins = (th * 60 + tm) - (fh * 60 + fm);
-    if (mins <= 0) return "—";
-    if (mins < 60) return `${mins} min`;
-    const h = Math.floor(mins / 60);
-    const m = mins % 60;
-    return m > 0 ? `${h}h ${m}min` : `${h}h`;
+const WORKOUT_TYPE_COLORS: Record<WorkoutType, { bg: string; color: string; icon: any }> = {
+    Strength: { bg: "rgba(239,68,68,0.1)", color: "#dc2626", icon: faDumbbell },
+    Cardio: { bg: "rgba(16,185,129,0.1)", color: "#059669", icon: faHeartPulse },
+    Mobility: { bg: "rgba(168,85,247,0.1)", color: "#9333ea", icon: faPersonWalking },
 };
 
-const WORKOUT_TYPE_COLORS: Record<WorkoutType, { bg: string; color: string }> = {
-    Strength: { bg: "rgba(239,68,68,0.1)", color: "#dc2626" },
-    Cardio: { bg: "rgba(16,185,129,0.1)", color: "#059669" },
-    Stretching: { bg: "rgba(168,85,247,0.1)", color: "#9333ea" },
-    Endurance: { bg: "rgba(234,179,8,0.1)", color: "#b45309" },
-    Core: { bg: "rgba(99,102,241,0.1)", color: "#6366f1" },
-    HIIT: { bg: "rgba(249,115,22,0.1)", color: "#f97316" },
-};
+const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts, onClose, onAddWorkout }) => {
+    const [workouts, setWorkouts] = useState<WorkoutLog[]>(initialWorkouts);
+    const [isLoggingNew, setIsLoggingNew] = useState(true);
+    const [selectedId, setSelectedId] = useState<number | null>(null);
 
-const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts, onClose, onAddWorkout }) => {
-    const [name, setName] = useState("");
+    const [label, setLabel] = useState("");
     const [type, setType] = useState<WorkoutType>("Strength");
-    const [from, setFrom] = useState("08:00");
-    const [to, setTo] = useState("09:00");
+    const [duration, setDuration] = useState(60);
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
+    const [availableExercises, setAvailableExercises] = useState<ExerciseItem[]>([]);
     const [exSearch, setExSearch] = useState("");
     const [exDropOpen, setExDropOpen] = useState(false);
     const [exSets, setExSets] = useState(3);
     const [exReps, setExReps] = useState(10);
+    const [exWeight, setExWeight] = useState(60);
     const [exercises, setExercises] = useState<WorkoutExerciseLog[]>([]);
     const [pendingEx, setPendingEx] = useState<ExerciseItem | null>(null);
+    const [typeDropOpen, setTypeDropOpen] = useState(false);
     const exDropRef = useRef<HTMLDivElement>(null);
+    const typeDropRef = useRef<HTMLDivElement>(null);
 
-    const filteredEx = EXERCISE_DATABASE.filter(e =>
-        e.name.toLowerCase().includes(exSearch.toLowerCase())
-    );
+    const token = localStorage.getItem("token");
+
+    const fetchWorkouts = async () => {
+        try {
+            const res = await fetch("http://localhost:5004/api/workout/list", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                const mapped: WorkoutLog[] = data.map((w: any) => ({
+                    id: w.id,
+                    date: w.date,
+                    duration: w.duration,
+                    type: w.type as WorkoutType,
+                    label: w.label,
+                    exercises: (w.workoutExercises || []).map((we: any) => ({
+                        exercise: {
+                            id: we.exerciseId,
+                            name: we.exerciseName || "Unknown Exercise",
+                            primaryMuscleGroup: we.primaryMuscleGroup || "N/A",
+                            secondaryMuscleGroup: we.secondaryMuscleGroup,
+                            difficulty: we.difficulty || "Beginner",
+                            fatigueCost: we.fatigueCost || 0
+                        },
+                        sets: we.sets,
+                        reps: we.reps,
+                        weight: we.weight
+                    }))
+                }));
+                setWorkouts(mapped);
+            }
+        } catch (e) { console.error(e); }
+    };
+
+    const fetchExercises = async () => {
+        try {
+            const res = await fetch("http://localhost:5004/api/exercise/list", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setAvailableExercises(data);
+            }
+        } catch (e) { console.error(e); }
+    };
+
+    useEffect(() => {
+        fetchWorkouts();
+        fetchExercises();
+    }, []);
 
     useEffect(() => {
         const handler = (e: MouseEvent) => {
             if (exDropRef.current && !exDropRef.current.contains(e.target as Node)) {
                 setExDropOpen(false);
             }
+            if (typeDropRef.current && !typeDropRef.current.contains(e.target as Node)) {
+                setTypeDropOpen(false);
+            }
         };
         document.addEventListener("mousedown", handler);
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
+    const filteredEx = availableExercises.filter(e =>
+        e.name.toLowerCase().includes(exSearch.toLowerCase())
+    );
+
     const addExercise = () => {
-        if (!pendingEx) return;
-        setExercises(prev => [...prev, { exercise: pendingEx, sets: exSets, reps: exReps }]);
+        if (!pendingEx || exSets <= 0 || exReps <= 0) return;
+        setExercises(prev => [...prev, { exercise: pendingEx, sets: exSets, reps: exReps, weight: exWeight }]);
         setPendingEx(null);
         setExSearch("");
         setExSets(3);
         setExReps(10);
+        setExWeight(60);
     };
 
     const removeExercise = (idx: number) => {
         setExercises(prev => prev.filter((_, i) => i !== idx));
     };
 
-    const handleSave = () => {
-        if (!name.trim()) return;
-        onAddWorkout({ name: name.trim(), type, from, to, exercises });
-        setName(""); setType("Strength");
-        setFrom("08:00"); setTo("09:00");
-        setExercises([]);
+    const resetForm = () => {
+        setLabel(""); setType("Strength"); setDuration(60); setDate(new Date().toISOString().split('T')[0]);
+        setExercises([]); setPendingEx(null); setSelectedId(null); setIsLoggingNew(true);
+    };
+
+    const selectForEdit = (w: WorkoutLog) => {
+        setSelectedId(w.id || null);
+        setLabel(w.label);
+        setType(w.type);
+        setDuration(w.duration);
+        setDate(w.date.split('T')[0]);
+        setExercises([...w.exercises]);
+        setIsLoggingNew(false);
+    };
+
+    const handleSave = async () => {
+        if (!label.trim()) return;
+
+        const body = {
+            date: new Date(date).toISOString(),
+            duration,
+            type,
+            label: label.trim(),
+            workoutExercises: exercises.map(ex => ({
+                exerciseId: ex.exercise.id,
+                sets: ex.sets,
+                reps: ex.reps,
+                weight: ex.weight
+            }))
+        };
+
+        try {
+            const url = selectedId 
+                ? `http://localhost:5004/api/workout/update/${selectedId}`
+                : "http://localhost:5004/api/workout/create";
+            const method = selectedId ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method,
+                headers: { 
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}` 
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (res.ok) {
+                fetchWorkouts();
+                resetForm();
+            }
+        } catch (e) { console.error(e); }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (!confirm("Delete this workout?")) return;
+        try {
+            const res = await fetch(`http://localhost:5004/api/workout/delete/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                fetchWorkouts();
+                if (selectedId === id) resetForm();
+            }
+        } catch (e) { console.error(e); }
     };
 
     return (
         <div className="db-modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-            <div className="db-modal-card db-modal-wide">
-                <div className="db-modal-header">
-                    <div className="db-modal-title">
-                        <span className="db-modal-icon workout-icon">🏋️</span>
-                        My Workouts
+            <div className="db-modal-card db-modal-split">
+                
+                {/* Left Sidebar: History */}
+                <div className="modal-sidebar">
+                    <div className="sidebar-header-modal">
+                        <FontAwesomeIcon icon={faHistory} />
+                        History
                     </div>
-                    <button className="db-modal-close" onClick={onClose} type="button">
-                        <FontAwesomeIcon icon={faXmark} />
-                    </button>
+                    <div className="history-list">
+                        <button 
+                            className={`history-new-btn ${isLoggingNew && !selectedId ? 'active' : ''}`}
+                            onClick={resetForm}
+                        >
+                            <FontAwesomeIcon icon={faPlus} />
+                            Log New Workout
+                        </button>
+                        {workouts.map(w => (
+                            <div 
+                                key={w.id} 
+                                className={`history-item ${selectedId === w.id ? 'active' : ''}`}
+                                onClick={() => selectForEdit(w)}
+                            >
+                                <div className="history-item-top">
+                                    <span className="history-label">{w.label}</span>
+                                    <FontAwesomeIcon 
+                                        icon={(WORKOUT_TYPE_COLORS[w.type] || WORKOUT_TYPE_COLORS["Strength"]).icon} 
+                                        style={{color: (WORKOUT_TYPE_COLORS[w.type] || WORKOUT_TYPE_COLORS["Strength"]).color}} 
+                                    />
+                                </div>
+                                <div className="history-item-meta">
+                                    {new Date(w.date).toLocaleDateString()} · {w.duration}m
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                <div className="db-modal-body">
-                    {/* Past workouts */}
-                    {workouts.length > 0 && (
-                        <div className="db-modal-section">
-                            <div className="db-modal-section-title">📂 Recorded Workouts</div>
-                            <div className="workout-log-list">
-                                {workouts.map((w, i) => {
-                                    const tc = WORKOUT_TYPE_COLORS[w.type];
-                                    return (
-                                        <div className="workout-log-item" key={i}>
-                                            <div className="workout-log-top">
-                                                <span className="workout-log-name">{w.name}</span>
-                                                <span className="workout-type-badge-db" style={{ background: tc.bg, color: tc.color }}>{w.type}</span>
-                                                <span className="workout-log-time">{w.from} – {w.to} <em>({formatDuration(w.from, w.to)})</em></span>
-                                            </div>
-                                            {w.exercises.length > 0 && (
-                                                <div className="workout-log-exercises">
-                                                    {w.exercises.map((ex, j) => (
-                                                        <span className="workout-ex-chip" key={j}>
-                                                            {ex.exercise.name} · {ex.sets}×{ex.reps}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                {/* Right Content: Form */}
+                <div className="modal-main-content">
+                    <div className="db-modal-header no-border">
+                        <div className="db-modal-title">
+                            {selectedId ? "Edit Workout" : "New Workout"}
                         </div>
-                    )}
-
-                    {/* New workout */}
-                    <div className="db-modal-section">
-                        <div className="db-modal-section-title">➕ Log New Workout</div>
-
-                        {/* Name + Type */}
-                        <div className="wk-form-row">
-                            <div className="wk-form-field wk-grow">
-                                <label className="db-field-label">Workout Name</label>
-                                <input
-                                    type="text"
-                                    className="db-input"
-                                    placeholder="e.g. Upper body, Morning run…"
-                                    value={name}
-                                    onChange={e => setName(e.target.value)}
-                                />
-                            </div>
-                            <div className="wk-form-field">
-                                <label className="db-field-label">Type</label>
-                                <select
-                                    className="db-select"
-                                    value={type}
-                                    onChange={e => setType(e.target.value as WorkoutType)}
-                                >
-                                    <option value="Strength">💪 Strength</option>
-                                    <option value="Cardio">🏃 Cardio</option>
-                                    <option value="Stretching">🧘 Stretching</option>
-                                    <option value="Endurance">🚴 Endurance</option>
-                                    <option value="Core">🎯 Core</option>
-                                    <option value="HIIT">⚡ HIIT</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Time */}
-                        <div className="wk-form-row">
-                            <div className="wk-form-field">
-                                <label className="db-field-label">Start Time</label>
-                                <input
-                                    type="time"
-                                    className="db-input"
-                                    value={from}
-                                    onChange={e => setFrom(e.target.value)}
-                                />
-                            </div>
-                            <div className="wk-form-field">
-                                <label className="db-field-label">End Time</label>
-                                <input
-                                    type="time"
-                                    className="db-input"
-                                    value={to}
-                                    onChange={e => setTo(e.target.value)}
-                                />
-                            </div>
-                            {from && to && (
-                                <div className="wk-duration-badge">
-                                    ⏱ {formatDuration(from, to)}
-                                </div>
-                            )}
-                        </div>
+                        <button className="db-modal-close" onClick={onClose} type="button">
+                            <FontAwesomeIcon icon={faXmark} />
+                        </button>
                     </div>
 
-                    {/* Exercises */}
-                    <div className="db-modal-section">
-                        <div className="db-modal-section-title">🏋️ Exercises</div>
+                    <div className="db-modal-body">
+                        <div className="db-modal-section">
+                            <div className="wk-form-row">
+                                <div className="wk-form-field wk-grow">
+                                    <label className="db-field-label">Workout Name</label>
+                                    <input
+                                        type="text"
+                                        className="db-input"
+                                        placeholder="Upper body, Morning run…"
+                                        value={label}
+                                        onChange={e => setLabel(e.target.value)}
+                                    />
+                                </div>
+                                <div className="wk-form-field" style={{width: '140px'}}>
+                                    <label className="db-field-label">Type</label>
+                                    <div className="custom-dropdown-wrap" ref={typeDropRef}>
+                                        <div 
+                                            className="db-select-custom" 
+                                            onClick={() => setTypeDropOpen(!typeDropOpen)}
+                                        >
+                                            {type}
+                                            <FontAwesomeIcon icon={typeDropOpen ? faXmark : faPlus} style={{fontSize: '10px', opacity: 0.5}} />
+                                        </div>
+                                        {typeDropOpen && (
+                                            <div className="custom-dropdown-list animate-fup">
+                                                {(["Strength", "Cardio", "Mobility"] as WorkoutType[]).map(t => (
+                                                    <div 
+                                                        key={t} 
+                                                        className={`custom-drop-item ${type === t ? 'selected' : ''}`}
+                                                        onClick={() => { setType(t); setTypeDropOpen(false); }}
+                                                    >
+                                                        {t}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
 
-                        {exercises.length > 0 && (
-                            <div className="ex-log-list">
+                            <div className="wk-form-row">
+                                <div className="wk-form-field wk-grow">
+                                    <label className="db-field-label">Date</label>
+                                    <input
+                                        type="date"
+                                        className="db-input"
+                                        value={date}
+                                        onChange={e => setDate(e.target.value)}
+                                    />
+                                </div>
+                                <div className="wk-form-field" style={{width: '140px'}}>
+                                    <label className="db-field-label">Duration (min)</label>
+                                    <input
+                                        type="number"
+                                        className="db-input"
+                                        value={duration}
+                                        onChange={e => setDuration(Number(e.target.value))}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="db-modal-section">
+                            <div className="section-header-row">
+                                <div className="db-modal-section-title">Exercises</div>
+                                <div className="exercise-count-badge">{exercises.length}</div>
+                            </div>
+
+                            <div className="ex-list-rework">
                                 {exercises.map((ex, i) => (
-                                    <div className="ex-log-item" key={i}>
-                                        <span className="ex-log-cat" style={{
-                                            background: WORKOUT_TYPE_COLORS[ex.exercise.category as WorkoutType]?.bg || "rgba(99,102,241,0.1)",
-                                            color: WORKOUT_TYPE_COLORS[ex.exercise.category as WorkoutType]?.color || "#6366f1"
-                                        }}>{ex.exercise.category}</span>
-                                        <span className="ex-log-name">{ex.exercise.name}</span>
-                                        <span className="ex-log-meta">{ex.sets} sets × {ex.reps} reps</span>
-                                        <button className="ex-remove-btn" onClick={() => removeExercise(i)}>
+                                    <div className="ex-item-rework" key={i}>
+                                        <div className="ex-item-info">
+                                            <div className="ex-item-name">{ex.exercise.name}</div>
+                                            <div className="ex-item-muscles">
+                                                {ex.exercise.primaryMuscleGroup} {ex.exercise.secondaryMuscleGroup ? `· ${ex.exercise.secondaryMuscleGroup}` : ''}
+                                            </div>
+                                        </div>
+                                        <div className="ex-item-stats">
+                                            <div className="ex-stat"><span>Sets</span>{ex.sets}</div>
+                                            <div className="ex-stat"><span>Reps</span>{ex.reps}</div>
+                                            <div className="ex-stat"><span>Kg</span>{ex.weight}</div>
+                                        </div>
+                                        <button className="ex-remove-minimal" onClick={() => removeExercise(i)}>
                                             <FontAwesomeIcon icon={faXmark} />
                                         </button>
                                     </div>
                                 ))}
                             </div>
-                        )}
 
-                        {/* Add exercise */}
-                        <div className="ex-add-row">
-                            <div className="ex-search-wrap" ref={exDropRef}>
-                                <div className="add-food-input-row">
-                                    <FontAwesomeIcon icon={faMagnifyingGlass} className="search-prefix-icon" />
-                                    <input
-                                        type="text"
-                                        className="db-input"
-                                        placeholder="Search exercise…"
-                                        value={exSearch}
-                                        onFocus={() => setExDropOpen(true)}
-                                        onChange={e => {
-                                            setExSearch(e.target.value);
-                                            setPendingEx(null);
-                                            setExDropOpen(true);
-                                        }}
-                                    />
+                            <div className="ex-adder-box">
+                                <div className="ex-search-row" ref={exDropRef}>
+                                    <div className="input-with-icon">
+                                        <FontAwesomeIcon icon={faMagnifyingGlass} className="field-icon" />
+                                        <input
+                                            type="text"
+                                            className="db-input"
+                                            placeholder="Add exercise..."
+                                            value={exSearch}
+                                            onFocus={() => setExDropOpen(true)}
+                                            onChange={e => {
+                                                setExSearch(e.target.value);
+                                                setPendingEx(null);
+                                                setExDropOpen(true);
+                                            }}
+                                        />
+                                    </div>
+                                    {exDropOpen && filteredEx.length > 0 && (
+                                        <div className="exercise-dropdown">
+                                            {filteredEx.map(ex => (
+                                                <div
+                                                    key={ex.id}
+                                                    className="ex-drop-item"
+                                                    onClick={() => {
+                                                        setPendingEx(ex);
+                                                        setExSearch(ex.name);
+                                                        setExDropOpen(false);
+                                                    }}
+                                                >
+                                                    <div className="ex-drop-name">{ex.name}</div>
+                                                    <div className="ex-drop-meta">{ex.primaryMuscleGroup} · {ex.difficulty}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
-                                {exDropOpen && filteredEx.length > 0 && (
-                                    <div className="food-dropdown">
-                                        {filteredEx.map(ex => (
-                                            <div
-                                                key={ex.id}
-                                                className="food-dropdown-item"
-                                                onClick={() => {
-                                                    setPendingEx(ex);
-                                                    setExSearch(ex.name);
-                                                    setExDropOpen(false);
-                                                }}
-                                            >
-                                                <span className="food-dropdown-name">{ex.name}</span>
-                                                <span className="food-dropdown-cal">{ex.category} · {ex.muscleGroup}</span>
+
+                                {pendingEx && (
+                                    <div className="ex-pending-details animate-fup">
+                                        <div className="ex-details-grid">
+                                            <div className="ex-detail-item">
+                                                <label>Primary</label>
+                                                <span>{pendingEx.primaryMuscleGroup}</span>
                                             </div>
-                                        ))}
+                                            <div className="ex-detail-item">
+                                                <label>Secondary</label>
+                                                <span>{pendingEx.secondaryMuscleGroup || "None"}</span>
+                                            </div>
+                                            <div className="ex-detail-item">
+                                                <label>Difficulty</label>
+                                                <span className={`diff-badge ${pendingEx.difficulty.toLowerCase()}`}>{pendingEx.difficulty}</span>
+                                            </div>
+                                        </div>
+                                        <div className="ex-inputs-row">
+                                            <div className="mini-field">
+                                                <label>Sets</label>
+                                                <input type="number" min="1" value={exSets} onChange={e => setExSets(Number(e.target.value))} />
+                                            </div>
+                                            <div className="mini-field">
+                                                <label>Reps</label>
+                                                <input type="number" min="1" value={exReps} onChange={e => setExReps(Number(e.target.value))} />
+                                            </div>
+                                            <div className="mini-field">
+                                                <label>Weight</label>
+                                                <input type="number" min="0" value={exWeight} onChange={e => setExWeight(Number(e.target.value))} />
+                                            </div>
+                                            <button 
+                                                className="add-ex-btn" 
+                                                onClick={addExercise}
+                                                disabled={!pendingEx || exSets <= 0 || exReps <= 0}
+                                            >
+                                                <FontAwesomeIcon icon={faPlus} />
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
-                            </div>
-                            <div className="ex-sets-reps">
-                                <div className="wk-form-field">
-                                    <label className="db-field-label">Sets</label>
-                                    <input
-                                        type="number"
-                                        className="db-input ex-num-input"
-                                        min={1} max={20}
-                                        value={exSets}
-                                        onChange={e => setExSets(Number(e.target.value))}
-                                    />
-                                </div>
-                                <div className="wk-form-field">
-                                    <label className="db-field-label">Reps</label>
-                                    <input
-                                        type="number"
-                                        className="db-input ex-num-input"
-                                        min={1} max={200}
-                                        value={exReps}
-                                        onChange={e => setExReps(Number(e.target.value))}
-                                    />
-                                </div>
-                                <button
-                                    className="db-btn-secondary ex-add-btn"
-                                    onClick={addExercise}
-                                    disabled={!pendingEx}
-                                >
-                                    <FontAwesomeIcon icon={faPlus} />
-                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <button
-                        className="db-btn-primary"
-                        onClick={handleSave}
-                        disabled={!name.trim()}
-                    >
-                        <FontAwesomeIcon icon={faDumbbell} /> Save Workout
-                    </button>
+                    <div className="modal-footer-rework">
+                        {selectedId && (
+                            <button className="btn-delete" onClick={() => handleDelete(selectedId)}>
+                                Delete Workout
+                            </button>
+                        )}
+                        <div style={{flex: 1}} />
+                        <button className="btn-cancel" onClick={onClose}>Cancel</button>
+                        <button className="btn-save" onClick={handleSave} disabled={!label || exercises.length === 0}>
+                            {selectedId ? "Save Changes" : "Save Workout"}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     );
 };
 
-// ─── Dashboard ────────────────────────────────────────────────────────────────
+// --- Dashboard ----------------------------------------------------------------
 const UserDashboard: React.FC = () => {
     const navigate = useNavigate();
 
@@ -1033,6 +1158,48 @@ const UserDashboard: React.FC = () => {
     // Workout log state
     const [workouts, setWorkouts] = useState<WorkoutLog[]>([]);
 
+    const fetchWorkouts = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                "http://localhost:5004/api/workout/list",
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                const mapped: WorkoutLog[] = data.map((w: any) => ({
+                    id: w.id,
+                    date: w.date,
+                    duration: w.duration,
+                    type: w.type as WorkoutType,
+                    label: w.label,
+                    exercises: (w.workoutExercises || []).map((we: any) => ({
+                        exercise: {
+                            id: we.exerciseId,
+                            name: we.exerciseName || "Unknown Exercise",
+                            primaryMuscleGroup: we.primaryMuscleGroup || "N/A",
+                            secondaryMuscleGroup: we.secondaryMuscleGroup,
+                            difficulty: we.difficulty || "Beginner",
+                            fatigueCost: we.fatigueCost || 0
+                        },
+                        sets: we.sets,
+                        reps: we.reps,
+                        weight: we.weight
+                    }))
+                }));
+                setWorkouts(mapped);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -1044,7 +1211,7 @@ const UserDashboard: React.FC = () => {
                 }
 
                 const response = await fetch(
-                    "https://localhost:7025/api/user/me",
+                    "http://localhost:5004/api/user/me",
                     {
                         method: "GET",
                         headers: {
@@ -1085,7 +1252,7 @@ const UserDashboard: React.FC = () => {
                 const token = localStorage.getItem("token");
 
                 const response = await fetch(
-                    "https://localhost:7025/api/WaterLog/today",
+                    "http://localhost:5004/api/WaterLog/today",
                     {
                         method: "GET",
                         headers: {
@@ -1111,6 +1278,8 @@ const UserDashboard: React.FC = () => {
 
         fetchWaterToday();
 
+        fetchWorkouts();
+
     }, []);
 
     const WATER_MAX = 3000;
@@ -1130,12 +1299,13 @@ const UserDashboard: React.FC = () => {
 
     const username = user?.name || "User";
 
-    const initials = username
+    const initials = (username || "User")
         .split(" ")
+        .filter(Boolean)
         .map((w: string) => w[0])
         .join("")
         .toUpperCase()
-        .slice(0, 2);
+        .slice(0, 2) || "U";
 
     return (
         <div className="db-root">
@@ -1276,17 +1446,20 @@ const UserDashboard: React.FC = () => {
                         ) : (
                             <div className="workout-preview-list">
                                 {workouts.slice(-2).map((w, i) => {
-                                    const tc = WORKOUT_TYPE_COLORS[w.type];
+                                    const tc = WORKOUT_TYPE_COLORS[w.type] || WORKOUT_TYPE_COLORS["Strength"];
                                     return (
                                         <div className="workout-preview-item" key={i}>
-                                            <span className="workout-type-badge-db" style={{ background: tc.bg, color: tc.color }}>{w.type}</span>
-                                            <span className="workout-preview-name">{w.name}</span>
-                                            <span className="workout-preview-time">{w.from} – {w.to}</span>
+                                            <span className="workout-type-badge-db" style={{ background: tc.bg, color: tc.color }}>
+                                                <FontAwesomeIcon icon={tc.icon} style={{marginRight: 4}} />
+                                                {w.type}
+                                            </span>
+                                            <span className="workout-preview-name">{w.label}</span>
+                                            <span className="workout-preview-time">{w.duration}m · {new Date(w.date).toLocaleDateString()}</span>
                                         </div>
                                     );
                                 })}
                                 {workouts.length > 2 && (
-                                    <div className="workout-more">+{workouts.length - 2} more workouts</div>
+                                    <div className="workout-more">+{workouts.length - 2} more workouts in history</div>
                                 )}
                             </div>
                         )}
@@ -1301,21 +1474,27 @@ const UserDashboard: React.FC = () => {
                         <div className="qs-list">
                             <div className="qs-row">
                                 <div className="qs-left">
-                                    <div className="qs-ico" style={{ background: "var(--cal-soft)" }}>🔥</div>
+                                    <div className="qs-ico" style={{ background: "var(--cal-soft)", color: "var(--cal-color)" }}>
+                                        <FontAwesomeIcon icon={faFire} />
+                                    </div>
                                     <span className="qs-lbl">Calories this week</span>
                                 </div>
                                 <span className="qs-val">13,470</span>
                             </div>
                             <div className="qs-row">
                                 <div className="qs-left">
-                                    <div className="qs-ico" style={{ background: "var(--water-soft)" }}>💧</div>
+                                    <div className="qs-ico" style={{ background: "var(--water-soft)", color: "var(--water-color)" }}>
+                                        <FontAwesomeIcon icon={faDroplet} />
+                                    </div>
                                     <span className="qs-lbl">Water this week</span>
                                 </div>
                                 <span className="qs-val">15.4 L</span>
                             </div>
                             <div className="qs-row">
                                 <div className="qs-left">
-                                    <div className="qs-ico" style={{ background: "var(--green-soft)" }}>🎯</div>
+                                    <div className="qs-ico" style={{ background: "var(--green-soft)", color: "var(--green)" }}>
+                                        <FontAwesomeIcon icon={faDumbbell} />
+                                    </div>
                                     <span className="qs-lbl">Goal days reached</span>
                                 </div>
                                 <span className="qs-val">5 / 7</span>
@@ -1396,8 +1575,11 @@ const UserDashboard: React.FC = () => {
             {workoutModal && (
                 <WorkoutsModal
                     workouts={workouts}
-                    onClose={() => setWorkoutModal(false)}
-                    onAddWorkout={w => setWorkouts(prev => [...prev, w])}
+                    onClose={() => {
+                        setWorkoutModal(false);
+                        fetchWorkouts();
+                    }}
+                    onAddWorkout={fetchWorkouts}
                 />
             )}
 

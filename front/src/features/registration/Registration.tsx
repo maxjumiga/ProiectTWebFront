@@ -76,7 +76,7 @@ const RegisterPage: React.FC = () => {
 
         try {
             const response = await fetch(
-                "https://localhost:7025/api/reg",
+                "http://localhost:5004/api/reg",
                 {
                     method: "POST",
                     headers: {
