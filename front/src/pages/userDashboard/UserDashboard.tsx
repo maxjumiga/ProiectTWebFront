@@ -34,18 +34,18 @@ interface FoodItem {
     unit: string;
 }
 
-const FOOD_DATABASE: FoodItem[] = [
-    { id: 1, name: "Chicken Breast", calories: 165, protein: 31, carbs: 0, fat: 3.6, vitaminC: 0, fiber: 0, unit: "100g" },
-    { id: 2, name: "Brown Rice", calories: 216, protein: 5, carbs: 45, fat: 1.8, vitaminC: 0, fiber: 3.5, unit: "100g" },
-    { id: 3, name: "Broccoli", calories: 34, protein: 2.8, carbs: 7, fat: 0.4, vitaminC: 89, fiber: 2.6, unit: "100g" },
-    { id: 4, name: "Whole Egg", calories: 155, protein: 13, carbs: 1.1, fat: 11, vitaminC: 0, fiber: 0, unit: "100g" },
-    { id: 5, name: "Oatmeal", calories: 389, protein: 17, carbs: 66, fat: 7, vitaminC: 0, fiber: 10, unit: "100g" },
-    { id: 6, name: "Salmon", calories: 208, protein: 20, carbs: 0, fat: 13, vitaminC: 3, fiber: 0, unit: "100g" },
-    { id: 7, name: "Sweet Potato", calories: 86, protein: 1.6, carbs: 20, fat: 0.1, vitaminC: 19, fiber: 3, unit: "100g" },
-    { id: 8, name: "Greek Yogurt", calories: 59, protein: 10, carbs: 3.6, fat: 0.4, vitaminC: 1, fiber: 0, unit: "100g" },
-    { id: 9, name: "Banana", calories: 89, protein: 1.1, carbs: 23, fat: 0.3, vitaminC: 8, fiber: 2.6, unit: "100g" },
-    { id: 10, name: "Almonds", calories: 579, protein: 21, carbs: 22, fat: 50, vitaminC: 0, fiber: 12, unit: "100g" },
-];
+// const FOOD_DATABASE: FoodItem[] = [
+//     { id: 1, name: "Chicken Breast", calories: 165, protein: 31, carbs: 0, fat: 3.6, vitaminC: 0, fiber: 0, unit: "100g" },
+//     { id: 2, name: "Brown Rice", calories: 216, protein: 5, carbs: 45, fat: 1.8, vitaminC: 0, fiber: 3.5, unit: "100g" },
+//     { id: 3, name: "Broccoli", calories: 34, protein: 2.8, carbs: 7, fat: 0.4, vitaminC: 89, fiber: 2.6, unit: "100g" },
+//     { id: 4, name: "Whole Egg", calories: 155, protein: 13, carbs: 1.1, fat: 11, vitaminC: 0, fiber: 0, unit: "100g" },
+//     { id: 5, name: "Oatmeal", calories: 389, protein: 17, carbs: 66, fat: 7, vitaminC: 0, fiber: 10, unit: "100g" },
+//     { id: 6, name: "Salmon", calories: 208, protein: 20, carbs: 0, fat: 13, vitaminC: 3, fiber: 0, unit: "100g" },
+//     { id: 7, name: "Sweet Potato", calories: 86, protein: 1.6, carbs: 20, fat: 0.1, vitaminC: 19, fiber: 3, unit: "100g" },
+//     { id: 8, name: "Greek Yogurt", calories: 59, protein: 10, carbs: 3.6, fat: 0.4, vitaminC: 1, fiber: 0, unit: "100g" },
+//     { id: 9, name: "Banana", calories: 89, protein: 1.1, carbs: 23, fat: 0.3, vitaminC: 8, fiber: 2.6, unit: "100g" },
+//     { id: 10, name: "Almonds", calories: 579, protein: 21, carbs: 22, fat: 50, vitaminC: 0, fiber: 12, unit: "100g" },
+// ];
 
 type MealTime = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
