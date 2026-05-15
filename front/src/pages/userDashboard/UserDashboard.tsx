@@ -16,14 +16,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import "./UserDashboard.css";
 
-const username = "Ion Popescu";
-const initials = username
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-
 // ─── Chart Data ───────────────────────────────────────────────────────────────
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const CAL_DATA = [1650, 2100, 1800, 2350, 1950, 2200, 1420];
@@ -43,16 +35,16 @@ interface FoodItem {
 }
 
 const FOOD_DATABASE: FoodItem[] = [
-    { id: 1,  name: "Chicken Breast",  calories: 165, protein: 31,  carbs: 0,   fat: 3.6, vitaminC: 0,  fiber: 0,   unit: "100g" },
-    { id: 2,  name: "Brown Rice",       calories: 216, protein: 5,   carbs: 45,  fat: 1.8, vitaminC: 0,  fiber: 3.5, unit: "100g" },
-    { id: 3,  name: "Broccoli",         calories: 34,  protein: 2.8, carbs: 7,   fat: 0.4, vitaminC: 89, fiber: 2.6, unit: "100g" },
-    { id: 4,  name: "Whole Egg",        calories: 155, protein: 13,  carbs: 1.1, fat: 11,  vitaminC: 0,  fiber: 0,   unit: "100g" },
-    { id: 5,  name: "Oatmeal",          calories: 389, protein: 17,  carbs: 66,  fat: 7,   vitaminC: 0,  fiber: 10,  unit: "100g" },
-    { id: 6,  name: "Salmon",           calories: 208, protein: 20,  carbs: 0,   fat: 13,  vitaminC: 3,  fiber: 0,   unit: "100g" },
-    { id: 7,  name: "Sweet Potato",     calories: 86,  protein: 1.6, carbs: 20,  fat: 0.1, vitaminC: 19, fiber: 3,   unit: "100g" },
-    { id: 8,  name: "Greek Yogurt",     calories: 59,  protein: 10,  carbs: 3.6, fat: 0.4, vitaminC: 1,  fiber: 0,   unit: "100g" },
-    { id: 9,  name: "Banana",           calories: 89,  protein: 1.1, carbs: 23,  fat: 0.3, vitaminC: 8,  fiber: 2.6, unit: "100g" },
-    { id: 10, name: "Almonds",          calories: 579, protein: 21,  carbs: 22,  fat: 50,  vitaminC: 0,  fiber: 12,  unit: "100g" },
+    { id: 1, name: "Chicken Breast", calories: 165, protein: 31, carbs: 0, fat: 3.6, vitaminC: 0, fiber: 0, unit: "100g" },
+    { id: 2, name: "Brown Rice", calories: 216, protein: 5, carbs: 45, fat: 1.8, vitaminC: 0, fiber: 3.5, unit: "100g" },
+    { id: 3, name: "Broccoli", calories: 34, protein: 2.8, carbs: 7, fat: 0.4, vitaminC: 89, fiber: 2.6, unit: "100g" },
+    { id: 4, name: "Whole Egg", calories: 155, protein: 13, carbs: 1.1, fat: 11, vitaminC: 0, fiber: 0, unit: "100g" },
+    { id: 5, name: "Oatmeal", calories: 389, protein: 17, carbs: 66, fat: 7, vitaminC: 0, fiber: 10, unit: "100g" },
+    { id: 6, name: "Salmon", calories: 208, protein: 20, carbs: 0, fat: 13, vitaminC: 3, fiber: 0, unit: "100g" },
+    { id: 7, name: "Sweet Potato", calories: 86, protein: 1.6, carbs: 20, fat: 0.1, vitaminC: 19, fiber: 3, unit: "100g" },
+    { id: 8, name: "Greek Yogurt", calories: 59, protein: 10, carbs: 3.6, fat: 0.4, vitaminC: 1, fiber: 0, unit: "100g" },
+    { id: 9, name: "Banana", calories: 89, protein: 1.1, carbs: 23, fat: 0.3, vitaminC: 8, fiber: 2.6, unit: "100g" },
+    { id: 10, name: "Almonds", calories: 579, protein: 21, carbs: 22, fat: 50, vitaminC: 0, fiber: 12, unit: "100g" },
 ];
 
 type MealTime = "Breakfast" | "Lunch" | "Dinner" | "Snack";
@@ -72,21 +64,21 @@ interface ExerciseItem {
 }
 
 const EXERCISE_DATABASE: ExerciseItem[] = [
-    { id: 1,  name: "Bench Press",      category: "Strength",    muscleGroup: "Chest" },
-    { id: 2,  name: "Squat",            category: "Strength",    muscleGroup: "Legs" },
-    { id: 3,  name: "Deadlift",         category: "Strength",    muscleGroup: "Full Body" },
-    { id: 4,  name: "Pull-Up",          category: "Strength",    muscleGroup: "Back" },
-    { id: 5,  name: "Overhead Press",   category: "Strength",    muscleGroup: "Shoulders" },
-    { id: 6,  name: "Barbell Row",      category: "Strength",    muscleGroup: "Back" },
-    { id: 7,  name: "Running",          category: "Cardio",      muscleGroup: "Full Body" },
-    { id: 8,  name: "Cycling",          category: "Cardio",      muscleGroup: "Legs" },
-    { id: 9,  name: "Jump Rope",        category: "Cardio",      muscleGroup: "Full Body" },
-    { id: 10, name: "Plank",            category: "Core",        muscleGroup: "Core" },
-    { id: 11, name: "Leg Press",        category: "Strength",    muscleGroup: "Legs" },
-    { id: 12, name: "Dumbbell Curl",    category: "Strength",    muscleGroup: "Biceps" },
-    { id: 13, name: "Tricep Dip",       category: "Strength",    muscleGroup: "Triceps" },
-    { id: 14, name: "Lunges",           category: "Strength",    muscleGroup: "Legs" },
-    { id: 15, name: "Mountain Climbers",category: "Cardio",      muscleGroup: "Full Body" },
+    { id: 1, name: "Bench Press", category: "Strength", muscleGroup: "Chest" },
+    { id: 2, name: "Squat", category: "Strength", muscleGroup: "Legs" },
+    { id: 3, name: "Deadlift", category: "Strength", muscleGroup: "Full Body" },
+    { id: 4, name: "Pull-Up", category: "Strength", muscleGroup: "Back" },
+    { id: 5, name: "Overhead Press", category: "Strength", muscleGroup: "Shoulders" },
+    { id: 6, name: "Barbell Row", category: "Strength", muscleGroup: "Back" },
+    { id: 7, name: "Running", category: "Cardio", muscleGroup: "Full Body" },
+    { id: 8, name: "Cycling", category: "Cardio", muscleGroup: "Legs" },
+    { id: 9, name: "Jump Rope", category: "Cardio", muscleGroup: "Full Body" },
+    { id: 10, name: "Plank", category: "Core", muscleGroup: "Core" },
+    { id: 11, name: "Leg Press", category: "Strength", muscleGroup: "Legs" },
+    { id: 12, name: "Dumbbell Curl", category: "Strength", muscleGroup: "Biceps" },
+    { id: 13, name: "Tricep Dip", category: "Strength", muscleGroup: "Triceps" },
+    { id: 14, name: "Lunges", category: "Strength", muscleGroup: "Legs" },
+    { id: 15, name: "Mountain Climbers", category: "Cardio", muscleGroup: "Full Body" },
 ];
 
 type WorkoutType = "Strength" | "Cardio" | "Stretching" | "Endurance" | "Core" | "HIIT";
@@ -181,8 +173,8 @@ const WaterBottle = ({ pct }: { pct: number }) => {
 const calcBMI = (h: number, w: number) => w / ((h / 100) ** 2);
 const bmiStatus = (bmi: number) => {
     if (bmi < 18.5) return { label: "Underweight", bg: "#bfdbfe", color: "#1d4ed8" };
-    if (bmi < 25)   return { label: "Healthy",     bg: "#bbf7d0", color: "#065f46" };
-    if (bmi < 30)   return { label: "Overweight",  bg: "#fed7aa", color: "#9a3412" };
+    if (bmi < 25) return { label: "Healthy", bg: "#bbf7d0", color: "#065f46" };
+    if (bmi < 30) return { label: "Overweight", bg: "#fed7aa", color: "#9a3412" };
     return { label: "Obese", bg: "#fecdd3", color: "#9f1239" };
 };
 const bmiBarPos = (bmi: number) => `${Math.min(Math.max((bmi - 15) / 25, 0), 1) * 100}%`;
@@ -200,12 +192,75 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
     const [mealTime, setMealTime] = useState<MealTime>("Breakfast");
     const [grams, setGrams] = useState(100);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [foods, setFoods] = useState<FoodItem[]>([]);
     const dropRef = useRef<HTMLDivElement>(null);
 
-    const filtered = FOOD_DATABASE.filter(f =>
-        f.name.toLowerCase().includes(search.toLowerCase())
-    );
+    // const filtered = FOOD_DATABASE.filter(f =>
+    //     f.name.toLowerCase().includes(search.toLowerCase())
+    // );
 
+    useEffect(() => {
+
+        if (search.trim().length < 2) {
+            setFoods([]);
+            return;
+        }
+
+        const fetchFoods = async () => {
+
+            try {
+
+                const token = localStorage.getItem("token");
+
+                const response = await fetch(
+                    `https://localhost:7025/api/UsdaFood/search-usda?query=${search}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch foods");
+                }
+
+                const data = await response.json();
+                console.log(data);
+                const mappedFoods: FoodItem[] = data.foods.map((f: any) => ({
+                    id: f.fdcId,
+                    name: f.description,
+                    calories: 0,
+                    protein: 0,
+                    carbs: 0,
+                    fat: 0,
+                    vitaminC: 0,
+                    fiber: 0,
+                    unit: "100g"
+                }));
+
+                const uniqueFoods = mappedFoods.filter(
+                    (food, index, self) =>
+                        index === self.findIndex(
+                            f => f.name.toLowerCase() === food.name.toLowerCase()
+                        )
+                );
+
+                setFoods(uniqueFoods);
+
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        const timeout = setTimeout(() => {
+            fetchFoods();
+        }, 300);
+
+        return () => clearTimeout(timeout);
+
+    }, [search]);
     useEffect(() => {
         const handler = (e: MouseEvent) => {
             if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
@@ -216,28 +271,66 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
-    const handleAdd = () => {
+    const handleAdd = async () => {
+
         if (!selectedFood || grams <= 0) return;
-        onAddFood({ food: selectedFood, mealTime, grams });
-        setSelectedFood(null);
-        setSearch("");
-        setGrams(100);
+
+        try {
+
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                "https://localhost:7025/api/FoodLog/create",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        fdcId: selectedFood.id,
+                        quantityGrams: grams,
+                        // mealTime: mealTime
+                    })
+                }
+            );
+
+            if (!response.ok) {
+
+                const text = await response.text();
+
+                console.log(text);
+            }
+
+            onAddFood({
+                food: selectedFood,
+                mealTime,
+                grams
+            });
+
+            setSelectedFood(null);
+            setSearch("");
+            setGrams(100);
+
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const macro = (val: number) => ((val * grams) / 100).toFixed(1);
 
     const groupedLog: Record<MealTime, FoodLog[]> = {
         Breakfast: foodLog.filter(l => l.mealTime === "Breakfast"),
-        Lunch:     foodLog.filter(l => l.mealTime === "Lunch"),
-        Dinner:    foodLog.filter(l => l.mealTime === "Dinner"),
-        Snack:     foodLog.filter(l => l.mealTime === "Snack"),
+        Lunch: foodLog.filter(l => l.mealTime === "Lunch"),
+        Dinner: foodLog.filter(l => l.mealTime === "Dinner"),
+        Snack: foodLog.filter(l => l.mealTime === "Snack"),
     };
 
     const mealIcons: Record<MealTime, string> = {
         Breakfast: "🌅",
-        Lunch:     "☀️",
-        Dinner:    "🌙",
-        Snack:     "🍎",
+        Lunch: "☀️",
+        Dinner: "🌙",
+        Snack: "🍎",
     };
 
     return (
@@ -307,20 +400,59 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                                         }}
                                     />
                                 </div>
-                                {dropdownOpen && filtered.length > 0 && (
+                                {dropdownOpen && foods.length > 0 && (
                                     <div className="food-dropdown">
-                                        {filtered.map(f => (
+                                        {foods.map(f => (
                                             <div
                                                 key={f.id}
                                                 className="food-dropdown-item"
-                                                onClick={() => {
-                                                    setSelectedFood(f);
-                                                    setSearch(f.name);
-                                                    setDropdownOpen(false);
+                                                onClick={async () => {
+
+                                                    try {
+
+                                                        const token = localStorage.getItem("token");
+
+                                                        const response = await fetch(
+                                                            `https://localhost:7025/api/UsdaFood/${f.id}`,
+                                                            {
+                                                                method: "GET",
+                                                                headers: {
+                                                                    Authorization: `Bearer ${token}`
+                                                                }
+                                                            }
+                                                        );
+
+                                                        if (!response.ok) {
+                                                            throw new Error("Failed to fetch food details");
+                                                        }
+
+                                                        const details = await response.json();
+
+                                                        console.log(details);
+
+                                                        const detailedFood: FoodItem = {
+                                                            id: f.id,
+                                                            name: f.name,
+                                                            calories: details.calories ?? 0,
+                                                            protein: details.protein ?? 0,
+                                                            carbs: details.carbs ?? 0,
+                                                            fat: details.fat ?? 0,
+                                                            vitaminC: details.vitaminC ?? 0,
+                                                            fiber: details.fiber ?? 0,
+                                                            unit: "100g"
+                                                        };
+
+                                                        setSelectedFood(detailedFood);
+                                                        setSearch(detailedFood.name);
+                                                        setDropdownOpen(false);
+
+                                                    } catch (err) {
+                                                        console.error(err);
+                                                    }
                                                 }}
                                             >
                                                 <span className="food-dropdown-name">{f.name}</span>
-                                                <span className="food-dropdown-cal">{f.calories} kcal/{f.unit}</span>
+                                                <span className="food-dropdown-cal">Click to view nutrition</span>
                                             </div>
                                         ))}
                                     </div>
@@ -416,26 +548,84 @@ interface WaterModalProps {
 const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onUpdate }) => {
     const [customStr, setCustomStr] = useState("");
     const customVal = parseInt(customStr, 10);
-    const customOk  = !isNaN(customVal) && customVal > 0;
+    const customOk = !isNaN(customVal) && customVal > 0;
     const pct = Math.min((waterMl / waterMax) * 100, 100);
 
-    const add = (ml: number) => { onUpdate(Math.min(waterMl + ml, waterMax)); }
-    const sub = (ml: number) => { onUpdate(Math.max(waterMl - ml, 0)); }
+    const add = async (ml: number) => {
+
+        try {
+
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                "https://localhost:7025/api/WaterLog/add",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        amountMl: ml
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to add water");
+            }
+
+            onUpdate(Math.min(waterMl + ml, waterMax));
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
+    const sub = async (ml: number) => {
+
+        try {
+
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                "https://localhost:7025/api/WaterLog/remove",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        amountMl: ml
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to remove water");
+            }
+
+            onUpdate(Math.max(waterMl - ml, 0));
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const getHydrationStatus = () => {
         if (pct >= 100) return { label: "Goal Reached! 🎉", color: "#10b981" };
-        if (pct >= 66)  return { label: "Almost there!", color: "#f97316" };
-        if (pct >= 33)  return { label: "Keep it up!", color: "#0ea5e9" };
+        if (pct >= 66) return { label: "Almost there!", color: "#f97316" };
+        if (pct >= 33) return { label: "Keep it up!", color: "#0ea5e9" };
         return { label: "Stay hydrated!", color: "#6366f1" };
     };
 
     const hydStatus = getHydrationStatus();
 
     const presets = [
-        { label: "Espresso", ml: 50,  icon: "☕" },
-        { label: "Glass",    ml: 200, icon: "🥤" },
-        { label: "Bottle",   ml: 500, icon: "💧" },
-        { label: "Large",    ml: 750, icon: "🫙" },
+        { label: "Espresso", ml: 50, icon: "☕" },
+        { label: "Glass", ml: 200, icon: "🥤" },
+        { label: "Bottle", ml: 500, icon: "💧" },
+        { label: "Large", ml: 750, icon: "🫙" },
     ];
 
     return (
@@ -557,26 +747,26 @@ const formatDuration = (from: string, to: string) => {
 };
 
 const WORKOUT_TYPE_COLORS: Record<WorkoutType, { bg: string; color: string }> = {
-    Strength:   { bg: "rgba(239,68,68,0.1)",    color: "#dc2626" },
-    Cardio:     { bg: "rgba(16,185,129,0.1)",   color: "#059669" },
-    Stretching: { bg: "rgba(168,85,247,0.1)",   color: "#9333ea" },
-    Endurance:  { bg: "rgba(234,179,8,0.1)",    color: "#b45309" },
-    Core:       { bg: "rgba(99,102,241,0.1)",   color: "#6366f1" },
-    HIIT:       { bg: "rgba(249,115,22,0.1)",   color: "#f97316" },
+    Strength: { bg: "rgba(239,68,68,0.1)", color: "#dc2626" },
+    Cardio: { bg: "rgba(16,185,129,0.1)", color: "#059669" },
+    Stretching: { bg: "rgba(168,85,247,0.1)", color: "#9333ea" },
+    Endurance: { bg: "rgba(234,179,8,0.1)", color: "#b45309" },
+    Core: { bg: "rgba(99,102,241,0.1)", color: "#6366f1" },
+    HIIT: { bg: "rgba(249,115,22,0.1)", color: "#f97316" },
 };
 
 const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts, onClose, onAddWorkout }) => {
     const [name, setName] = useState("");
     const [type, setType] = useState<WorkoutType>("Strength");
     const [from, setFrom] = useState("08:00");
-    const [to, setTo]     = useState("09:00");
+    const [to, setTo] = useState("09:00");
 
-    const [exSearch, setExSearch]     = useState("");
+    const [exSearch, setExSearch] = useState("");
     const [exDropOpen, setExDropOpen] = useState(false);
-    const [exSets, setExSets]         = useState(3);
-    const [exReps, setExReps]         = useState(10);
-    const [exercises, setExercises]   = useState<WorkoutExerciseLog[]>([]);
-    const [pendingEx, setPendingEx]   = useState<ExerciseItem | null>(null);
+    const [exSets, setExSets] = useState(3);
+    const [exReps, setExReps] = useState(10);
+    const [exercises, setExercises] = useState<WorkoutExerciseLog[]>([]);
+    const [pendingEx, setPendingEx] = useState<ExerciseItem | null>(null);
     const exDropRef = useRef<HTMLDivElement>(null);
 
     const filteredEx = EXERCISE_DATABASE.filter(e =>
@@ -826,34 +1016,126 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts, onClose, onAddW
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 const UserDashboard: React.FC = () => {
     const navigate = useNavigate();
+
+    const [user, setUser] = useState<any>(null);
+
     const [waterMl, setWaterMl] = useState(0);
-    const [height, setHeight]   = useState(170);
-    const [weight, setWeight]   = useState(72);
+    const [height, setHeight] = useState(170);
+    const [weight, setWeight] = useState(72);
 
     // Modal states
-    const [calModal,     setCalModal]     = useState(false);
-    const [waterModal,   setWaterModal]   = useState(false);
+    const [calModal, setCalModal] = useState(false);
+    const [waterModal, setWaterModal] = useState(false);
     const [workoutModal, setWorkoutModal] = useState(false);
 
     // Food log state
-    const [foodLog, setFoodLog]     = useState<FoodLog[]>([]);
+    const [foodLog, setFoodLog] = useState<FoodLog[]>([]);
     // Workout log state
-    const [workouts, setWorkouts]   = useState<WorkoutLog[]>([]);
+    const [workouts, setWorkouts] = useState<WorkoutLog[]>([]);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const token = localStorage.getItem("token");
+
+                if (!token) {
+                    navigate("/login");
+                    return;
+                }
+
+                const response = await fetch(
+                    "https://localhost:7025/api/user/me",
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    navigate("/login");
+                    return;
+                }
+
+                const data = await response.json();
+
+                setUser(data);
+
+                if (data.height) {
+                    setHeight(data.height);
+                }
+
+                if (data.weight) {
+                    setWeight(data.weight);
+                }
+
+            } catch (err) {
+                console.error(err);
+                navigate("/login");
+            }
+        };
+
+        fetchUser();
+
+        const fetchWaterToday = async () => {
+
+            try {
+
+                const token = localStorage.getItem("token");
+
+                const response = await fetch(
+                    "https://localhost:7025/api/WaterLog/today",
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch water");
+                }
+
+                const data = await response.json();
+
+                console.log(data);
+
+                setWaterMl(data.amountMl ?? 0);
+
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchWaterToday();
+
+    }, []);
 
     const WATER_MAX = 3000;
-    const CAL_GOAL  = 2200;
-    const todayCal  = 0;
+    const CAL_GOAL = 2200;
+    const todayCal = 0;
     const totalFoodCal = foodLog.reduce((sum, log) => sum + Math.round(log.food.calories * log.grams / 100), 0);
-    const calPct    = Math.round(((todayCal + totalFoodCal) / CAL_GOAL) * 100);
-    const waterPct  = waterMl / WATER_MAX;
+    const calPct = Math.round(((todayCal + totalFoodCal) / CAL_GOAL) * 100);
+    const waterPct = waterMl / WATER_MAX;
 
-    const bmi    = calcBMI(height, weight);
+    const bmi = calcBMI(height, weight);
     const status = bmiStatus(bmi);
 
-    const today   = new Date();
+    const today = new Date();
     const dateStr = today.toLocaleDateString("en-US", {
         weekday: "long", year: "numeric", month: "long", day: "numeric",
     });
+
+    const username = user?.name || "User";
+
+    const initials = username
+        .split(" ")
+        .map((w: string) => w[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
 
     return (
         <div className="db-root">
