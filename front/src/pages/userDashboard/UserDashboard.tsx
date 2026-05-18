@@ -866,16 +866,16 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
         };
 
         try {
-            const url = selectedId 
+            const url = selectedId
                 ? `http://localhost:5004/api/workout/update/${selectedId}`
                 : "http://localhost:5004/api/workout/create";
             const method = selectedId ? "PUT" : "POST";
 
             const res = await fetch(url, {
                 method,
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}` 
+                    Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify(body)
             });
@@ -904,7 +904,7 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
     return (
         <div className="db-modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
             <div className="db-modal-card db-modal-split">
-                
+
                 {/* Left Sidebar: History */}
                 <div className="modal-sidebar">
                     <div className="sidebar-header-modal">
@@ -912,7 +912,7 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
                         History
                     </div>
                     <div className="history-list">
-                        <button 
+                        <button
                             className={`history-new-btn ${isLoggingNew && !selectedId ? 'active' : ''}`}
                             onClick={resetForm}
                         >
@@ -920,16 +920,16 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
                             Log New Workout
                         </button>
                         {workouts.map(w => (
-                            <div 
-                                key={w.id} 
+                            <div
+                                key={w.id}
                                 className={`history-item ${selectedId === w.id ? 'active' : ''}`}
                                 onClick={() => selectForEdit(w)}
                             >
                                 <div className="history-item-top">
                                     <span className="history-label">{w.label}</span>
-                                    <FontAwesomeIcon 
-                                        icon={(WORKOUT_TYPE_COLORS[w.type] || WORKOUT_TYPE_COLORS["Strength"]).icon} 
-                                        style={{color: (WORKOUT_TYPE_COLORS[w.type] || WORKOUT_TYPE_COLORS["Strength"]).color}} 
+                                    <FontAwesomeIcon
+                                        icon={(WORKOUT_TYPE_COLORS[w.type] || WORKOUT_TYPE_COLORS["Strength"]).icon}
+                                        style={{ color: (WORKOUT_TYPE_COLORS[w.type] || WORKOUT_TYPE_COLORS["Strength"]).color }}
                                     />
                                 </div>
                                 <div className="history-item-meta">
@@ -964,21 +964,21 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
                                         onChange={e => setLabel(e.target.value)}
                                     />
                                 </div>
-                                <div className="wk-form-field" style={{width: '140px'}}>
+                                <div className="wk-form-field" style={{ width: '140px' }}>
                                     <label className="db-field-label">Type</label>
                                     <div className="custom-dropdown-wrap" ref={typeDropRef}>
-                                        <div 
-                                            className="db-select-custom" 
+                                        <div
+                                            className="db-select-custom"
                                             onClick={() => setTypeDropOpen(!typeDropOpen)}
                                         >
                                             {type}
-                                            <FontAwesomeIcon icon={typeDropOpen ? faXmark : faPlus} style={{fontSize: '10px', opacity: 0.5}} />
+                                            <FontAwesomeIcon icon={typeDropOpen ? faXmark : faPlus} style={{ fontSize: '10px', opacity: 0.5 }} />
                                         </div>
                                         {typeDropOpen && (
                                             <div className="custom-dropdown-list animate-fup">
                                                 {(["Strength", "Cardio", "Mobility"] as WorkoutType[]).map(t => (
-                                                    <div 
-                                                        key={t} 
+                                                    <div
+                                                        key={t}
                                                         className={`custom-drop-item ${type === t ? 'selected' : ''}`}
                                                         onClick={() => { setType(t); setTypeDropOpen(false); }}
                                                     >
@@ -1001,7 +1001,7 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
                                         onChange={e => setDate(e.target.value)}
                                     />
                                 </div>
-                                <div className="wk-form-field" style={{width: '140px'}}>
+                                <div className="wk-form-field" style={{ width: '140px' }}>
                                     <label className="db-field-label">Duration (min)</label>
                                     <input
                                         type="number"
@@ -1106,8 +1106,8 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
                                                 <label>Weight</label>
                                                 <input type="number" min="0" value={exWeight} onChange={e => setExWeight(Number(e.target.value))} />
                                             </div>
-                                            <button 
-                                                className="add-ex-btn" 
+                                            <button
+                                                className="add-ex-btn"
                                                 onClick={addExercise}
                                                 disabled={!pendingEx || exSets <= 0 || exReps <= 0}
                                             >
@@ -1126,7 +1126,7 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
                                 Delete Workout
                             </button>
                         )}
-                        <div style={{flex: 1}} />
+                        <div style={{ flex: 1 }} />
                         <button className="btn-cancel" onClick={onClose}>Cancel</button>
                         <button className="btn-save" onClick={handleSave} disabled={!label || exercises.length === 0}>
                             {selectedId ? "Save Changes" : "Save Workout"}
@@ -1145,6 +1145,7 @@ const UserDashboard: React.FC = () => {
     const [user, setUser] = useState<any>(null);
 
     const [waterMl, setWaterMl] = useState(0);
+    const [todayCalories, setTodayCalories] = useState(0);
     const [height, setHeight] = useState(170);
     const [weight, setWeight] = useState(72);
 
@@ -1276,15 +1277,46 @@ const UserDashboard: React.FC = () => {
             }
         };
 
-        fetchWaterToday();
+        const fetchTodayCalories = async () => {
 
+            try {
+
+                const token = localStorage.getItem("token");
+
+                const response = await fetch(
+                    "http://localhost:5004/api/FoodLog/today",
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch calories");
+                }
+
+                const data = await response.json();
+
+                console.log(data);
+
+                setTodayCalories(data.calories ?? 0);
+
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchWaterToday();
+        fetchTodayCalories();
         fetchWorkouts();
 
     }, []);
 
     const WATER_MAX = 3000;
     const CAL_GOAL = 2200;
-    const todayCal = 0;
+    const todayCal = todayCalories;
     const totalFoodCal = foodLog.reduce((sum, log) => sum + Math.round(log.food.calories * log.grams / 100), 0);
     const calPct = Math.round(((todayCal + totalFoodCal) / CAL_GOAL) * 100);
     const waterPct = waterMl / WATER_MAX;
@@ -1450,7 +1482,7 @@ const UserDashboard: React.FC = () => {
                                     return (
                                         <div className="workout-preview-item" key={i}>
                                             <span className="workout-type-badge-db" style={{ background: tc.bg, color: tc.color }}>
-                                                <FontAwesomeIcon icon={tc.icon} style={{marginRight: 4}} />
+                                                <FontAwesomeIcon icon={tc.icon} style={{ marginRight: 4 }} />
                                                 {w.type}
                                             </span>
                                             <span className="workout-preview-name">{w.label}</span>
