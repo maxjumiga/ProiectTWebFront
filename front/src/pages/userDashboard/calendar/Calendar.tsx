@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+    faDumbbell,
+    faHeartPulse,
+    faPersonWalking,
     faHouse,
     faCalendarDays,
     faUserGear,
@@ -14,13 +17,12 @@ import "./Calendar.css";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type WorkoutType = "forta" | "stretching" | "rezistenta" | "cardio";
+type WorkoutType = "Strength" | "Cardio" | "Mobility";
 
 interface Workout {
     type: WorkoutType;
     label: string;
-    from: string;
-    to: string;
+    duration: number;
 }
 
 interface DayData {
@@ -34,17 +36,21 @@ interface DayData {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const WORKOUT_TYPE_LABELS: Record<WorkoutType, string> = {
-    forta: "Strength",
-    stretching: "Stretching",
-    rezistenta: "Endurance",
-    cardio: "Cardio",
+    Strength: "Strength",
+    Cardio: "Cardio",
+    Mobility: "Mobility",
 };
 
 const WORKOUT_COLORS: Record<WorkoutType, string> = {
-    forta: "#dc2626",
-    stretching: "#9333ea",
-    rezistenta: "#b45309",
-    cardio: "#059669",
+    Strength: "#dc2626",
+    Cardio: "#059669",
+    Mobility: "#9333ea",
+};
+
+const WORKOUT_TYPE_ICONS: Record<WorkoutType, any> = {
+    Strength: faDumbbell,
+    Cardio: faHeartPulse,
+    Mobility: faPersonWalking,
 };
 
 const MONTH_NAMES_EN = [
@@ -73,104 +79,6 @@ function getFirstWeekday(year: number, month: number) {
     return (d + 6) % 7;
 }
 
-function formatDuration(from: string, to: string) {
-    const [fh, fm] = from.split(":").map(Number);
-    const [th, tm] = to.split(":").map(Number);
-    const mins = (th * 60 + tm) - (fh * 60 + fm);
-    if (mins < 60) return `${mins} min`;
-    const h = Math.floor(mins / 60);
-    const m = mins % 60;
-    return m > 0 ? `${h}h ${m}min` : `${h}h`;
-}
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-function generateMockData(): Record<string, DayData> {
-    const now = new Date();
-    const y = now.getFullYear();
-    const m = now.getMonth();
-    const data: Record<string, DayData> = {};
-
-    const samples: Array<{ offset: number; data: DayData }> = [
-        {
-            offset: 0,
-            data: {
-                calories: 1420, calGoal: 2200, waterMl: 1600, waterGoal: 3000,
-                workouts: [{ type: "stretching", label: "Morning Yoga", from: "07:00", to: "07:40" }],
-            },
-        },
-        {
-            offset: 2,
-            data: {
-                calories: 2100, calGoal: 2200, waterMl: 2400, waterGoal: 3000,
-                workouts: [
-                    { type: "forta", label: "Upper body", from: "08:00", to: "09:15" },
-                    { type: "stretching", label: "Cool-down", from: "09:15", to: "09:35" },
-                ],
-            },
-        },
-        {
-            offset: 4,
-            data: {
-                calories: 1800, calGoal: 2200, waterMl: 2000, waterGoal: 3000,
-                workouts: [],
-            },
-        },
-        {
-            offset: 6,
-            data: {
-                calories: 2350, calGoal: 2200, waterMl: 2800, waterGoal: 3000,
-                workouts: [{ type: "cardio", label: "Running in the park", from: "06:15", to: "07:00" }],
-            },
-        },
-        {
-            offset: 8,
-            data: {
-                calories: 1950, calGoal: 2200, waterMl: 2200, waterGoal: 3000,
-                workouts: [
-                    { type: "rezistenta", label: "Endurance cycle", from: "18:00", to: "19:10" },
-                    { type: "stretching", label: "Evening Yoga", from: "20:00", to: "20:30" },
-                ],
-            },
-        },
-        {
-            offset: 11,
-            data: {
-                calories: 2200, calGoal: 2200, waterMl: 3000, waterGoal: 3000,
-                workouts: [
-                    { type: "forta", label: "Legs & core", from: "09:00", to: "10:20" },
-                    { type: "cardio", label: "Cycling", from: "17:30", to: "18:15" },
-                ],
-            },
-        },
-        {
-            offset: 14,
-            data: {
-                calories: 1650, calGoal: 2200, waterMl: 1500, waterGoal: 3000,
-                workouts: [],
-            },
-        },
-        {
-            offset: 16,
-            data: {
-                calories: 2080, calGoal: 2200, waterMl: 2600, waterGoal: 3000,
-                workouts: [{ type: "cardio", label: "Swimming", from: "07:00", to: "07:55" }],
-            },
-        },
-    ];
-
-    const today = now.getDate();
-    samples.forEach(({ offset, data: d }) => {
-        const day = Math.max(1, today - offset);
-        if (day >= 1 && day <= getDaysInMonth(y, m)) {
-            data[makeDateKey(y, m, day)] = d;
-        }
-    });
-
-    return data;
-}
-
-const MOCK_DATA = generateMockData();
 
 // ─── SVG Ring ─────────────────────────────────────────────────────────────────
 
@@ -278,14 +186,47 @@ const DayModal: React.FC<DayModalProps> = ({ date, data, onClose }) => {
                                     <div className="workout-list">
                                         {data.workouts.map((w, i) => (
                                             <div className="workout-item" key={i}>
-                                                <span className={`workout-type-badge ${w.type}`}>
-                                                    {WORKOUT_TYPE_LABELS[w.type]}
-                                                </span>
-                                                <span style={{ fontSize: "13px", color: "var(--text-primary)", flex: 1 }}>
-                                                    {w.label}
-                                                </span>
-                                                <span className="workout-time">{w.from} – {w.to}</span>
-                                                <span className="workout-duration">({formatDuration(w.from, w.to)})</span>
+
+                                                <div
+                                                    style={{
+                                                        width: "32px",
+                                                        height: "32px",
+                                                        borderRadius: "10px",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        background: `${WORKOUT_COLORS[w.type]}15`,
+                                                        color: WORKOUT_COLORS[w.type],
+                                                        flexShrink: 0,
+                                                    }}
+                                                >
+                                                    <FontAwesomeIcon
+                                                        icon={WORKOUT_TYPE_ICONS[w.type]}
+                                                    />
+                                                </div>
+
+                                                <div style={{ flex: 1 }}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: "14px",
+                                                            fontWeight: 600,
+                                                            color: "var(--text-primary)"
+                                                        }}
+                                                    >
+                                                        {w.label}
+                                                    </div>
+
+                                                    <div
+                                                        style={{
+                                                            fontSize: "12px",
+                                                            color: "var(--text-muted)",
+                                                            marginTop: "2px"
+                                                        }}
+                                                    >
+                                                        {WORKOUT_TYPE_LABELS[w.type]} · {w.duration} min
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         ))}
                                     </div>
@@ -306,7 +247,57 @@ const CalendarPage: React.FC = () => {
     const now = new Date();
     const [year, setYear] = useState(now.getFullYear());
     const [month, setMonth] = useState(now.getMonth());
+    const [calendarData, setCalendarData] = useState<Record<string, DayData>>({});
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedDayData, setSelectedDayData] = useState<DayData | null>(null);
+
+    useEffect(() => {
+
+        const fetchMonth = async () => {
+            try {
+
+                const token = localStorage.getItem("token");
+
+                const response = await fetch(
+                    `http://localhost:5004/api/calendar/month?year=${year}&month=${month + 1}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch calendar");
+                }
+
+                const data = await response.json();
+
+                const transformed: Record<string, DayData> = {};
+
+                Object.entries(data).forEach(([key, value]: any) => {
+
+                    transformed[key] = {
+                        calories: value.calories,
+                        calGoal: 2200,
+
+                        waterMl: value.waterMl,
+                        waterGoal: 3000,
+
+                        workouts: new Array(value.workoutsCount).fill({})
+                    };
+                });
+
+                setCalendarData(transformed);
+
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchMonth();
+
+    }, [year, month]);
 
     // ── Build cells ──
     const firstWeekday = getFirstWeekday(year, month);
@@ -345,10 +336,10 @@ const CalendarPage: React.FC = () => {
         current && day === now.getDate() && month === now.getMonth() && year === now.getFullYear();
 
     const getDayData = (day: number): DayData | undefined =>
-        MOCK_DATA[makeDateKey(year, month, day)];
+        calendarData[makeDateKey(year, month, day)];
 
     // ── Right panel stats derived from mock data ──
-    const allEntries = Object.values(MOCK_DATA);
+    const allEntries = Object.values(calendarData);
     const avgCal = Math.round(allEntries.reduce((s, d) => s + d.calories, 0) / allEntries.length);
     const avgWater = Math.round(allEntries.reduce((s, d) => s + d.waterMl, 0) / allEntries.length);
     const totalWorkouts = allEntries.reduce((s, d) => s + d.workouts.length, 0);
@@ -356,7 +347,7 @@ const CalendarPage: React.FC = () => {
 
     // Flatten recent workouts for right panel
     const recentWorkouts: Array<{ workout: Workout; date: string }> = [];
-    Object.entries(MOCK_DATA)
+    Object.entries(calendarData)
         .sort(([a], [b]) => b.localeCompare(a))
         .forEach(([key, d]) => {
             d.workouts.forEach(w => {
@@ -372,7 +363,7 @@ const CalendarPage: React.FC = () => {
         d.setDate(d.getDate() - i);
         const key = makeDateKey(d.getFullYear(), d.getMonth(), d.getDate());
         if (i === 0) streakCells.push("active");
-        else streakCells.push(MOCK_DATA[key] ? "done" : "missed");
+        else streakCells.push(calendarData[key] ? "done" : "missed");
     }
 
     const calPct = avgCal / 2200;
@@ -452,24 +443,65 @@ const CalendarPage: React.FC = () => {
                                         !cell.currentMonth ? "other-month" : "",
                                         today ? "today" : "",
                                     ].filter(Boolean).join(" ")}
-                                    onClick={() => {
-                                        if (cell.currentMonth) setSelectedDate(new Date(year, month, cell.day));
+                                    onClick={async () => {
+
+                                        if (!cell.currentMonth) return;
+
+                                        const date = new Date(year, month, cell.day);
+
+                                        setSelectedDate(date);
+
+                                        try {
+
+                                            const token = localStorage.getItem("token");
+
+                                            const formatted =
+                                                `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+                                            const response = await fetch(
+                                                `http://localhost:5004/api/calendar/day/${formatted}`,
+                                                {
+                                                    headers: {
+                                                        Authorization: `Bearer ${token}`
+                                                    }
+                                                }
+                                            );
+
+                                            if (!response.ok) {
+                                                throw new Error("Failed to fetch day data");
+                                            }
+
+                                            const data = await response.json();
+
+                                            setSelectedDayData(data);
+
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
                                     }}
                                 >
                                     <div className="cal-day-num">{cell.day}</div>
                                     {data && (
                                         <div className="cal-day-indicators">
-                                            <div className="cal-day-pill cal">
-                                                🔥 {data.calories.toLocaleString("en-US")} kcal
-                                            </div>
-                                            <div className="cal-day-pill water">
-                                                💧 {(data.waterMl / 1000).toFixed(1)} L
-                                            </div>
+
+                                            {data.calories > 0 && (
+                                                <div className="cal-day-pill cal">
+                                                    🔥 {data.calories.toLocaleString("en-US")} kcal
+                                                </div>
+                                            )}
+
+                                            {data.waterMl > 0 && (
+                                                <div className="cal-day-pill water">
+                                                    💧 {(data.waterMl / 1000).toFixed(1)} L
+                                                </div>
+                                            )}
+
                                             {data.workouts.length > 0 && (
                                                 <div className="cal-day-pill workout">
                                                     🏋️ {data.workouts.length} workouts
                                                 </div>
                                             )}
+
                                         </div>
                                     )}
                                 </div>
@@ -570,7 +602,7 @@ const CalendarPage: React.FC = () => {
                             <div className="rp-workout-item" key={i}>
                                 <div className="rp-workout-dot" style={{ background: WORKOUT_COLORS[w.type] }} />
                                 <span className="rp-workout-name">{w.label}</span>
-                                <span className="rp-workout-time">{w.from}–{w.to}</span>
+                                <span className="rp-workout-duration">{w.duration} min</span>
                             </div>
                         ))
                     )}
@@ -602,7 +634,7 @@ const CalendarPage: React.FC = () => {
             {selectedDate && (
                 <DayModal
                     date={selectedDate}
-                    data={MOCK_DATA[makeDateKey(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())] ?? null}
+                    data={selectedDayData}
                     onClose={() => setSelectedDate(null)}
                 />
             )}
