@@ -12,6 +12,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Landing from '../pages/landing/Landing';
 import LoginPage from '../features/authentication/Authentication';
 import RegisterPage from '../features/registration/Registration';
+import ForgotPasswordFlow from '../features/forgotPassword/ForgotPassword';
 import Dashboard from '../pages/userDashboard/UserDashboard';
 import Profile from '../pages/userDashboard/profile/Profile';
 import Settings from '../pages/userDashboard/settings/Settings';
@@ -56,6 +57,10 @@ export default function AppRoutes() {
                 <Route element={<GuestRoute />}>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route
+                        path="/forgot-password"
+                        element={<ForgotPasswordFlow />}
+                    />
                 </Route>
 
                 {/* Protected Routes — utilizator autentificat (colegi) */}

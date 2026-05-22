@@ -1331,7 +1331,7 @@ const UserDashboard: React.FC = () => {
 
     const username = user?.name || "User";
 
-    const initials = (username || "User")
+    const initials = (username)
         .split(" ")
         .filter(Boolean)
         .map((w: string) => w[0])

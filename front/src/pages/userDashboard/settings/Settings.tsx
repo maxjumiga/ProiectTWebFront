@@ -29,7 +29,10 @@ import {
     faChartLine,
     faTextHeight,
     faFont,
-    faPen
+    faPen,
+    faEye,
+    faEyeSlash,
+    faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./Settings.css";
@@ -103,6 +106,18 @@ const SettingsPage: React.FC = () => {
     const [shareData, setShareData] = useState(false);
     const [analytics, setAnalytics] = useState(true);
     const [autoBackup, setAutoBackup] = useState(true);
+
+    // Modal parolă
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [confirmCurrentPassword, setConfirmCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showConfirmCurrentPassword, setShowConfirmCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [passwordError, setPasswordError] = useState("");
+    const [passwordSuccess, setPasswordSuccess] = useState("");
+    const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
     useEffect(() => {
         fetchUser();
@@ -196,6 +211,70 @@ const SettingsPage: React.FC = () => {
         }
         catch (error) {
             console.error(error);
+        }
+    };
+
+    const handlePasswordChange = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setPasswordError("");
+        setPasswordSuccess("");
+
+        if (!currentPassword || !confirmCurrentPassword || !newPassword) {
+            setPasswordError("All fields are required.");
+            return;
+        }
+
+        if (currentPassword !== confirmCurrentPassword) {
+            setPasswordError("The current passwords entered do not match.");
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            setPasswordError("The new password must be at least 6 characters.");
+            return;
+        }
+
+        setIsUpdatingPassword(true);
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                "http://localhost:5004/api/User/change-password",
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        currentPassword,
+                        newPassword,
+                    }),
+                }
+            );
+
+            const data = await response.json();
+
+            if (!data.isSuccess) {
+                throw new Error(data.message);
+            }
+
+            setPasswordSuccess("Password changed successfully!");
+
+            setTimeout(() => {
+                setShowPasswordModal(false);
+
+                setCurrentPassword("");
+                setConfirmCurrentPassword("");
+                setNewPassword("");
+
+                setPasswordError("");
+                setPasswordSuccess("");
+            }, 2000);
+        } catch (err: any) {
+            setPasswordError(err.message || "Failed to connect to the server.");
+        } finally {
+            setIsUpdatingPassword(false);
         }
     };
 
@@ -410,7 +489,22 @@ const SettingsPage: React.FC = () => {
                                             <div className="s-sub">Last change: 3 months ago</div>
                                         </div>
                                     </div>
-                                    <button className="s-action-btn"><FontAwesomeIcon icon={faLock} />Change</button>
+                                    <button
+                                        className="s-action-btn"
+                                        onClick={() => {
+                                            setShowPasswordModal(true);
+                                            setCurrentPassword("");
+                                            setConfirmCurrentPassword("");
+                                            setNewPassword("");
+                                            setPasswordError("");
+                                            setPasswordSuccess("");
+                                            setShowCurrentPassword(false);
+                                            setShowConfirmCurrentPassword(false);
+                                            setShowNewPassword(false);
+                                        }}
+                                    >
+                                        <FontAwesomeIcon icon={faLock} />Change
+                                    </button>
                                 </div>
                                 <div className="s-row">
                                     <div className="s-row-left">
@@ -578,6 +672,136 @@ const SettingsPage: React.FC = () => {
                     </>
                 )}
             </main>
+
+            {/* ── Password Change Modal ── */}
+            {showPasswordModal && (
+                <div className="s-modal-overlay" onClick={() => setShowPasswordModal(false)}>
+                    <div className="s-modal-card" onClick={(e) => e.stopPropagation()}>
+                        <div className="s-modal-header">
+                            <div className="s-modal-title">
+                                <FontAwesomeIcon icon={faLock} />
+                                <span>Change Password</span>
+                            </div>
+                            <button
+                                className="s-modal-close"
+                                onClick={() => setShowPasswordModal(false)}
+                                type="button"
+                            >
+                                <FontAwesomeIcon icon={faXmark} />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handlePasswordChange}>
+                            <div className="s-modal-body">
+                                <p style={{ fontSize: "12px", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "4px" }}>
+                                    Enter your current password twice to confirm, followed by your new password.
+                                </p>
+
+                                {/* Parola actuală */}
+                                <div className="form-group">
+                                    <label>Current Password</label>
+                                    <div className="s-modal-input-wrapper">
+                                        <FontAwesomeIcon icon={faLock} className="s-modal-input-icon" />
+                                        <input
+                                            className="s-input"
+                                            type={showCurrentPassword ? "text" : "password"}
+                                            placeholder="Enter current password"
+                                            value={currentPassword}
+                                            onChange={(e) => setCurrentPassword(e.target.value)}
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            className="s-modal-eye-btn"
+                                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                        >
+                                            <FontAwesomeIcon icon={showCurrentPassword ? faEyeSlash : faEye} />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Confirmă parola actuală */}
+                                <div className="form-group">
+                                    <label>Confirm Current Password</label>
+                                    <div className="s-modal-input-wrapper">
+                                        <FontAwesomeIcon icon={faLock} className="s-modal-input-icon" />
+                                        <input
+                                            className="s-input"
+                                            type={showConfirmCurrentPassword ? "text" : "password"}
+                                            placeholder="Re-enter current password"
+                                            value={confirmCurrentPassword}
+                                            onChange={(e) => setConfirmCurrentPassword(e.target.value)}
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            className="s-modal-eye-btn"
+                                            onClick={() => setShowConfirmCurrentPassword(!showConfirmCurrentPassword)}
+                                        >
+                                            <FontAwesomeIcon icon={showConfirmCurrentPassword ? faEyeSlash : faEye} />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Noua parolă */}
+                                <div className="form-group">
+                                    <label>New Password</label>
+                                    <div className="s-modal-input-wrapper">
+                                        <FontAwesomeIcon icon={faLock} className="s-modal-input-icon" />
+                                        <input
+                                            className="s-input"
+                                            type={showNewPassword ? "text" : "password"}
+                                            placeholder="Enter new password (min. 6 characters)"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            className="s-modal-eye-btn"
+                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                        >
+                                            <FontAwesomeIcon icon={showNewPassword ? faEyeSlash : faEye} />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {passwordError && (
+                                    <div className="s-modal-error-box">
+                                        <span>⚠ {passwordError}</span>
+                                    </div>
+                                )}
+
+                                {passwordSuccess && (
+                                    <div className="s-modal-success-box">
+                                        <FontAwesomeIcon icon={faCheck} />
+                                        <span>{passwordSuccess}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="s-modal-footer">
+                                <button
+                                    className="btn-ghost"
+                                    type="button"
+                                    onClick={() => setShowPasswordModal(false)}
+                                    style={{ padding: "8px 16px", fontSize: "13px" }}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    className="save-btn"
+                                    type="submit"
+                                    disabled={isUpdatingPassword || !!passwordSuccess}
+                                    style={{ padding: "8px 16px", fontSize: "13px" }}
+                                >
+                                    {isUpdatingPassword ? "Saving..." : "Change password"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
         </div>
     );

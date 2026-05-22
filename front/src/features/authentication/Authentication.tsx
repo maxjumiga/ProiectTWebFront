@@ -42,6 +42,15 @@ const LoginPage: React.FC = () => {
 
             const data = await response.json();
 
+            if (data.requiresTwoFactor) {
+                navigate("/two-factor", {
+                    state: {
+                        email: data.email
+                    }
+                });
+
+                return;
+            }
             // JWT
             localStorage.setItem("token", data.token);
 
@@ -180,6 +189,7 @@ const LoginPage: React.FC = () => {
                         <button
                             className="footer-link muted"
                             type="button"
+                            onClick={() => navigate('/forgot-password')}
                         >
                             Forgot password?
                         </button>
