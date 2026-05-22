@@ -146,6 +146,9 @@ const SettingsPage: React.FC = () => {
             console.log("DATA:", resBody.data);
             if (resBody.isSuccess && resBody.data) {
                 setUserData(resBody.data);
+                setTwoFA(
+                    resBody.data.twoFactorEnabled
+                );
             }
         }
         catch (error) {
@@ -448,7 +451,44 @@ const SettingsPage: React.FC = () => {
                                             <div className="s-sub">{twoFA ? "Enabled — your account is extra protected" : "Disabled — we recommend enabling 2FA"}</div>
                                         </div>
                                     </div>
-                                    <Toggle checked={twoFA} onChange={() => setTwoFA(v => !v)} />
+                                    <Toggle
+                                        checked={twoFA}
+                                        onChange={async () => {
+
+                                            const newValue = !twoFA;
+
+                                            setTwoFA(newValue);
+
+                                            try {
+
+                                                const token =
+                                                    localStorage.getItem("token");
+
+                                                await fetch(
+                                                    "http://localhost:5004/api/User/me",
+                                                    {
+                                                        method: "PATCH",
+
+                                                        headers: {
+                                                            "Content-Type":
+                                                                "application/json",
+
+                                                            Authorization:
+                                                                `Bearer ${token}`,
+                                                        },
+
+                                                        body: JSON.stringify({
+                                                            twoFactorEnabled:
+                                                                newValue
+                                                        }),
+                                                    }
+                                                );
+                                            }
+                                            catch (error) {
+                                                console.error(error);
+                                            }
+                                        }}
+                                    />
                                 </div>
                                 <div className="s-row">
                                     <div className="s-row-left">

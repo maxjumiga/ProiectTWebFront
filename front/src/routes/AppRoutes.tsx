@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 // -- Pagini colegi --
 import Landing from '../pages/landing/Landing';
 import LoginPage from '../features/authentication/Authentication';
+import TwoFactorPage from '../features/authentication/TwoFactor';
 import RegisterPage from '../features/registration/Registration';
 import ForgotPasswordFlow from '../features/forgotPassword/ForgotPassword';
 import Dashboard from '../pages/userDashboard/UserDashboard';
@@ -56,6 +57,7 @@ export default function AppRoutes() {
                 {/* Guest Routes — doar pentru utilizatori neautentificati */}
                 <Route element={<GuestRoute />}>
                     <Route path="/login" element={<LoginPage />} />
+                    <Route path="/two-factor" element={<TwoFactorPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route
                         path="/forgot-password"
