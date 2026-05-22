@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faHouse,
@@ -28,7 +28,8 @@ import {
     faBolt,
     faChartLine,
     faTextHeight,
-    faFont
+    faFont,
+    faPen
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./Settings.css";
@@ -42,7 +43,7 @@ const Toggle = ({ checked, onChange }: { checked: boolean; onChange: () => void 
 );
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type NavSection = "notificari" | "aspect" | "limba" | "securitate" | "date" | "cont";
+type NavSection = "general" | "securitate" | "cont";
 
 
 
@@ -59,9 +60,19 @@ const ACCENT_COLORS = [
 // ─── Component ────────────────────────────────────────────────────────────────
 const SettingsPage: React.FC = () => {
     const navigate = useNavigate();
-    const username = "Ion Popescu";
-    const [activeNav, setActiveNav] = useState<NavSection>("notificari");
+    const [activeNav, setActiveNav] = useState<NavSection>("general");
     const [saved, setSaved] = useState(false);
+    const [userData, setUserData] = useState({
+        name: "",
+        email: "",
+        gender: "",
+        age: 0,
+        height: 0,
+        weight: 0,
+        goal: ""
+    });
+    const [isEditingName, setIsEditingName] = useState(false);
+    const [isEditingEmail, setIsEditingEmail] = useState(false);
 
     // Notificări
     const [notifEmail, setNotifEmail] = useState(true);
@@ -93,20 +104,109 @@ const SettingsPage: React.FC = () => {
     const [analytics, setAnalytics] = useState(true);
     const [autoBackup, setAutoBackup] = useState(true);
 
-    const handleSave = () => {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2500);
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
+    const fetchUser = async () => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                "http://localhost:5004/api/User/me",
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (!response.ok)
+                throw new Error("Failed");
+
+            const resBody = await response.json();
+
+            console.log("FULL RESPONSE:", resBody);
+            console.log("DATA:", resBody.data);
+            if (resBody.isSuccess && resBody.data) {
+                setUserData(resBody.data);
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
     };
 
-    const initials = username.charAt(0).toUpperCase();
+    const handleSave = async () => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                "http://localhost:5004/api/User/me",
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(userData),
+                }
+            );
+
+            if (!response.ok)
+                throw new Error("Failed to update");
+
+            setSaved(true);
+
+            setTimeout(() => setSaved(false), 2500);
+        }
+        catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleSaveField = async (field: "name" | "email") => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                "http://localhost:5004/api/User/me",
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(userData),
+                }
+            );
+
+            if (!response.ok)
+                throw new Error("Failed to update");
+
+            setSaved(true);
+            setTimeout(() => setSaved(false), 2500);
+
+            if (field === "name") {
+                setIsEditingName(false);
+            } else {
+                setIsEditingEmail(false);
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    };
+
+
+
+    const initials = userData.name ? userData.name.charAt(0).toUpperCase() : "";
 
     // ── Nav items ──
     const navItems: { id: NavSection; label: string; icon: React.ReactNode }[] = [
-        { id: "notificari", label: "Notifications", icon: <FontAwesomeIcon icon={faBell} /> },
-        { id: "aspect", label: "Appearance & Theme", icon: <FontAwesomeIcon icon={faPalette} /> },
-        { id: "limba", label: "Language & Region", icon: <FontAwesomeIcon icon={faGlobe} /> },
+        { id: "general", label: "General", icon: <FontAwesomeIcon icon={faGear} /> },
         { id: "securitate", label: "Security", icon: <FontAwesomeIcon icon={faShield} /> },
-        { id: "date", label: "Data & Privacy", icon: <FontAwesomeIcon icon={faDatabase} /> },
         { id: "cont", label: "Account", icon: <FontAwesomeIcon icon={faUser} /> },
     ];
 
@@ -167,15 +267,11 @@ const SettingsPage: React.FC = () => {
                         <span className={`saved-indicator${saved ? " visible" : ""}`}>
                             <FontAwesomeIcon icon={faCheck} /> Saved
                         </span>
-                        <button className="save-btn" onClick={handleSave}>
-                            <FontAwesomeIcon icon={faFloppyDisk} />
-                            Save changes
-                        </button>
                     </div>
                 </div>
 
-                {/* ══ NOTIFICATIONS ══ */}
-                {activeNav === "notificari" && (
+                {/* ══ GENERAL ══ */}
+                {activeNav === "general" && (
                     <>
                         <div className="settings-section">
                             <div className="section-title"><FontAwesomeIcon icon={faBell} />Notification channels</div>
@@ -204,42 +300,6 @@ const SettingsPage: React.FC = () => {
                         </div>
 
                         <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faBullseye} />What you want to receive</div>
-                            <div className="s-card">
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico orange"><FontAwesomeIcon icon={faCalendarDays} /></div>
-                                        <div>
-                                            <div className="s-lbl">Weekly report</div>
-                                            <div className="s-sub">Summary of your progress from the last week</div>
-                                        </div>
-                                    </div>
-                                    <Toggle checked={notifReport} onChange={() => setNotifReport(v => !v)} />
-                                </div>
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico green"><FontAwesomeIcon icon={faBell} /></div>
-                                        <div>
-                                            <div className="s-lbl">Appointment reminder</div>
-                                            <div className="s-sub">Reminder 24h before an appointment</div>
-                                        </div>
-                                    </div>
-                                    <Toggle checked={notifAppt} onChange={() => setNotifAppt(v => !v)} />
-                                </div>
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico gray"><FontAwesomeIcon icon={faBolt} /></div>
-                                        <div>
-                                            <div className="s-lbl">Health tips</div>
-                                            <div className="s-sub">Daily personalized tips based on your profile</div>
-                                        </div>
-                                    </div>
-                                    <Toggle checked={notifTips} onChange={() => setNotifTips(v => !v)} />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="settings-section">
                             <div className="section-title"><FontAwesomeIcon icon={faEnvelope} />Email frequency</div>
                             <div className="s-card">
                                 <div className="s-row">
@@ -252,142 +312,9 @@ const SettingsPage: React.FC = () => {
                                     </div>
                                     <select className="s-select">
                                         <option>Zilnic</option>
-                                        <option selected>Weekly</option>
+                                        <option defaultValue="Weekly">Weekly</option>
                                         <option>Lunar</option>
                                         <option>Never</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
-
-                {/* ══ ASPECT ══ */}
-                {activeNav === "aspect" && (
-                    <>
-                        <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faMoon} />Theme</div>
-                            <div className="s-card">
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico gray">{darkMode ? <FontAwesomeIcon icon={faMoon} /> : <FontAwesomeIcon icon={faSun} />}</div>
-                                        <div>
-                                            <div className="s-lbl">Dark mode</div>
-                                            <div className="s-sub">Enable dark theme for night visual comfort</div>
-                                        </div>
-                                    </div>
-                                    <Toggle checked={darkMode} onChange={() => setDarkMode(v => !v)} />
-                                </div>
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico purple"><FontAwesomeIcon icon={faBolt} /></div>
-                                        <div>
-                                            <div className="s-lbl">Interface animations</div>
-                                            <div className="s-sub">Transitions and animated effects during navigation</div>
-                                        </div>
-                                    </div>
-                                    <Toggle checked={animations} onChange={() => setAnimations(v => !v)} />
-                                </div>
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico blue"><FontAwesomeIcon icon={faGear} /></div>
-                                        <div>
-                                            <div className="s-lbl">Compact mode</div>
-                                            <div className="s-sub">Reduces spacing for more visible content</div>
-                                        </div>
-                                    </div>
-                                    <Toggle checked={compactMode} onChange={() => setCompactMode(v => !v)} />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faPalette} />Accent color</div>
-                            <div className="s-card">
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico" style={{ background: ACCENT_COLORS.find(c => c.id === accentColor)?.value + "22", color: ACCENT_COLORS.find(c => c.id === accentColor)?.value }}>
-                                            <FontAwesomeIcon icon={faPalette} />
-                                        </div>
-                                        <div>
-                                            <div className="s-lbl">Primary color</div>
-                                            <div className="s-sub">Affects buttons, links and active elements</div>
-                                        </div>
-                                    </div>
-                                    <div className="accent-colors">
-                                        {ACCENT_COLORS.map(c => (
-                                            <div
-                                                key={c.id}
-                                                className={`accent-dot${accentColor === c.id ? " selected" : ""}`}
-                                                style={{ background: c.value }}
-                                                onClick={() => setAccentColor(c.id)}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faTextHeight} />Text size</div>
-                            <div className="s-card">
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico orange"><FontAwesomeIcon icon={faFont} /></div>
-                                        <div>
-                                            <div className="s-lbl">Font size</div>
-                                            <div className="s-sub">Adjust interface text size</div>
-                                        </div>
-                                    </div>
-                                    <div className="s-slider-wrap">
-                                        <input
-                                            type="range"
-                                            className="s-slider"
-                                            min={12} max={18} value={fontSize}
-                                            onChange={e => setFontSize(Number(e.target.value))}
-                                        />
-                                        <span className="s-slider-val">{fontSize}px</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
-
-                {/* ══ LANGUAGE ══ */}
-                {activeNav === "limba" && (
-                    <>
-                        <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faGlobe} />Language & display</div>
-                            <div className="s-card">
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico blue"><FontAwesomeIcon icon={faLanguage} /></div>
-                                        <div>
-                                            <div className="s-lbl">App language</div>
-                                            <div className="s-sub">Interface display language</div>
-                                        </div>
-                                    </div>
-                                    <select className="s-select" value={language} onChange={e => setLanguage(e.target.value)}>
-                                        <option value="ro">🇷🇴 Română</option>
-                                        <option value="en">🇬🇧 English</option>
-                                        <option value="fr">🇫🇷 Français</option>
-                                        <option value="de">🇩🇪 Deutsch</option>
-                                    </select>
-                                </div>
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico purple"><FontAwesomeIcon icon={faClock} /></div>
-                                        <div>
-                                            <div className="s-lbl">Timezone</div>
-                                            <div className="s-sub">Timezone used for dates and times</div>
-                                        </div>
-                                    </div>
-                                    <select className="s-select" value={timezone} onChange={e => setTimezone(e.target.value)}>
-                                        <option value="Europe/Bucharest">Europe/Bucharest</option>
-                                        <option value="Europe/London">Europe/London</option>
-                                        <option value="Europe/Paris">Europe/Paris</option>
-                                        <option value="America/New_York">America/New York</option>
                                     </select>
                                 </div>
                             </div>
@@ -500,73 +427,6 @@ const SettingsPage: React.FC = () => {
                     </>
                 )}
 
-                {/* ══ DATA & PRIVACY ══ */}
-                {activeNav === "date" && (
-                    <>
-                        <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faDatabase} />Storage & backup</div>
-                            <div className="s-card">
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico green"><FontAwesomeIcon icon={faDatabase} /></div>
-                                        <div>
-                                            <div className="s-lbl">Automatic backup</div>
-                                            <div className="s-sub">Your data is automatically saved to the cloud daily</div>
-                                        </div>
-                                    </div>
-                                    <Toggle checked={autoBackup} onChange={() => setAutoBackup(v => !v)} />
-                                </div>
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico blue"><FontAwesomeIcon icon={faDownload} /></div>
-                                        <div>
-                                            <div className="s-lbl">Export my data</div>
-                                            <div className="s-sub">Download all your data in JSON or CSV format</div>
-                                        </div>
-                                    </div>
-                                    <button className="s-action-btn"><FontAwesomeIcon icon={faDownload} />Export</button>
-                                </div>
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico orange"><FontAwesomeIcon icon={faArrowsRotate} /></div>
-                                        <div>
-                                            <div className="s-lbl">Last backup</div>
-                                            <div className="s-sub">Today, 06:30 — 12.4 MB</div>
-                                        </div>
-                                    </div>
-                                    <button className="s-action-btn"><FontAwesomeIcon icon={faArrowsRotate} />Backup now</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faShield} />Privacy</div>
-                            <div className="s-card">
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico purple"><FontAwesomeIcon icon={faChartLine} /></div>
-                                        <div>
-                                            <div className="s-lbl">Usage analytics</div>
-                                            <div className="s-sub">Help improve the app through anonymous data</div>
-                                        </div>
-                                    </div>
-                                    <Toggle checked={analytics} onChange={() => setAnalytics(v => !v)} />
-                                </div>
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico gray"><FontAwesomeIcon icon={faUser} /></div>
-                                        <div>
-                                            <div className="s-lbl">Share health data</div>
-                                            <div className="s-sub">Allow doctors to access your data with your consent</div>
-                                        </div>
-                                    </div>
-                                    <Toggle checked={shareData} onChange={() => setShareData(v => !v)} />
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
-
                 {/* ══ CONT ══ */}
                 {activeNav === "cont" && (
                     <>
@@ -581,7 +441,41 @@ const SettingsPage: React.FC = () => {
                                             <div className="s-sub">Visible in your public profile</div>
                                         </div>
                                     </div>
-                                    <input className="s-input" defaultValue={username} placeholder="Username" />
+                                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                                        <input
+                                            className="s-input"
+                                            value={userData.name}
+                                            placeholder="Username"
+                                            disabled={!isEditingName}
+                                            onChange={(e) =>
+                                                setUserData({
+                                                    ...userData,
+                                                    name: e.target.value
+                                                })
+                                            }
+                                        />
+
+                                        <button
+                                            className="s-action-btn"
+                                            onClick={() => {
+                                                if (isEditingName) {
+                                                    handleSaveField("name");
+                                                } else {
+                                                    setIsEditingName(true);
+                                                }
+                                            }}
+                                        >
+                                            {isEditingName ? (
+                                                <>
+                                                    <FontAwesomeIcon icon={faFloppyDisk} /> Save
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <FontAwesomeIcon icon={faPen} /> Change
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className="s-row">
                                     <div className="s-row-left">
@@ -591,7 +485,41 @@ const SettingsPage: React.FC = () => {
                                             <div className="s-sub">Used for notifications and authentication</div>
                                         </div>
                                     </div>
-                                    <input className="s-input" defaultValue="ion.popescu@gmail.com" placeholder="Email" />
+                                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                                        <input
+                                            className="s-input"
+                                            value={userData.email}
+                                            placeholder="Email"
+                                            disabled={!isEditingEmail}
+                                            onChange={(e) =>
+                                                setUserData({
+                                                    ...userData,
+                                                    email: e.target.value
+                                                })
+                                            }
+                                        />
+
+                                        <button
+                                            className="s-action-btn"
+                                            onClick={() => {
+                                                if (isEditingEmail) {
+                                                    handleSaveField("email");
+                                                } else {
+                                                    setIsEditingEmail(true);
+                                                }
+                                            }}
+                                        >
+                                            {isEditingEmail ? (
+                                                <>
+                                                    <FontAwesomeIcon icon={faFloppyDisk} /> Save
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <FontAwesomeIcon icon={faPen} /> Change
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -650,86 +578,6 @@ const SettingsPage: React.FC = () => {
                     </>
                 )}
             </main>
-
-            {/* ── Right dark panel ── */}
-            <aside className="settings-right">
-                <div>
-                    <div className="sr-title">Activity log</div>
-                    <div className="sr-sub">Last changes</div>
-                    <div className="activity-log">
-                        {[
-                            { color: "#10b981", text: "Push notifications enabled", time: "now" },
-                            { color: "#6366f1", text: "Language changed to English", time: "2h" },
-                            { color: "#f97316", text: "Password updated successfully", time: "3 days" },
-                            { color: "#a855f7", text: "2FA enabled on account", time: "5 days" },
-                            { color: "#38bdf8", text: "Automatic backup configured", time: "1 week" },
-                        ].map((item, i) => (
-                            <div className="log-item" key={i}>
-                                <div className="log-dot" style={{ background: item.color }} />
-                                <div className="log-text">{item.text}</div>
-                                <div className="log-time">{item.time}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <hr className="sr-divider" />
-
-                <div>
-                    <div className="sr-title">Used storage</div>
-                    <div className="storage-bar-wrap">
-                        <div className="storage-bar-info">
-                            <span className="storage-lbl">Total used</span>
-                            <span className="storage-val">47 / 500 MB</span>
-                        </div>
-                        <div className="storage-bar">
-                            <div className="storage-bar-fill" style={{ width: "9.4%" }} />
-                        </div>
-                        <div className="storage-items">
-                            {[
-                                { color: "#6366f1", label: "Health data", val: "28 MB" },
-                                { color: "#10b981", label: "Backups", val: "14 MB" },
-                                { color: "#f97316", label: "Profile images", val: "5 MB" },
-                            ].map((item, i) => (
-                                <div className="storage-item" key={i}>
-                                    <div className="storage-item-left">
-                                        <div className="storage-item-dot" style={{ background: item.color }} />
-                                        {item.label}
-                                    </div>
-                                    <div className="storage-item-val">{item.val}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                <hr className="sr-divider" />
-
-                <div>
-                    <div className="sr-title">Keyboard shortcuts</div>
-                    <div className="shortcuts-list">
-                        {[
-                            { label: "Save", keys: ["Ctrl", "S"] },
-                            { label: "Search", keys: ["Ctrl", "K"] },
-                            { label: "Dashboard", keys: ["Alt", "D"] },
-                            { label: "Profile", keys: ["Alt", "P"] },
-                            { label: "Settings", keys: ["Alt", "S"] },
-                        ].map((sc, i) => (
-                            <div className="shortcut-row" key={i}>
-                                <span className="shortcut-lbl">{sc.label}</span>
-                                <div className="shortcut-keys">
-                                    {sc.keys.map((k, j) => (
-                                        <React.Fragment key={j}>
-                                            {j > 0 && <span style={{ color: "var(--dark-muted)", fontSize: 10 }}>+</span>}
-                                            <span className="kbd">{k}</span>
-                                        </React.Fragment>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </aside>
 
         </div>
     );
