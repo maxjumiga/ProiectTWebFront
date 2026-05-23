@@ -4,6 +4,20 @@ import { faEnvelope, faShield, faCircleInfo, faCheck } from "@fortawesome/free-s
 import { useNavigate, useLocation } from "react-router-dom";
 import "./TwoFactor.css";
 
+// Functie pentru decodarea JWT
+function parseJwt(token: string) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        return null;
+    }
+}
+
 const OTP_LENGTH = 4;
 
 export default function TwoFactorPage() {
@@ -101,6 +115,10 @@ export default function TwoFactorPage() {
 
             // JWT token
             localStorage.setItem("token", data.token);
+            
+            // Decodare token
+            const decoded = parseJwt(data.token);
+            const role = decoded?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || decoded?.role;
 
             sessionStorage.setItem("isAuthenticated", "true");
 
@@ -117,7 +135,9 @@ export default function TwoFactorPage() {
 
             // Redirect
             setTimeout(() => {
-                if (data.onboardingCompleted) {
+                if (role === "Admin") {
+                    navigate("/admin");
+                } else if (data.onboardingCompleted) {
                     navigate("/dashboard");
                 } else {
                     navigate("/onboarding");

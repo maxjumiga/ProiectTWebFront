@@ -5,6 +5,20 @@ import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./Authentication.css";
 
+// Functie pentru decodarea JWT fara a instala librarii externe
+function parseJwt(token: string) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        return null;
+    }
+}
+
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -51,10 +65,22 @@ const LoginPage: React.FC = () => {
 
                 return;
             }
-            // JWT
+            
+            // Salvam JWT
             localStorage.setItem("token", data.token);
 
-            // user info
+            // Decodam JWT-ul pentru a afla rolul
+            const decoded = parseJwt(data.token);
+            // In C# .NET ClaimTypes.Role este serializat de obicei ca aceasta cheie lunga, sau doar 'role'
+            const role = decoded?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || decoded?.role;
+
+            // Daca este Admin, plecam direct pe panoul de Admin
+            if (role === "Admin") {
+                navigate("/admin");
+                return;
+            }
+
+            // Daca este User normal
             if (data.user) {
                 localStorage.setItem(
                     "user",
@@ -81,7 +107,7 @@ const LoginPage: React.FC = () => {
                 );
             }
 
-            // redirect
+            // redirect pentru user
             if (data.onboardingCompleted) {
                 navigate("/dashboard");
             } else {

@@ -34,6 +34,7 @@ export default function Header() {
 
     // Sterge datele de autentificare admin si redirectioneaza la /login
     const handleLogout = () => {
+        localStorage.removeItem('token');
         sessionStorage.removeItem('isAdminAuthenticated');
         sessionStorage.removeItem('isAuthenticated');
         navigate('/login', { replace: true });
