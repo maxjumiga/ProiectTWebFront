@@ -1,33 +1,18 @@
-// ============================================================
-// features/exercises/ExercisesTable.tsx — Tabelul cu exercitii
-// Componenta de prezentare care afiseaza lista de exercitii filtrate.
-// Nu gestioneaza starea — logica ramane in GestionareExercitii.tsx
-// Fiecare rand contine:
-//   - Avatar colorat cu initiala exercitiului + numele
-//   - Badge pentru grupa musculara (colorat pe categorie)
-//   - Badge pentru dificultate (verde/portocaliu/rosu)
-//   - Durata medie in minute
-//   - Descrierea exercitiului (sau "—" daca lipseste)
-//   - Butoane Edit si Sterge
-// ============================================================
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
-import type { Exercitiu } from '../../types';
+import type { DificultateExercitiu, Exercitiu, GrupMuscular } from '../../types';
 import {
-    grupMuscularLabel,
-    grupColorClass,
-    dificultateLabel,
+    costObosealaLabel,
     dificultateColorClass,
-    type GrupMuscular,
-    type DificultateExercitiu,
+    dificultateLabel,
+    grupColorClass,
+    grupMuscularLabel,
 } from './exercisesConstants';
 
-// Properties received from ExercisesManagement
 interface ExercisesTableProps {
-    filtered: Exercitiu[];                // Already filtered list of exercises
-    onEdit: (e: Exercitiu) => void;       // Callback for opening edit modal
-    onDelete: (id: string) => void;       // Callback for initiating deletion
+    filtered: Exercitiu[];
+    onEdit: (e: Exercitiu) => void;
+    onDelete: (id: number) => void;
 }
 
 export default function ExercisesTable({ filtered, onEdit, onDelete }: ExercisesTableProps) {
@@ -39,70 +24,47 @@ export default function ExercisesTable({ filtered, onEdit, onDelete }: Exercises
                         <tr>
                             <th>Exercise</th>
                             <th>Muscle Group</th>
+                            <th>Secondary Muscle</th>
                             <th>Difficulty</th>
-                            <th>Avg. Duration</th>
-                            <th>Description</th>
+                            <th>Fatigue Cost</th>
                             <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {/* Daca lista e goala dupa filtrare, nu se afiseaza nimic */}
                         {filtered.length === 0 ? null : (
                             filtered.map(ex => (
                                 <tr key={ex.id}>
-
-                                    {/* Celula nume: avatar colorat cu initiala + name */}
                                     <td>
                                         <div className="ga-name-cell">
-                                            {/* Culoarea avatarului depinde de grupa musculara */}
                                             <div className={`ga-avatar ${grupColorClass[ex.grupMuscular as GrupMuscular]}`}>
                                                 {ex.nume.charAt(0).toUpperCase()}
                                             </div>
                                             <span className="user-name">{ex.nume}</span>
                                         </div>
                                     </td>
-
-                                    {/* Badge colorat pentru grupa musculara */}
                                     <td>
                                         <span className={`badge ga-badge-cat ${grupColorClass[ex.grupMuscular as GrupMuscular]}`}>
                                             {grupMuscularLabel[ex.grupMuscular as GrupMuscular]}
                                         </span>
                                     </td>
-
-                                    {/* Badge colorat pentru dificultate (verde/portocaliu/rosu) */}
+                                    <td className="ex-descriere-cell">
+                                        {ex.grupaSecundara || <span className="ex-no-desc">—</span>}
+                                    </td>
                                     <td>
                                         <span className={`badge ex-badge-dif ${dificultateColorClass[ex.dificultate as DificultateExercitiu]}`}>
                                             {dificultateLabel[ex.dificultate as DificultateExercitiu]}
                                         </span>
                                     </td>
-
-                                    {/* Durata in minute */}
                                     <td className="ga-num-cell">
-                                        <span className="ga-kcal">{ex.durataMed}</span>
-                                        <span className="ga-unit-sm">min</span>
+                                        <span>{costObosealaLabel[ex.costOboseala]}</span>
                                     </td>
-
-                                    {/* Descrierea — daca nu exista, afiseaza "—" */}
-                                    <td className="ex-descriere-cell">
-                                        {ex.descriere || <span className="ex-no-desc">—</span>}
-                                    </td>
-
-                                    {/* Butoanele de actiune */}
                                     <td>
                                         <div className="um-actions">
-                                            <button
-                                                className="btn-edit-sm"
-                                                onClick={() => onEdit(ex)}
-                                                title="Edit exercise"
-                                            >
+                                            <button className="btn-edit-sm" onClick={() => onEdit(ex)} title="Edit exercise">
                                                 <FontAwesomeIcon icon={faPenToSquare} style={{ width: 13, height: 13 }} />
                                                 Edit
                                             </button>
-                                            <button
-                                                className="btn-danger-sm"
-                                                onClick={() => onDelete(ex.id)}
-                                                title="Delete exercise"
-                                            >
+                                            <button className="btn-danger-sm" onClick={() => onDelete(ex.id)} title="Delete exercise">
                                                 <FontAwesomeIcon icon={faTrash} style={{ width: 13, height: 13 }} />
                                                 Delete
                                             </button>

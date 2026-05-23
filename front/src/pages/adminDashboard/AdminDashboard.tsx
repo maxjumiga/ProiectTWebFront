@@ -1,115 +1,93 @@
-// ============================================================
-// pages/Dashboard.tsx — Pagina principala (dashboard)
-// Afiseaza un rezumat al activitatii aplicatiei prin:
-//   - 4 carduri de statistici (utilizatori total, saptamana, luna, activi)
-//   - Tabel cu ultimii 5 utilizatori inregistrati
-// Toate calculele se fac pe datele din mockData, folosind useMemo
-// pentru a nu recalcula la fiecare randare inutila.
-// ============================================================
-
-import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-    faUsers,          // Iconita card Total Utilizatori
-    faArrowTrendUp,   // Iconita card Aceasta Saptamana
-    faCalendarDays,   // Iconita card Aceasta Luna
-    faCircleCheck,    // Iconita card Utilizatori Activi
-    faArrowRight,     // Sageata "Vezi toti"
+    faUsers,
+    faArrowTrendUp,
+    faCalendarDays,
+    faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons';
-import { mockUsers } from '../../data/mockData';
+import type { User } from '../../types';
 import StatsCard from '../../components/StatsCard';
+import { getAdminUsers } from '../../services/adminApi';
 import './AdminDashboard.css';
 
-// Calculeaza primul minut al saptamanii curente (duminica la 00:00)
-function startOfWeek(date: Date) {
-    const d = new Date(date);
-    const day = d.getDay(); // 0 = duminica, 6 = sambata
-    d.setDate(d.getDate() - day);
-    d.setHours(0, 0, 0, 0);
-    return d;
-}
-
-// Calculeaza primul minut al lunii curente (ziua 1 la 00:00)
-function startOfMonth(date: Date) {
-    return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
 export default function AdminDashboard() {
-    const now = new Date();
+    const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [requestError, setRequestError] = useState('');
 
-    // Calculam toate statisticile dintr-o singura trecere prin mockUsers
-    // useMemo previne recalculul la fiecare randare (doar cand se schimba dependintele)
+    useEffect(() => {
+        async function loadUsers() {
+            try {
+                setLoading(true);
+                setRequestError('');
+                setUsers(await getAdminUsers());
+            } catch (error) {
+                setRequestError(error instanceof Error ? error.message : 'Failed to load dashboard data.');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loadUsers();
+    }, []);
+
     const stats = useMemo(() => {
-        const weekStart = startOfWeek(now);
-        const monthStart = startOfMonth(now);
+        const total = users.length;
+        const admins = users.filter(u => u.role === 'admin').length;
+        const onboarded = users.filter(u => u.onboardingCompleted).length;
+        const pendingOnboarding = total - onboarded;
+        const twoFactor = users.filter(u => u.twoFactorEnabled).length;
 
-        const total = mockUsers.length;
-        // Filtram utilizatorii inregistrati in aceasta saptamana
-        const thisWeek = mockUsers.filter(u => new Date(u.joinedAt) >= weekStart).length;
-        // Filtram utilizatorii inregistrati in aceasta luna
-        const thisMonth = mockUsers.filter(u => new Date(u.joinedAt) >= monthStart).length;
-        const activi = mockUsers.filter(u => u.status === 'activ').length;
-        const inactivi = total - activi;
-        const admins = mockUsers.filter(u => u.role === 'admin').length;
+        return { total, admins, onboarded, pendingOnboarding, twoFactor };
+    }, [users]);
 
-        return { total, thisWeek, thisMonth, activi, inactivi, admins };
-    }, []); // Array gol = se calculeaza o singura data la montare
-
-    // Sortam utilizatorii dupa data inregistrarii (cel mai recent primul)
-    // si luam primii 5 pentru tabelul "Utilizatori Recenti"
     const recentUsers = useMemo(
-        () => [...mockUsers].sort((a, b) => new Date(b.joinedAt).getTime() - new Date(a.joinedAt).getTime()).slice(0, 5),
-        []
+        () => [...users].sort((a, b) => b.id - a.id).slice(0, 5),
+        [users]
     );
 
     return (
         <div className="dashboard">
+            {requestError && <div className="form-error" style={{ marginBottom: '1rem' }}>{requestError}</div>}
 
-            {/* Grila cu 4 carduri de statistici */}
             <div className="stats-grid">
                 <StatsCard
                     icon={<FontAwesomeIcon icon={faUsers} style={{ width: 22, height: 22 }} />}
                     label="Total Users"
                     value={stats.total}
                     color="blue"
-                    trend={`${stats.admins} administrators · ${stats.total - stats.admins} users`}
+                    trend={`${stats.admins} administrators · ${stats.total - stats.admins} standard users`}
                 />
                 <StatsCard
                     icon={<FontAwesomeIcon icon={faArrowTrendUp} style={{ width: 22, height: 22 }} />}
-                    label="This Week"
-                    value={stats.thisWeek}
+                    label="Onboarded"
+                    value={stats.onboarded}
                     color="green"
-                    trend="Recently registered users"
+                    trend={`${stats.pendingOnboarding} users still pending onboarding`}
                 />
                 <StatsCard
                     icon={<FontAwesomeIcon icon={faCalendarDays} style={{ width: 22, height: 22 }} />}
-                    label="This Month"
-                    value={stats.thisMonth}
+                    label="2FA Enabled"
+                    value={stats.twoFactor}
                     color="amber"
-                    trend="Users registered this month"
+                    trend="Accounts protected with two-factor authentication"
                 />
                 <StatsCard
                     icon={<FontAwesomeIcon icon={faCircleCheck} style={{ width: 22, height: 22 }} />}
-                    label="Active Users"
-                    value={stats.activi}
+                    label="Pending Setup"
+                    value={stats.pendingOnboarding}
                     color="purple"
-                    trend={`${stats.inactivi} inactive`}
+                    trend="Users who have not completed onboarding yet"
                 />
             </div>
 
-            {/* Sectiunea cu tabelul utilizatorilor recenti */}
             <div className="dashboard-section">
                 <div className="section-header">
                     <div>
-                        <h2 className="section-title">Recent Users</h2>
-                        <p className="section-sub">Last 5 registered users</p>
+                        <h2 className="section-title">Latest Users</h2>
+                        <p className="section-sub">Most recent users returned by the API</p>
                     </div>
-                    {/* Link catre pagina completa de utilizatori */}
-                    <Link to="/users" className="btn-link">
-                        View all
-                        <FontAwesomeIcon icon={faArrowRight} style={{ width: 14, height: 14 }} />
-                    </Link>
                 </div>
 
                 <div className="table-wrap">
@@ -118,31 +96,33 @@ export default function AdminDashboard() {
                             <tr>
                                 <th>User</th>
                                 <th>Role</th>
-                                <th>Status</th>
-                                <th>Registration Date</th>
+                                <th>Onboarding</th>
+                                <th>2FA</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {recentUsers.map(u => (
-                                <tr key={u.id}>
-                                    {/* Celula utilizator: avatar cu initiala + nume + email */}
-                                    <td>
-                                        <div className="user-cell">
-                                            <div className="user-avatar">{u.name.charAt(0)}</div>
-                                            <div className="user-details">
-                                                <span className="user-name">{u.name}</span>
-                                                <span className="user-email">{u.email}</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    {/* Badge colorat pentru rol */}
-                                    <td><span className={`badge ${u.role}`}>{u.role === 'admin' ? 'Admin' : 'User'}</span></td>
-                                    {/* Badge colorat pentru status */}
-                                    <td><span className={`badge ${u.status}`}>{u.status === 'activ' ? 'Active' : 'Inactive'}</span></td>
-                                    {/* Data formatata in engleza */}
-                                    <td className="date-cell">{new Date(u.joinedAt).toLocaleDateString('en-US')}</td>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={4} className="um-empty">Loading dashboard data...</td>
                                 </tr>
-                            ))}
+                            ) : (
+                                recentUsers.map(u => (
+                                    <tr key={u.id}>
+                                        <td>
+                                            <div className="user-cell">
+                                                <div className="user-avatar">{u.name.charAt(0)}</div>
+                                                <div className="user-details">
+                                                    <span className="user-name">{u.name}</span>
+                                                    <span className="user-email">{u.email}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span className={`badge ${u.role}`}>{u.role === 'admin' ? 'Admin' : 'User'}</span></td>
+                                        <td><span className={`badge ${u.onboardingCompleted ? 'activ' : 'inactiv'}`}>{u.onboardingCompleted ? 'Completed' : 'Pending'}</span></td>
+                                        <td><span className={`badge ${u.twoFactorEnabled ? 'activ' : 'inactiv'}`}>{u.twoFactorEnabled ? 'Enabled' : 'Disabled'}</span></td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

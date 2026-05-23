@@ -1,16 +1,4 @@
-// ============================================================
-// pages/exercises/ExercisesManagement.tsx — Pagina gestionare exercitii
-// Permite administratorului sa:
-//   - Caute exercitii dupa nume sau descriere
-//   - Filtreze dupa grupa musculara (piept, spate, picioare etc.)
-//   - Adauge un exercitiu nou (cu modal + validare)
-//   - Editeze un exercitiu existent (modal pre-completat)
-//   - Stearga un exercitiu (cu confirmare prin modal)
-// Cautarea functioneaza atat pe nume CAT SI pe descriere.
-// Starea locala simuleaza o baza de date in-memory (porneste goala).
-// ============================================================
-
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import type { Exercitiu } from '../../types';
@@ -23,116 +11,149 @@ import {
     grupMuscularFilterOptions,
     emptyExercitiiForm,
     validateExercitiiForm,
-    generateId,
     type ExercitiiForm,
 } from '../../features/exercises/exercisesConstants';
+import {
+    createAdminExercise,
+    deleteAdminExercise,
+    getAdminExercises,
+    updateAdminExercise,
+} from '../../services/adminApi';
 import './ExercisesManagement.css';
 
 export default function ExercisesManagement() {
-    // Lista completa de exercitii (in-memory, porneste goala)
     const [exercitii, setExercitii] = useState<Exercitiu[]>([]);
-
-    // Textul de cautare si filtrul de grupa musculara activ
     const [search, setSearch] = useState('');
-    const [filterGrup, setFilterGrup] = useState('all'); // 'all' = fara filtru
+    const [filterGrup, setFilterGrup] = useState('all');
+    const [loading, setLoading] = useState(true);
+    const [requestError, setRequestError] = useState('');
 
-    // --- Starea modalului de adaugare ---
     const [showAdd, setShowAdd] = useState(false);
     const [addForm, setAddForm] = useState<ExercitiiForm>(emptyExercitiiForm());
     const [addError, setAddError] = useState('');
 
-    // --- Starea modalului de editare ---
-    const [editTarget, setEditTarget] = useState<Exercitiu | null>(null); // null = modal inchis
+    const [editTarget, setEditTarget] = useState<Exercitiu | null>(null);
     const [editForm, setEditForm] = useState<ExercitiiForm>(emptyExercitiiForm());
     const [editError, setEditError] = useState('');
 
-    // --- Starea confirmarii de stergere ---
-    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [deleteId, setDeleteId] = useState<number | null>(null);
 
-    // Lista filtrata — recalculata automat la orice modificare a dependintelor
+    async function loadExercises() {
+        try {
+            setLoading(true);
+            setRequestError('');
+            setExercitii(await getAdminExercises());
+        } catch (error) {
+            setRequestError(error instanceof Error ? error.message : 'Failed to load exercises.');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        loadExercises();
+    }, []);
+
     const filtered = useMemo(() => {
         const q = search.trim().toLowerCase();
         return exercitii.filter(e =>
-            // Cautarea functioneaza in AMBELE campuri: nume SI descriere
-            (!q || e.nume.toLowerCase().includes(q) || e.descriere.toLowerCase().includes(q)) &&
-            (filterGrup === 'all' || e.grupMuscular === filterGrup) // Filtrul de grupa musculara
+            (!q || e.nume.toLowerCase().includes(q) || e.grupaSecundara.toLowerCase().includes(q)) &&
+            (filterGrup === 'all' || e.grupMuscular === filterGrup)
         );
     }, [exercitii, search, filterGrup]);
 
-    // Valideaza si salveaza un exercitiu nou la inceputul listei
-    function handleAdd() {
+    async function handleAdd() {
         const err = validateExercitiiForm(addForm);
-        if (err) { setAddError(err); return; }
-        setExercitii(prev => [{ ...addForm, id: generateId() }, ...prev]); // Adauga la inceput
-        setShowAdd(false);
-        setAddForm(emptyExercitiiForm()); // Reseteaza pentru urmatoarea utilizare
-        setAddError('');
+        if (err) {
+            setAddError(err);
+            return;
+        }
+
+        try {
+            await createAdminExercise(addForm);
+            setShowAdd(false);
+            setAddForm(emptyExercitiiForm());
+            setAddError('');
+            await loadExercises();
+        } catch (error) {
+            setAddError(error instanceof Error ? error.message : 'Failed to create exercise.');
+        }
     }
 
-    // Pregateste modalul de editare cu datele exercitiului selectat
     function openEdit(ex: Exercitiu) {
         setEditTarget(ex);
         setEditForm({
             nume: ex.nume,
             grupMuscular: ex.grupMuscular,
+            grupaSecundara: ex.grupaSecundara,
             dificultate: ex.dificultate,
-            descriere: ex.descriere,
-            durataMed: ex.durataMed,
+            costOboseala: ex.costOboseala,
         });
         setEditError('');
     }
 
-    // Valideaza si salveaza modificarile unui exercitiu existent
-    function handleEdit() {
+    async function handleEdit() {
         if (!editTarget) return;
+
         const err = validateExercitiiForm(editForm);
-        if (err) { setEditError(err); return; }
-        // Inlocuieste exercitiul vechi cu datele noi, pastrand ID-ul original
-        setExercitii(prev => prev.map(e => e.id === editTarget.id ? { ...editForm, id: e.id } : e));
-        setEditTarget(null); // Inchide modalul
-        setEditError('');
+        if (err) {
+            setEditError(err);
+            return;
+        }
+
+        try {
+            await updateAdminExercise(editTarget.id, editForm);
+            setEditTarget(null);
+            setEditError('');
+            await loadExercises();
+        } catch (error) {
+            setEditError(error instanceof Error ? error.message : 'Failed to update exercise.');
+        }
     }
 
-    // Sterge exercitiul cu ID-ul din deleteId
-    function handleDelete() {
-        if (deleteId) {
-            setExercitii(prev => prev.filter(e => e.id !== deleteId));
-            setDeleteId(null); // Inchide modalul de confirmare
+    async function handleDelete() {
+        if (!deleteId) return;
+
+        try {
+            await deleteAdminExercise(deleteId);
+            setDeleteId(null);
+            await loadExercises();
+        } catch (error) {
+            setRequestError(error instanceof Error ? error.message : 'Failed to delete exercise.');
         }
     }
 
     return (
         <div className="ga">
-
-            {/* Toolbar: cautare + filtru grupa musculara + buton adaugare */}
             <div className="um-toolbar">
                 <SearchBar value={search} onChange={setSearch} placeholder="Search exercise by name..." />
                 <div className="um-filters">
-                    {/* Filtrul de grupa musculara — include "Toate grupele" */}
                     <CustomSelect value={filterGrup} onChange={setFilterGrup} options={grupMuscularFilterOptions} variant="default" />
                 </div>
-                {/* Butonul de adaugare — reseteaza formularul si deschide modalul */}
                 <button className="btn-primary" onClick={() => { setShowAdd(true); setAddForm(emptyExercitiiForm()); setAddError(''); }}>
                     <FontAwesomeIcon icon={faPlus} style={{ width: 14, height: 14 }} />
                     Add Exercise
                 </button>
             </div>
 
-            {/* Contorul — "X exercitii" sau "X din Y exercitii" cand e filtrat */}
+            {requestError && <div className="form-error" style={{ marginBottom: '1rem' }}>{requestError}</div>}
+
             <p className="um-count">
                 {filtered.length === exercitii.length
                     ? `${exercitii.length} exercises in database`
                     : `${filtered.length} of ${exercitii.length} exercises`}
             </p>
 
-            {/* Table with filtered exercises list */}
-            <ExercisesTable
-                filtered={filtered}
-                onEdit={openEdit}
-                onDelete={setDeleteId}
-            />
+            {loading ? (
+                <div className="um-card"><div className="um-empty"><span>Loading exercises...</span></div></div>
+            ) : (
+                <ExercisesTable
+                    filtered={filtered}
+                    onEdit={openEdit}
+                    onDelete={setDeleteId}
+                />
+            )}
 
-            {/* Add modal — conditional rendering */}
             {showAdd && (
                 <ExercisesModal
                     title="Add New Exercise"
@@ -145,7 +166,6 @@ export default function ExercisesManagement() {
                 />
             )}
 
-            {/* Edit modal — conditional rendering when editTarget is not null */}
             {editTarget && (
                 <ExercisesModal
                     title="Edit Exercise"
@@ -158,7 +178,6 @@ export default function ExercisesManagement() {
                 />
             )}
 
-            {/* Modalul de confirmare stergere */}
             {deleteId && (
                 <ConfirmDeleteModal
                     itemName={exercitii.find(e => e.id === deleteId)?.nume ?? ''}

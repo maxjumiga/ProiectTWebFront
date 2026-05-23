@@ -23,8 +23,6 @@ export interface SelectOption {
 interface CustomSelectProps {
     value: string;                     // Valoarea selectata curent
     onChange: (value: string) => void; // Callback apelat la selectarea unei optiuni
-    value: string;                     // Currently selected value
-    onChange: (value: string) => void; // Callback called when an option is selected
     options: SelectOption[];           // List of available options
     placeholder?: string;             // Text displayed when nothing is selected
     variant?: 'default' | 'inline' | 'form'; // Visual style of the dropdown

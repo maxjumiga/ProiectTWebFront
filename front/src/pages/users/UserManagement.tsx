@@ -1,106 +1,101 @@
-// ============================================================
-// pages/users/UserManagement.tsx — Pagina gestionare utilizatori
-// Permite administratorului sa:
-//   - Caute utilizatori dupa nume sau email
-//   - Filtreze dupa rol (admin/user) si status (activ/inactiv)
-//   - Schimbe rolul unui utilizator direct din tabel (CustomSelect inline)
-//   - Stearga un utilizator (cu confirmare prin modal)
-// Starea locala (useState) simuleaza o baza de date in-memory.
-// ============================================================
-
-import { useState, useMemo } from 'react';
-import { mockUsers } from '../../data/mockData';
-import type { User, Role } from '../../types';
+import { useEffect, useMemo, useState } from 'react';
+import type { User } from '../../types';
 import SearchBar from '../../components/SearchBar';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 import CustomSelect from '../../components/CustomSelect';
 import UsersTable from '../../features/users/UsersTable';
+import { deleteAdminUser, getAdminUsers } from '../../services/adminApi';
 import './UserManagement.css';
 
-// Optiunile pentru filtrul de rol (include "Toate rolurile" ca optiune implicita)
 const roleFilterOptions = [
     { value: 'all', label: 'All roles' },
     { value: 'admin', label: 'Admin' },
     { value: 'user', label: 'User' },
 ];
 
-// Optiunile pentru filtrul de status
 const statusFilterOptions = [
-    { value: 'all', label: 'All statuses' },
-    { value: 'activ', label: 'Active' },
-    { value: 'inactiv', label: 'Inactive' },
+    { value: 'all', label: 'All onboarding states' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'pending', label: 'Pending' },
 ];
 
 export default function UserManagement() {
-    // Lista completa de utilizatori (initiata cu datele mock)
-    const [users, setUsers] = useState<User[]>(mockUsers);
-
-    // Textul de cautare introdus de utilizator
+    const [users, setUsers] = useState<User[]>([]);
     const [search, setSearch] = useState('');
-
-    // Filtrele active pentru rol si status ('all' = fara filtru)
     const [filterRole, setFilterRole] = useState('all');
     const [filterStatus, setFilterStatus] = useState('all');
+    const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [requestError, setRequestError] = useState('');
 
-    // ID-ul utilizatorului selectat pentru stergere (null = niciun modal deschis)
-    const [deleteId, setDeleteId] = useState<string | null>(null);
+    async function loadUsers() {
+        try {
+            setLoading(true);
+            setRequestError('');
+            setUsers(await getAdminUsers());
+        } catch (error) {
+            setRequestError(error instanceof Error ? error.message : 'Failed to load users.');
+        } finally {
+            setLoading(false);
+        }
+    }
 
-    // Lista filtrata — recalculata automat cand se schimba search, filterRole sau filterStatus
-    // useMemo previne filtrarea inutila la fiecare randare
+    useEffect(() => {
+        loadUsers();
+    }, []);
+
     const filtered = useMemo(() => {
         const q = search.trim().toLowerCase();
         return users.filter(u =>
-            // Conditia de cautare: textul trebuie sa apara in nume SAU email
             (!q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)) &&
-            // Conditia de filtru rol: 'all' inseamna toti
             (filterRole === 'all' || u.role === filterRole) &&
-            // Conditia de filtru status
-            (filterStatus === 'all' || u.status === filterStatus)
+            (
+                filterStatus === 'all' ||
+                (filterStatus === 'completed' && u.onboardingCompleted) ||
+                (filterStatus === 'pending' && !u.onboardingCompleted)
+            )
         );
     }, [users, search, filterRole, filterStatus]);
 
-    // Schimba rolul unui utilizator identificat prin ID
-    function changeRole(id: string, role: string) {
-        setUsers(prev => prev.map(u => u.id === id ? { ...u, role: role as Role } : u));
-    }
+    async function handleDelete() {
+        if (!deleteId) return;
 
-    // Executa stergerea utilizatorului cu ID-ul din deleteId
-    function handleDelete() {
-        if (deleteId) {
-            setUsers(prev => prev.filter(u => u.id !== deleteId));
-            setDeleteId(null); // Inchidem modalul dupa stergere
+        try {
+            await deleteAdminUser(deleteId);
+            setDeleteId(null);
+            await loadUsers();
+        } catch (error) {
+            setRequestError(error instanceof Error ? error.message : 'Failed to delete user.');
         }
     }
 
     return (
         <div className="um">
-
-            {/* Toolbar: cautare + filtre */}
             <div className="um-toolbar">
                 <SearchBar value={search} onChange={setSearch} placeholder="Search by name or email..." />
                 <div className="um-filters">
-                    {/* Filtrul de rol */}
                     <CustomSelect value={filterRole} onChange={setFilterRole} options={roleFilterOptions} variant="default" />
-                    {/* Filtrul de status */}
                     <CustomSelect value={filterStatus} onChange={setFilterStatus} options={statusFilterOptions} variant="default" />
                 </div>
             </div>
 
-            {/* Contorul: afiseaza cate rezultate sunt vizibile din total */}
+            {requestError && <div className="form-error" style={{ marginBottom: '1rem' }}>{requestError}</div>}
+
             <p className="um-count">
                 {filtered.length === users.length
                     ? `${users.length} users total`
                     : `${filtered.length} of ${users.length} users`}
             </p>
 
-            {/* Table with filtered users */}
-            <UsersTable
-                filtered={filtered}
-                onRoleChange={changeRole}
-                onDelete={setDeleteId} // Sets the ID to open the confirmation modal
-            />
+            {loading ? (
+                <div className="um-card"><div className="um-empty"><span>Loading users...</span></div></div>
+            ) : (
+                <UsersTable
+                    filtered={filtered}
+                    onDelete={setDeleteId}
+                />
+            )}
 
-            {/* Modalul de confirmare stergere — apare doar cand deleteId nu e null */}
             {deleteId && (
                 <ConfirmDeleteModal
                     itemName={`user ${users.find(u => u.id === deleteId)?.name}`}

@@ -1,42 +1,30 @@
-// ============================================================
-// features/exercises/ExercisesModal.tsx — Modal adaugare/editare exercitiu
-// Componenta reutilizabila pentru ambele operatii (add si edit).
-// Formularul contine:
-//   - Camp text pentru numele exercitiului (obligatoriu)
-//   - Dropdown pentru grupa musculara (CustomSelect)
-//   - Dropdown pentru dificultate (CustomSelect)
-//   - Input numeric pentru durata medie (minute)
-//   - Textarea pentru descriere (optional)
-// Validarea se face in GestionareExercitii prin validateExercitiiForm
-// ============================================================
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCheck } from '@fortawesome/free-solid-svg-icons';
-import type { GrupMuscular, DificultateExercitiu, ExercitiiForm } from './exercisesConstants';
-import { grupMuscularOptions, dificultateOptions } from './exercisesConstants';
+import type { CostOboseala, DificultateExercitiu, GrupMuscular } from '../../types';
+import {
+    costObosealaOptions,
+    dificultateOptions,
+    grupMuscularOptions,
+    type ExercitiiForm,
+} from './exercisesConstants';
 import CustomSelect from '../../components/CustomSelect';
 
-// Proprietatile primite de la GestionareExercitii
 interface ExercitiiModalProps {
-    title: string;                              // Titlul modalului
-    form: ExercitiiForm;                        // Datele curente ale formularului
-    error: string;                              // Mesajul de eroare (gol = fara eroare)
-    onFormChange: (form: ExercitiiForm) => void; // Callback la orice modificare
-    onSave: () => void;                         // Callback la salvare
-    onClose: () => void;                        // Callback la inchidere
-    saveLabel?: string;                         // Textul butonului (default: "Salvează")
+    title: string;
+    form: ExercitiiForm;
+    error: string;
+    onFormChange: (form: ExercitiiForm) => void;
+    onSave: () => void;
+    onClose: () => void;
+    saveLabel?: string;
 }
 
 export default function ExercisesModal({
     title, form, error, onFormChange, onSave, onClose, saveLabel = 'Save',
-}: ExercisesModalProps) {
+}: ExercitiiModalProps) {
     return (
-        // Overlay — click pe fundal inchide modalul
         <div className="modal-overlay" onClick={onClose}>
-            {/* Cutia modala — stopPropagation previne inchiderea accidentala */}
             <div className="modal modal--wide" onClick={e => e.stopPropagation()}>
-
-                {/* Header: titlul + butonul X */}
                 <div className="modal-header">
                     <h3>{title}</h3>
                     <button className="modal-close" onClick={onClose}>
@@ -44,12 +32,9 @@ export default function ExercisesModal({
                     </button>
                 </div>
 
-                {/* Corpul: formularul */}
                 <div className="modal-body">
-                    {/* Eroarea de validare — apare doar daca exista */}
                     {error && <div className="form-error">{error}</div>}
 
-                    {/* Randul 1: Numele exercitiului (pe toata latimea) */}
                     <div className="form-row">
                         <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                             <label>Exercise name <span className="req">*</span></label>
@@ -63,7 +48,6 @@ export default function ExercisesModal({
                         </div>
                     </div>
 
-                    {/* Randul 2: Grupa musculara + Dificultate (2 coloane) */}
                     <div className="form-row">
                         <div className="form-group">
                             <label>Muscle Group</label>
@@ -85,34 +69,29 @@ export default function ExercisesModal({
                         </div>
                     </div>
 
-                    {/* Durata medie in minute */}
-                    <div className="form-group">
-                        <label>Average duration <span className="ga-unit">(minutes)</span></label>
-                        <input
-                            className="form-input"
-                            type="number"
-                            min={0}
-                            step={1}
-                            placeholder="ex: 30"
-                            value={form.durataMed}
-                            onChange={e => onFormChange({ ...form, durataMed: parseInt(e.target.value) || 0 })}
-                        />
-                    </div>
-
-                    {/* Descriere — camp text liber, optional */}
-                    <div className="form-group">
-                        <label>Description <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: '11px' }}>(optional)</span></label>
-                        <textarea
-                            className="form-input ex-textarea"
-                            rows={3}
-                            placeholder="Describe the technique, muscles involved..."
-                            value={form.descriere}
-                            onChange={e => onFormChange({ ...form, descriere: e.target.value })}
-                        />
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label>Secondary muscle group</label>
+                            <input
+                                className="form-input"
+                                type="text"
+                                placeholder="e.g.: Triceps"
+                                value={form.grupaSecundara}
+                                onChange={e => onFormChange({ ...form, grupaSecundara: e.target.value })}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Fatigue cost</label>
+                            <CustomSelect
+                                value={form.costOboseala}
+                                onChange={val => onFormChange({ ...form, costOboseala: val as CostOboseala })}
+                                options={costObosealaOptions}
+                                variant="form"
+                            />
+                        </div>
                     </div>
                 </div>
 
-                {/* Footer: Anuleaza + Salveaza */}
                 <div className="modal-footer">
                     <button className="btn-ghost" onClick={onClose}>Cancel</button>
                     <button className="btn-primary" onClick={onSave}>

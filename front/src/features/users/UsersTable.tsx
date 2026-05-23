@@ -1,33 +1,13 @@
-// ============================================================
-// features/users/UsersTable.tsx — Tabelul cu utilizatori
-// Componenta de prezentare (presentational) care primeste datele
-// deja filtrate prin props si le afiseaza intr-un tabel.
-// Nu gestioneaza starea — aceasta ramane in UserManagement.tsx
-// Contine:
-//   - Starea "gol" cu iconita cand nu exista rezultate de cautare
-//   - Dropdown inline pentru schimbarea rolului direct din tabel
-//   - Buton de stergere cu iconita Trash
-// ============================================================
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 import type { User } from '../../types';
-import CustomSelect from '../../components/CustomSelect';
 
-// Optiunile disponibile pentru schimbarea rolului unui utilizator
-const roleOptions = [{ value: 'user', label: 'User' }, { value: 'admin', label: 'Admin' }];
-
-// Map de culori pentru badge-urile de rol in dropdown inline
-const roleColorMap: Record<string, string> = { admin: 'admin', user: 'user' };
-
-// Properties received from the parent page (UserManagement)
 interface UsersTableProps {
-    filtered: User[];                            // Already filtered list of users
-    onRoleChange: (id: string, role: string) => void; // Callback for role change
-    onDelete: (id: string) => void;              // Callback for initiating deletion
+    filtered: User[];
+    onDelete: (id: number) => void;
 }
 
-export default function UsersTable({ filtered, onRoleChange, onDelete }: UsersTableProps) {
+export default function UsersTable({ filtered, onDelete }: UsersTableProps) {
     return (
         <div className="um-card">
             <div className="table-wrap">
@@ -36,24 +16,22 @@ export default function UsersTable({ filtered, onRoleChange, onDelete }: UsersTa
                         <tr>
                             <th>User</th>
                             <th>Role</th>
-                            <th>Registration Date</th>
+                            <th>Onboarding</th>
+                            <th>2FA</th>
                             <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {/* Starea de lista goala — afisata cand cautarea nu returneaza rezultate */}
                         {filtered.length === 0 ? (
                             <tr>
-                                <td colSpan={4} className="um-empty">
+                                <td colSpan={5} className="um-empty">
                                     <FontAwesomeIcon icon={faMagnifyingGlass} style={{ width: 40, height: 40, opacity: 0.3 }} />
                                     <span>No users found</span>
                                 </td>
                             </tr>
                         ) : (
-                            // Randarea fiecarui utilizator ca rand in tabel
                             filtered.map(u => (
                                 <tr key={u.id}>
-                                    {/* Celula utilizator: cerc cu initiala + nume + email */}
                                     <td>
                                         <div className="user-cell">
                                             <div className="user-avatar">{u.name.charAt(0)}</div>
@@ -63,27 +41,24 @@ export default function UsersTable({ filtered, onRoleChange, onDelete }: UsersTa
                                             </div>
                                         </div>
                                     </td>
-
-                                    {/* Dropdown inline pentru schimbarea rolului */}
                                     <td>
-                                        <CustomSelect
-                                            value={u.role}
-                                            onChange={val => onRoleChange(u.id, val)}
-                                            options={roleOptions}
-                                            variant="inline"    // Varianta compacta pentru tabel
-                                            colorMap={roleColorMap}
-                                        />
+                                        <span className={`badge ${u.role}`}>{u.role === 'admin' ? 'Admin' : 'User'}</span>
                                     </td>
-
-                                    {/* Data formatata in romana */}
-                                    <td className="date-cell">{new Date(u.joinedAt).toLocaleDateString('en-US')}</td>
-
-                                    {/* Actiunile disponibile: doar stergere pentru utilizatori */}
+                                    <td>
+                                        <span className={`badge ${u.onboardingCompleted ? 'activ' : 'inactiv'}`}>
+                                            {u.onboardingCompleted ? 'Completed' : 'Pending'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span className={`badge ${u.twoFactorEnabled ? 'activ' : 'inactiv'}`}>
+                                            {u.twoFactorEnabled ? 'Enabled' : 'Disabled'}
+                                        </span>
+                                    </td>
                                     <td>
                                         <div className="um-actions">
                                             <button
                                                 className="btn-danger-sm"
-                                                onClick={() => onDelete(u.id)} // Deschide modalul de confirmare
+                                                onClick={() => onDelete(u.id)}
                                                 title="Delete user"
                                             >
                                                 <FontAwesomeIcon icon={faTrash} style={{ width: 13, height: 13 }} />
