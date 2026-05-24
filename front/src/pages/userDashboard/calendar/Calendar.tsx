@@ -60,8 +60,7 @@ const MONTH_NAMES_EN = [
 
 const WEEKDAY_ABBR = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-const username = "Ion Popescu";
-const initials = username.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -250,6 +249,29 @@ const CalendarPage: React.FC = () => {
     const [calendarData, setCalendarData] = useState<Record<string, DayData>>({});
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedDayData, setSelectedDayData] = useState<DayData | null>(null);
+    const [user, setUser] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) return;
+                const response = await fetch("http://localhost:5004/api/user/me", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    const userData = (result.isSuccess && result.data) ? result.data : result;
+                    setUser(userData);
+                }
+            } catch (err) {
+                console.error("Error fetching user in Calendar:", err);
+            }
+        };
+        fetchUser();
+    }, []);
 
     useEffect(() => {
 
@@ -396,7 +418,15 @@ const CalendarPage: React.FC = () => {
                     </button>
                 </nav>
                 <div className="cal-sidebar-bottom">
-                    <button className="cal-avatar" onClick={() => navigate('/profile')}>{initials}</button>
+                    <button className="cal-avatar" onClick={() => navigate('/profile')}>
+                        {(user?.name || "Ion Popescu")
+                            .split(" ")
+                            .filter(Boolean)
+                            .map((w: string) => w[0])
+                            .join("")
+                            .toUpperCase()
+                            .slice(0, 2) || "U"}
+                    </button>
                 </div>
             </aside>
 

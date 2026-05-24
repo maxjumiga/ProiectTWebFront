@@ -105,10 +105,14 @@ export default function TwoFactorPage() {
                 }
             );
 
+            if (!response.ok) {
+                throw new Error("Invalid code. Please try again.");
+            }
+
             const data = await response.json();
 
-            if (!response.ok || !data.token) {
-                throw new Error(data.message || "Invalid or expired verification code.");
+            if (!data || !data.token) {
+                throw new Error("Invalid code. Please try again.");
             }
 
             setSuccess(true);

@@ -883,6 +883,7 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
             if (res.ok) {
                 fetchWorkouts();
                 resetForm();
+                onAddWorkout(body as any);
             }
         } catch (e) { console.error(e); }
     };
@@ -897,6 +898,7 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
             if (res.ok) {
                 fetchWorkouts();
                 if (selectedId === id) resetForm();
+                onAddWorkout(null as any);
             }
         } catch (e) { console.error(e); }
     };
@@ -1227,15 +1229,16 @@ const UserDashboard: React.FC = () => {
                 }
 
                 const data = await response.json();
+                const userData = (data.isSuccess && data.data) ? data.data : data;
 
-                setUser(data);
+                setUser(userData);
 
-                if (data.height) {
-                    setHeight(data.height);
+                if (userData.height) {
+                    setHeight(userData.height);
                 }
 
-                if (data.weight) {
-                    setWeight(data.weight);
+                if (userData.weight) {
+                    setWeight(userData.weight);
                 }
 
             } catch (err) {
@@ -1345,7 +1348,7 @@ const UserDashboard: React.FC = () => {
             {/* ── SIDEBAR ── */}
             <aside className="db-sidebar">
                 <div className="db-logo">
-                    <img src="/favicon.svg" alt="OmniTrack Logo" style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
+                    <img src="/favicon.svg" alt="OmniTrack Logo" />
                 </div>
 
                 <nav className="db-nav">
