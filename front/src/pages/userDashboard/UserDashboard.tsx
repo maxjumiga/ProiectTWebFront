@@ -1374,6 +1374,56 @@ const UserDashboard: React.FC = () => {
         }
     };
 
+    const fetchWaterToday = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                "http://localhost:5004/api/WaterLog/today",
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch water");
+            }
+
+            const data = await response.json();
+            console.log(data);
+            setWaterMl(data.amountMl ?? 0);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const fetchTodayCalories = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                "http://localhost:5004/api/FoodLog/today",
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch calories");
+            }
+
+            const data = await response.json();
+            console.log(data);
+            setTodayCalories(data.calories ?? 0);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -1419,69 +1469,6 @@ const UserDashboard: React.FC = () => {
         };
 
         fetchUser();
-
-        const fetchWaterToday = async () => {
-
-            try {
-
-                const token = localStorage.getItem("token");
-
-                const response = await fetch(
-                    "http://localhost:5004/api/WaterLog/today",
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch water");
-                }
-
-                const data = await response.json();
-
-                console.log(data);
-
-                setWaterMl(data.amountMl ?? 0);
-
-            } catch (err) {
-                console.error(err);
-            }
-        };
-
-        const fetchTodayCalories = async () => {
-
-            try {
-
-                const token = localStorage.getItem("token");
-
-                const response = await fetch(
-                    "http://localhost:5004/api/FoodLog/today",
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch calories");
-                }
-
-                const data = await response.json();
-
-                console.log(data);
-
-                setTodayCalories(data.calories ?? 0);
-
-            } catch (err) {
-                console.error(err);
-            }
-        };
-
         fetchWaterToday();
         fetchTodayCalories();
         fetchWorkouts();
@@ -1601,11 +1588,10 @@ const UserDashboard: React.FC = () => {
                             <FontAwesomeIcon icon={faBell} />
                             <span className="bell-badge-dot" />
                         </button>
-                        <button className="header-pill-btn date-selector-btn">
+                        <div className="header-pill-btn date-selector-btn" style={{ cursor: "default" }}>
                             <FontAwesomeIcon icon={faCalendarDays} className="btn-icon-left" />
                             <span>{dateStr.split(',')[1]?.trim() || "May 18, 2024"}</span>
-                            <FontAwesomeIcon icon={faChevronDown} className="btn-icon-right" />
-                        </button>
+                        </div>
                     </div>
                 </div>
 
@@ -1756,10 +1742,6 @@ const UserDashboard: React.FC = () => {
                                 <FontAwesomeIcon icon={faWeightScale} className="weight-title-icon" />
                                 <span className="weight-card-title">Today's Weight</span>
                             </div>
-                            <button className="weight-add-btn-mini" onClick={() => setIsEditingWeight(true)}>
-                                <FontAwesomeIcon icon={faPlus} className="btn-icon-left" />
-                                <span>Add Weight</span>
-                            </button>
                         </div>
 
                         <div className="weight-stats-split">
@@ -1802,18 +1784,25 @@ const UserDashboard: React.FC = () => {
                                 const weightHistory = [weight + 0.8, weight + 0.5, weight + 0.9, weight + 0.3, weight + 0.1, weight + 0.4, weight];
                                 const minW = Math.min(...weightHistory) - 0.5;
                                 const maxW = Math.max(...weightHistory) + 0.5;
-                                const mapY = (w: number) => 65 - ((w - minW) / (maxW - minW || 1)) * 40;
+                                const mapY = (w: number) => 110 - ((w - minW) / (maxW - minW || 1)) * 80;
                                 
                                 const widthTotal = 240;
                                 const step = widthTotal / 6;
                                 const points = weightHistory.map((w, idx) => ({ x: 10 + idx * step, y: mapY(w), val: w }));
                                 const pathD = points.reduce((acc, p, idx) => acc + (idx === 0 ? `M ${p.x} ${p.y}` : ` L ${p.x} ${p.y}`), "");
-                                const areaD = pathD + ` L ${points[points.length - 1].x} 75 L ${points[0].x} 75 Z`;
+                                const areaD = pathD + ` L ${points[points.length - 1].x} 130 L ${points[0].x} 130 Z`;
                                 
-                                const labels = ["May 12", "May 13", "May 14", "May 15", "May 16", "May 17", "May 18"];
+                                const dates = [];
+                                for (let i = 6; i >= 0; i--) {
+                                    const d = new Date();
+                                    d.setDate(d.getDate() - i);
+                                    dates.push(d);
+                                }
+                                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                                const labels = dates.map(d => `${months[d.getMonth()]} ${d.getDate()}`);
                                 
                                 return (
-                                    <svg viewBox="0 0 260 95" width="100%" height="95" className="sparkline-svg">
+                                    <svg viewBox="0 0 260 150" width="100%" height="150" className="sparkline-svg">
                                         <defs>
                                             <linearGradient id="weight-grad" x1="0" y1="0" x2="0" y2="1">
                                                 <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
@@ -1838,13 +1827,13 @@ const UserDashboard: React.FC = () => {
                                                 </g>
                                             );
                                         })()}
-                                        <text x={points[0].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[0]}</text>
-                                        <text x={points[1].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[1]}</text>
-                                        <text x={points[2].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[2]}</text>
-                                        <text x={points[3].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[3]}</text>
-                                        <text x={points[4].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[4]}</text>
-                                        <text x={points[5].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[5]}</text>
-                                        <text x={points[6].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[6]}</text>
+                                        <text x={points[0].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[0]}</text>
+                                        <text x={points[1].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[1]}</text>
+                                        <text x={points[2].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[2]}</text>
+                                        <text x={points[3].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[3]}</text>
+                                        <text x={points[4].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[4]}</text>
+                                        <text x={points[5].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[5]}</text>
+                                        <text x={points[6].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[6]}</text>
                                     </svg>
                                 );
                             })()}
@@ -1858,50 +1847,6 @@ const UserDashboard: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* CARD 6: Recent Workouts */}
-                    <div className="db-grid-card card-recent-workouts">
-                        <div className="recent-workouts-header">
-                            <span className="recent-workouts-title">Recent Workouts</span>
-                            <button className="view-all-workouts-link" onClick={() => setWorkoutModal(true)}>
-                                View all
-                            </button>
-                        </div>
-
-                        <div className="recent-workouts-list">
-                            {workouts.length === 0 ? (
-                                <div className="workouts-empty-state">
-                                    <FontAwesomeIcon icon={faDumbbell} className="empty-dumbbell-icon" />
-                                    <span>No workouts logged yet.</span>
-                                </div>
-                            ) : (
-                                workouts.slice(-4).reverse().map((w, idx) => {
-                                    const typeStyles = {
-                                        Strength: { bg: "#f3e8ff", color: "#7c3aed", icon: faDumbbell },
-                                        Cardio: { bg: "#dbeafe", color: "#2563eb", icon: faPersonWalking },
-                                        Mobility: { bg: "#ffedd5", color: "#f97316", icon: faPersonWalking }
-                                    };
-                                    const style = typeStyles[w.type] || typeStyles["Strength"];
-                                    
-                                    return (
-                                        <div className="recent-workout-item" key={idx}>
-                                            <div className="recent-workout-icon-container" style={{ backgroundColor: style.bg, color: style.color }}>
-                                                <FontAwesomeIcon icon={style.icon} />
-                                            </div>
-                                            <div className="recent-workout-details">
-                                                <span className="recent-workout-name">{w.label}</span>
-                                                <span className="recent-workout-meta">
-                                                    {new Date(w.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · {w.duration} min
-                                                </span>
-                                            </div>
-                                            <div className="recent-workout-checkmark">
-                                                <FontAwesomeIcon icon={faCircleCheck} className="green-checkmark-icon" />
-                                            </div>
-                                        </div>
-                                    );
-                                })
-                            )}
-                        </div>
-                    </div>
                 </div>
             </main>
 
@@ -1910,7 +1855,11 @@ const UserDashboard: React.FC = () => {
                 <CaloriesModal
                     foodLog={foodLog}
                     onClose={() => setCalModal(false)}
-                    onAddFood={log => setFoodLog(prev => [...prev, log])}
+                    onAddFood={log => {
+                        setFoodLog(prev => [...prev, log]);
+                        fetchTodayCalories();
+                        fetchWeeklyProgress();
+                    }}
                 />
             )}
             {waterModal && (
@@ -1918,7 +1867,10 @@ const UserDashboard: React.FC = () => {
                     waterMl={waterMl}
                     waterMax={WATER_MAX}
                     onClose={() => setWaterModal(false)}
-                    onUpdate={setWaterMl}
+                    onUpdate={ml => {
+                        setWaterMl(ml);
+                        fetchWeeklyProgress();
+                    }}
                 />
             )}
             {workoutModal && (

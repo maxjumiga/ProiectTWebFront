@@ -338,6 +338,16 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.04);
 }
 
+.date-selector-btn {
+    cursor: default !important;
+}
+
+.date-selector-btn:hover {
+    transform: none !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+    border-color: var(--border-color) !important;
+}
+
 .btn-icon-left {
     color: var(--text-muted);
 }
@@ -868,7 +878,7 @@
 /* Weight sparkline */
 .weight-sparkline-container {
     width: 100%;
-    height: 95px;
+    height: 150px;
     margin-bottom: 12px;
 }
 
@@ -910,100 +920,7 @@
     transform: translateX(3px);
 }
 
-/* ═══════════════════════════
-   CARD 6: RECENT WORKOUTS
-   ═══════════════════════════ */
-.recent-workouts-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
 
-.recent-workouts-title {
-    font-size: 14.5px;
-    font-weight: 800;
-    color: var(--text-primary);
-}
-
-.view-all-workouts-link {
-    border: none;
-    background: transparent;
-    color: var(--color-blue-dark);
-    font-size: 12.5px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: inherit;
-}
-
-.recent-workouts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.workouts-empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 30px 0;
-    color: var(--text-muted);
-}
-
-.empty-dumbbell-icon {
-    font-size: 20px;
-    opacity: 0.5;
-}
-
-.recent-workout-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.recent-workout-icon-container {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    flex-shrink: 0;
-}
-
-.recent-workout-details {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.recent-workout-name {
-    font-size: 13.5px;
-    font-weight: 700;
-    color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.recent-workout-meta {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 600;
-    margin-top: 2px;
-}
-
-.recent-workout-checkmark {
-    flex-shrink: 0;
-}
-
-.green-checkmark-icon {
-    color: var(--color-green);
-    font-size: 15px;
-}
 
 
 /* ════════════════════════════════════
@@ -1557,6 +1474,13 @@
 .water-hydration-badge {
     font-size: 12px;
     font-weight: 700;
+}
+
+.water-bottle-svg {
+    width: 54px;
+    height: 118px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 4px 10px rgba(14, 165, 233, 0.15));
 }
 
 .water-preset-grid {
