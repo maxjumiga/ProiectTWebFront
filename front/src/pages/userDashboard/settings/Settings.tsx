@@ -121,6 +121,14 @@ const SettingsPage: React.FC = () => {
     const [passwordSuccess, setPasswordSuccess] = useState("");
     const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
+    // Modal ștergere cont
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteCode, setDeleteCode] = useState(["", "", "", ""]);
+    const [deleteError, setDeleteError] = useState("");
+    const [deleteSuccess, setDeleteSuccess] = useState("");
+    const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+    const [isRequestingDelete, setIsRequestingDelete] = useState(false);
+
     useEffect(() => {
         fetchUser();
     }, []);
@@ -280,6 +288,131 @@ const SettingsPage: React.FC = () => {
             setPasswordError(err.message || "Failed to connect to the server.");
         } finally {
             setIsUpdatingPassword(false);
+        }
+    };
+
+    const handleRequestDelete = async () => {
+        setIsRequestingDelete(true);
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                "http://localhost:5004/api/User/request-delete",
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (!response.ok)
+                throw new Error("Failed to request account deletion.");
+
+            // Deschide modalul pentru cod
+            setShowDeleteModal(true);
+            setDeleteCode(["", "", "", ""]);
+            setDeleteError("");
+            setDeleteSuccess("");
+        } catch (err: any) {
+            console.error(err);
+            setDeleteError(err.message || "Failed to connect to the server.");
+            setShowDeleteModal(true);
+        } finally {
+            setIsRequestingDelete(false);
+        }
+    };
+
+    const handleDeleteCodeChange = (index: number, value: string) => {
+        if (value.length > 1) value = value.slice(-1);
+        if (value && !/^\d$/.test(value)) return;
+
+        const newCode = [...deleteCode];
+        newCode[index] = value;
+        setDeleteCode(newCode);
+
+        // Auto-focus next input
+        if (value && index < 3) {
+            const next = document.getElementById(`delete-code-${index + 1}`);
+            next?.focus();
+        }
+    };
+
+    const handleDeleteCodeKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Backspace" && !deleteCode[index] && index > 0) {
+            const prev = document.getElementById(`delete-code-${index - 1}`);
+            prev?.focus();
+        }
+    };
+
+    const handleDeleteCodePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4);
+        if (pasted.length === 4) {
+            setDeleteCode(pasted.split(""));
+            const last = document.getElementById("delete-code-3");
+            last?.focus();
+        }
+    };
+
+    const handleConfirmDelete = async () => {
+        const code = deleteCode.join("");
+        if (code.length !== 4) {
+            setDeleteError("Please enter the full 4-digit code.");
+            return;
+        }
+
+        setDeleteError("");
+        setIsDeletingAccount(true);
+
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                "http://localhost:5004/api/User/me",
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        email: userData.email,
+                        code: code,
+                    }),
+                }
+            );
+
+            // Încearcă să parseze răspunsul JSON (dacă există)
+            let data: any = null;
+            try {
+                data = await response.json();
+            } catch {
+                // Serverul poate returna un body gol (204 etc.)
+            }
+
+            if (!response.ok) {
+                throw new Error(data?.message || "Failed to delete account.");
+            }
+
+            if (data && data.isSuccess === false) {
+                throw new Error(data.message || "Failed to delete account.");
+            }
+
+            setDeleteSuccess("Account deleted successfully. Redirecting...");
+
+            // Curăță toate datele de autentificare
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            sessionStorage.removeItem("isAuthenticated");
+
+            setTimeout(() => {
+                navigate("/login");
+            }, 1500);
+        } catch (err: any) {
+            setDeleteError(err.message || "Failed to delete account.");
+        } finally {
+            setIsDeletingAccount(false);
         }
     };
 
@@ -736,7 +869,14 @@ const SettingsPage: React.FC = () => {
                                             <div className="s-sub">Permanently removes account and all associated data</div>
                                         </div>
                                     </div>
-                                    <button className="s-action-btn danger"><FontAwesomeIcon icon={faTrash} />Delete account</button>
+                                    <button
+                                        className="s-action-btn danger"
+                                        onClick={handleRequestDelete}
+                                        disabled={isRequestingDelete}
+                                    >
+                                        <FontAwesomeIcon icon={faTrash} />
+                                        {isRequestingDelete ? "Sending code..." : "Delete account"}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -870,6 +1010,91 @@ const SettingsPage: React.FC = () => {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Delete Account Modal ── */}
+            {showDeleteModal && (
+                <div className="s-modal-overlay" onClick={() => setShowDeleteModal(false)}>
+                    <div className="s-modal-card s-modal-card--danger" onClick={(e) => e.stopPropagation()}>
+                        <div className="s-modal-header s-modal-header--danger">
+                            <div className="s-modal-title s-modal-title--danger">
+                                <FontAwesomeIcon icon={faTrash} />
+                                <span>Delete Account</span>
+                            </div>
+                            <button
+                                className="s-modal-close"
+                                onClick={() => setShowDeleteModal(false)}
+                                type="button"
+                            >
+                                <FontAwesomeIcon icon={faXmark} />
+                            </button>
+                        </div>
+
+                        <div className="s-modal-body">
+                            <div className="s-delete-warning-banner">
+                                <FontAwesomeIcon icon={faTrash} />
+                                <div>
+                                    <strong>This action is permanent</strong>
+                                    <p>All your data, progress, and account information will be permanently removed and cannot be recovered.</p>
+                                </div>
+                            </div>
+
+                            <p style={{ fontSize: "12px", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "4px" }}>
+                                We've sent a 4-digit verification code to <strong>{userData.email}</strong>. Enter it below to confirm deletion.
+                            </p>
+
+                            <div className="s-delete-code-group">
+                                {deleteCode.map((digit, i) => (
+                                    <input
+                                        key={i}
+                                        id={`delete-code-${i}`}
+                                        className="s-delete-code-input"
+                                        type="text"
+                                        inputMode="numeric"
+                                        maxLength={1}
+                                        value={digit}
+                                        onChange={(e) => handleDeleteCodeChange(i, e.target.value)}
+                                        onKeyDown={(e) => handleDeleteCodeKeyDown(i, e)}
+                                        onPaste={i === 0 ? handleDeleteCodePaste : undefined}
+                                        autoFocus={i === 0}
+                                    />
+                                ))}
+                            </div>
+
+                            {deleteError && (
+                                <div className="s-modal-error-box">
+                                    <span>⚠ {deleteError}</span>
+                                </div>
+                            )}
+
+                            {deleteSuccess && (
+                                <div className="s-modal-success-box">
+                                    <FontAwesomeIcon icon={faCheck} />
+                                    <span>{deleteSuccess}</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="s-modal-footer">
+                            <button
+                                className="btn-ghost"
+                                type="button"
+                                onClick={() => setShowDeleteModal(false)}
+                                style={{ padding: "8px 16px", fontSize: "13px" }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="s-delete-confirm-btn"
+                                onClick={handleConfirmDelete}
+                                disabled={isDeletingAccount || !!deleteSuccess || deleteCode.join("").length !== 4}
+                            >
+                                <FontAwesomeIcon icon={faTrash} />
+                                {isDeletingAccount ? "Deleting..." : "Confirm account deletion"}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
