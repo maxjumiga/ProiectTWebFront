@@ -103,15 +103,22 @@ interface WorkoutLog {
 }
 
 // ─── Bar Chart ────────────────────────────────────────────────────────────────
-const BarChart = () => {
+interface BarChartProps {
+    labels: string[];
+    calData: number[];
+    waterData: number[];
+}
+
+const BarChart: React.FC<BarChartProps> = ({ labels, calData, waterData }) => {
     const W = 600, H = 220, pL = 40, pR = 60, pT = 20, pB = 30;
     const cW = W - pL - pR, cH = H - pT - pB;
-    const n = DAYS_LABELS.length, gW = cW / n;
+    const n = labels.length || 7;
+    const gW = cW / n;
     const bW = 12, gap = 4;
     
     const maxWaterScale = 4.0; // Liters
     const maxCalScale = 4000;  // kcal
-    const CAL_GOAL = 2500;
+    const CAL_GOAL = 2200;
     const WATER_GOAL = 3.0;
 
     return (
@@ -155,25 +162,25 @@ const BarChart = () => {
                 );
             })()}
 
-            {/* Goal Line: Calories 2,500 kcal */}
+            {/* Goal Line: Calories 2,200 kcal */}
             {(() => {
                 const yCalGoal = pT + cH - (CAL_GOAL / maxCalScale) * cH;
                 return (
                     <g>
                         <line x1={pL} x2={W - pR} y1={yCalGoal} y2={yCalGoal} 
                             stroke="#f97316" strokeWidth="1.2" strokeDasharray="4 4" opacity="0.8" />
-                        <text x={W - pR + 10} y={yCalGoal + 10} fontSize="9" fill="#ea580c" fontWeight="700">2,500 kcal (Goal)</text>
+                        <text x={W - pR + 10} y={yCalGoal + 10} fontSize="9" fill="#ea580c" fontWeight="700">2,200 kcal (Goal)</text>
                     </g>
                 );
             })()}
 
             {/* Bars and labels */}
-            {DAYS_LABELS.map((d: string, i: number) => {
+            {labels.map((d: string, i: number) => {
                 const cx = pL + i * gW + gW / 2;
                 
                 // Water in liters for scaling
-                const waterL = WAT_DATA[i] / 1000;
-                const calories = CAL_DATA[i];
+                const waterL = (waterData[i] || 0) / 1000;
+                const calories = calData[i] || 0;
 
                 const wh = Math.min((waterL / maxWaterScale) * cH, cH);
                 const ch = Math.min((calories / maxCalScale) * cH, cH);
@@ -1320,6 +1327,53 @@ const UserDashboard: React.FC = () => {
         }
     };
 
+    const [weeklyLabels, setWeeklyLabels] = useState<string[]>([]);
+    const [weeklyCal, setWeeklyCal] = useState<number[]>([]);
+    const [weeklyWater, setWeeklyWater] = useState<number[]>([]);
+    const [weeklyLoading, setWeeklyLoading] = useState(true);
+
+    const fetchWeeklyProgress = async () => {
+        try {
+            const dates = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                dates.push(d);
+            }
+
+            const token = localStorage.getItem("token");
+            const promises = dates.map(d => {
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, "0");
+                const day = String(d.getDate()).padStart(2, "0");
+                const formatted = `${year}-${month}-${day}`;
+                return fetch(`http://localhost:5004/api/calendar/day/${formatted}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }).then(res => {
+                    if (res.ok) return res.json();
+                    return { calories: 0, waterMl: 0 };
+                }).catch(() => ({ calories: 0, waterMl: 0 }));
+            });
+
+            const results = await Promise.all(promises);
+            
+            const labels = dates.map(d => {
+                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                return `${months[d.getMonth()]} ${d.getDate()}`;
+            });
+            
+            const cals = results.map(r => r.calories || 0);
+            const waters = results.map(r => r.waterMl || 0);
+
+            setWeeklyLabels(labels);
+            setWeeklyCal(cals);
+            setWeeklyWater(waters);
+            setWeeklyLoading(false);
+        } catch (err) {
+            console.error("Error fetching weekly progress:", err);
+        }
+    };
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -1431,6 +1485,7 @@ const UserDashboard: React.FC = () => {
         fetchWaterToday();
         fetchTodayCalories();
         fetchWorkouts();
+        fetchWeeklyProgress();
 
     }, []);
 
@@ -1459,6 +1514,29 @@ const UserDashboard: React.FC = () => {
         .toUpperCase()
         .slice(0, 2) || "U";
 
+    // Averages & Best Day calculations
+    const avgWaterNum = weeklyWater.length > 0 
+        ? (weeklyWater.reduce((a, b) => a + b, 0) / weeklyWater.length / 1000) 
+        : 0;
+    const avgWaterLabel = `${avgWaterNum.toFixed(1)} L`;
+
+    const avgCalNum = weeklyCal.length > 0 
+        ? Math.round(weeklyCal.reduce((a, b) => a + b, 0) / weeklyCal.length) 
+        : 0;
+    const avgCalLabel = `${avgCalNum.toLocaleString("en-US")} kcal`;
+
+    let bestDayIdx = 0;
+    let maxCal = 0;
+    for (let i = 0; i < weeklyCal.length; i++) {
+        if (weeklyCal[i] > maxCal) {
+            maxCal = weeklyCal[i];
+            bestDayIdx = i;
+        }
+    }
+    const bestDayLabel = weeklyLabels[bestDayIdx] || "N/A";
+    const bestDayWaterLabel = weeklyWater.length > bestDayIdx ? `${(weeklyWater[bestDayIdx] / 1000).toFixed(1)} L` : "0.0 L";
+    const bestDayCalLabel = weeklyCal.length > bestDayIdx ? `${weeklyCal[bestDayIdx].toLocaleString("en-US")} kcal` : "0 kcal";
+
     return (
         <div className="db-root">
 
@@ -1484,7 +1562,7 @@ const UserDashboard: React.FC = () => {
                     </button>
                     <button className="db-nav-item" onClick={() => navigate('/calendar')}>
                         <FontAwesomeIcon icon={faCalendarDays} className="nav-item-icon" />
-                        <span>Progress / Calendar</span>
+                        <span>Progress</span>
                     </button>
                     <button className="db-nav-item" onClick={() => navigate('/profile')}>
                         <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
@@ -1505,11 +1583,6 @@ const UserDashboard: React.FC = () => {
                             <span className="user-display-name">{username}</span>
                             <FontAwesomeIcon icon={faChevronRight} className="user-arrow-icon" />
                         </div>
-                        <span className="user-level">Level 12</span>
-                        <div className="user-xp-bar-container">
-                            <div className="user-xp-bar-fill" style={{ width: '60%' }} />
-                        </div>
-                        <span className="user-xp-text">3,450 XP</span>
                     </div>
                 </div>
             </aside>
@@ -1639,7 +1712,11 @@ const UserDashboard: React.FC = () => {
                         </div>
 
                         <div className="weekly-chart-wrapper">
-                            <BarChart />
+                            {weeklyLoading ? (
+                                <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600 }}>Loading chart...</div>
+                            ) : (
+                                <BarChart labels={weeklyLabels} calData={weeklyCal} waterData={weeklyWater} />
+                            )}
                         </div>
 
                         <div className="weekly-summary-stats">
@@ -1648,7 +1725,7 @@ const UserDashboard: React.FC = () => {
                                     <FontAwesomeIcon icon={faDroplet} className="widget-icon blue-text" />
                                     <span className="widget-label">Avg. Water / Day</span>
                                 </div>
-                                <div className="widget-value">2.6 L</div>
+                                <div className="widget-value">{avgWaterLabel}</div>
                             </div>
                             <div className="summary-divider" />
                             <div className="summary-widget">
@@ -1656,7 +1733,7 @@ const UserDashboard: React.FC = () => {
                                     <FontAwesomeIcon icon={faFire} className="widget-icon orange-text" />
                                     <span className="widget-label">Avg. Calories / Day</span>
                                 </div>
-                                <div className="widget-value">2,210 kcal</div>
+                                <div className="widget-value">{avgCalLabel}</div>
                             </div>
                             <div className="summary-divider" />
                             <div className="summary-widget">
@@ -1665,8 +1742,8 @@ const UserDashboard: React.FC = () => {
                                     <span className="widget-label">Best Day</span>
                                 </div>
                                 <div className="widget-best-details">
-                                    <span className="widget-best-day">May 15</span>
-                                    <span className="widget-best-meta">3.2 L · 2,840 kcal</span>
+                                    <span className="widget-best-day">{bestDayLabel}</span>
+                                    <span className="widget-best-meta">{bestDayWaterLabel} · {bestDayCalLabel}</span>
                                 </div>
                             </div>
                         </div>

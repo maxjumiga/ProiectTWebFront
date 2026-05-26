@@ -33,7 +33,7 @@
     --color-green-dark: #059669;
     --color-green-soft: rgba(16, 185, 129, 0.08);
 
-    --sidebar-width: 240px;
+    --sidebar-width: 260px;
     --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
     --card-shadow-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
 }
@@ -53,17 +53,18 @@
 /* ═══════════════════════════
    SIDEBAR (LEFT)
    ═══════════════════════════ */
-.db-sidebar {
+.db-root .db-sidebar {
     width: var(--sidebar-width);
     min-width: var(--sidebar-width);
     height: 100vh;
-    background: var(--surface-white);
+    background: #ffffff;
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     padding: 32px 20px 24px;
     flex-shrink: 0;
     z-index: 10;
+    align-items: stretch;
 }
 
 .db-logo-wrapper {
