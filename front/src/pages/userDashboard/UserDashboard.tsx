@@ -15,14 +15,30 @@ import {
     faHistory,
     faHeartPulse,
     faPersonWalking,
+    faChevronDown,
+    faPencil,
+    faArrowDown,
+    faTrophy,
+    faWeightScale,
+    faCircleCheck,
+    faQuestion,
+    faChevronRight,
+    faAppleWhole,
+    faMoon,
+    faCoffee,
+    faUtensils,
+    faGlassWater,
+    faBolt,
+    faRuler,
+    faListUl
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./UserDashboard.css";
 
 // ─── Chart Data ───────────────────────────────────────────────────────────────
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const CAL_DATA = [1650, 2100, 1800, 2350, 1950, 2200, 1420];
-const WAT_DATA = [1800, 2400, 2000, 2800, 2200, 2600, 1600];
+const DAYS_LABELS = ["May 12", "May 13", "May 14", "May 15", "May 16", "May 17", "May 18"];
+const CAL_DATA = [1842, 2100, 1800, 2350, 1950, 2210, 1420];
+const WAT_DATA = [2100, 2400, 2000, 2800, 2200, 2600, 1600];
 
 // ─── Mock Food Data ───────────────────────────────────────────────────────────
 interface FoodItem {
@@ -88,39 +104,90 @@ interface WorkoutLog {
 
 // ─── Bar Chart ────────────────────────────────────────────────────────────────
 const BarChart = () => {
-    const W = 520, H = 148, pL = 8, pR = 8, pT = 8, pB = 24;
+    const W = 600, H = 220, pL = 40, pR = 60, pT = 20, pB = 30;
     const cW = W - pL - pR, cH = H - pT - pB;
-    const n = DAYS.length, gW = cW / n;
-    const bW = gW * 0.27, gap = bW * 0.35;
-    const mC = Math.max(...CAL_DATA), mW = Math.max(...WAT_DATA);
+    const n = DAYS_LABELS.length, gW = cW / n;
+    const bW = 12, gap = 4;
+    
+    const maxWaterScale = 4.0; // Liters
+    const maxCalScale = 4000;  // kcal
+    const CAL_GOAL = 2500;
+    const WATER_GOAL = 3.0;
 
     return (
-        <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet">
+        <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" className="db-svg-chart">
             <defs>
                 <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#f97316" stopOpacity="0.9" />
-                    <stop offset="100%" stopColor="#f97316" stopOpacity="0.5" />
+                    <stop offset="0%" stopColor="#f97316" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#ffedd5" stopOpacity="0.5" />
                 </linearGradient>
                 <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.9" />
-                    <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.5" />
+                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#dbeafe" stopOpacity="0.5" />
                 </linearGradient>
             </defs>
-            {[0, 0.5, 1].map((v, i) => (
-                <line key={i} x1={pL} x2={W - pR}
-                    y1={pT + cH - v * cH} y2={pT + cH - v * cH}
-                    stroke="#e4e7f0" strokeWidth="1" strokeDasharray={i === 0 ? "0" : "3 5"} />
-            ))}
-            {DAYS.map((d, i) => {
+            
+            {/* Horizontal Grid lines (5 ticks) */}
+            {[0, 0.25, 0.5, 0.75, 1].map((v, i) => {
+                const y = pT + cH - v * cH;
+                const waterVal = (v * maxWaterScale).toFixed(0);
+                const calVal = v === 0 ? "0" : `${(v * maxCalScale) / 1000}K`;
+                return (
+                    <g key={i} className="chart-grid-group">
+                        <line x1={pL} x2={W - pR} y1={y} y2={y} stroke="#f1f5f9" strokeWidth="1" />
+                        {/* Left Y Axis (Water L) */}
+                        <text x={pL - 10} y={y + 4} textAnchor="end" fontSize="10" fill="#94a3b8" fontWeight="500">{waterVal}</text>
+                        {/* Right Y Axis (Calories kcal) */}
+                        <text x={W - pR + 10} y={y + 4} textAnchor="start" fontSize="10" fill="#94a3b8" fontWeight="500">{calVal}</text>
+                    </g>
+                );
+            })}
+
+            {/* Goal Line: Water 3.0 L */}
+            {(() => {
+                const yWaterGoal = pT + cH - (WATER_GOAL / maxWaterScale) * cH;
+                return (
+                    <g>
+                        <line x1={pL} x2={W - pR} y1={yWaterGoal} y2={yWaterGoal} 
+                            stroke="#3b82f6" strokeWidth="1.2" strokeDasharray="4 4" opacity="0.8" />
+                        <text x={W - pR + 10} y={yWaterGoal - 4} fontSize="9" fill="#2563eb" fontWeight="700">3.0 L (Goal)</text>
+                    </g>
+                );
+            })()}
+
+            {/* Goal Line: Calories 2,500 kcal */}
+            {(() => {
+                const yCalGoal = pT + cH - (CAL_GOAL / maxCalScale) * cH;
+                return (
+                    <g>
+                        <line x1={pL} x2={W - pR} y1={yCalGoal} y2={yCalGoal} 
+                            stroke="#f97316" strokeWidth="1.2" strokeDasharray="4 4" opacity="0.8" />
+                        <text x={W - pR + 10} y={yCalGoal + 10} fontSize="9" fill="#ea580c" fontWeight="700">2,500 kcal (Goal)</text>
+                    </g>
+                );
+            })()}
+
+            {/* Bars and labels */}
+            {DAYS_LABELS.map((d: string, i: number) => {
                 const cx = pL + i * gW + gW / 2;
-                const ch = (CAL_DATA[i] / mC) * cH;
-                const wh = (WAT_DATA[i] / mW) * cH;
+                
+                // Water in liters for scaling
+                const waterL = WAT_DATA[i] / 1000;
+                const calories = CAL_DATA[i];
+
+                const wh = Math.min((waterL / maxWaterScale) * cH, cH);
+                const ch = Math.min((calories / maxCalScale) * cH, cH);
+
                 return (
                     <g key={i}>
-                        <rect x={cx - gap / 2 - bW} y={pT + cH - ch} width={bW} height={ch} fill="url(#cg)" rx="3" />
-                        <rect x={cx + gap / 2} y={pT + cH - wh} width={bW} height={wh} fill="url(#wg)" rx="3" />
-                        <text x={cx} y={H - 5} textAnchor="middle" fontSize="10"
-                            fontFamily="'Space Mono', monospace" fill="#a8adc4">{d}</text>
+                        {/* Water Bar (Blue) */}
+                        <rect x={cx - bW - gap / 2} y={pT + cH - wh} width={bW} height={wh} fill="url(#wg)" rx="4" />
+                        
+                        {/* Calories Bar (Orange) */}
+                        <rect x={cx + gap / 2} y={pT + cH - ch} width={bW} height={ch} fill="url(#cg)" rx="4" />
+                        
+                        {/* X-Axis Date Label */}
+                        <text x={cx} y={H - 8} textAnchor="middle" fontSize="10" fill="#94a3b8" fontWeight="600">{d}</text>
                     </g>
                 );
             })}
@@ -315,11 +382,11 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
         Snack: foodLog.filter(l => l.mealTime === "Snack"),
     };
 
-    const mealIcons: Record<MealTime, string> = {
-        Breakfast: "🌅",
-        Lunch: "☀️",
-        Dinner: "🌙",
-        Snack: "🍎",
+    const mealIcons: Record<MealTime, any> = {
+        Breakfast: faCoffee,
+        Lunch: faUtensils,
+        Dinner: faMoon,
+        Snack: faAppleWhole,
     };
 
     return (
@@ -327,7 +394,9 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
             <div className="db-modal-card db-modal-wide">
                 <div className="db-modal-header">
                     <div className="db-modal-title">
-                        <span className="db-modal-icon cal-icon">🔥</span>
+                        <span className="db-modal-icon cal-icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <FontAwesomeIcon icon={faFire} style={{ color: "#ea580c" }} />
+                        </span>
                         Calories Consumed Today
                     </div>
                     <button className="db-modal-close" onClick={onClose} type="button">
@@ -340,13 +409,13 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                     {foodLog.length > 0 && (
                         <div className="db-modal-section">
                             <div className="db-modal-section-title">
-                                📋 Today's Food Log
+                                <FontAwesomeIcon icon={faListUl} style={{ marginRight: 6 }} /> Today's Food Log
                             </div>
                             {(["Breakfast", "Lunch", "Dinner", "Snack"] as MealTime[]).map(meal => (
                                 groupedLog[meal].length > 0 && (
                                     <div key={meal} className="meal-group">
                                         <div className="meal-group-label">
-                                            {mealIcons[meal]} {meal}
+                                            <FontAwesomeIcon icon={mealIcons[meal]} style={{ marginRight: 6 }} /> {meal}
                                         </div>
                                         {groupedLog[meal].map((log, i) => {
                                             const factor = log.grams / 100;
@@ -369,7 +438,9 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
 
                     {/* Add food form */}
                     <div className="db-modal-section">
-                        <div className="db-modal-section-title">➕ Add Food</div>
+                        <div className="db-modal-section-title">
+                            <FontAwesomeIcon icon={faPlus} style={{ marginRight: 6 }} /> Add Food
+                        </div>
 
                         {/* Food search — full width */}
                         <div className="add-food-grid">
@@ -457,10 +528,10 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                                         value={mealTime}
                                         onChange={e => setMealTime(e.target.value as MealTime)}
                                     >
-                                        <option value="Breakfast">🌅 Breakfast</option>
-                                        <option value="Lunch">☀️ Lunch</option>
-                                        <option value="Dinner">🌙 Dinner</option>
-                                        <option value="Snack">🍎 Snack</option>
+                                        <option value="Breakfast">Breakfast</option>
+                                        <option value="Lunch">Lunch</option>
+                                        <option value="Dinner">Dinner</option>
+                                        <option value="Snack">Snack</option>
                                     </select>
                                 </div>
                                 <div className="add-food-field">
@@ -602,7 +673,7 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
     };
 
     const getHydrationStatus = () => {
-        if (pct >= 100) return { label: "Goal Reached! 🎉", color: "#10b981" };
+        if (pct >= 100) return { label: "Goal Reached!", color: "#10b981" };
         if (pct >= 66) return { label: "Almost there!", color: "#f97316" };
         if (pct >= 33) return { label: "Keep it up!", color: "#0ea5e9" };
         return { label: "Stay hydrated!", color: "#6366f1" };
@@ -611,10 +682,10 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
     const hydStatus = getHydrationStatus();
 
     const presets = [
-        { label: "Espresso", ml: 50, icon: "☕" },
-        { label: "Glass", ml: 200, icon: "🥤" },
-        { label: "Bottle", ml: 500, icon: "💧" },
-        { label: "Large", ml: 750, icon: "🫙" },
+        { label: "Espresso", ml: 50, icon: faCoffee },
+        { label: "Glass", ml: 200, icon: faGlassWater },
+        { label: "Bottle", ml: 500, icon: faDroplet },
+        { label: "Large", ml: 750, icon: faGlassWater },
     ];
 
     return (
@@ -622,7 +693,9 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
             <div className="db-modal-card">
                 <div className="db-modal-header">
                     <div className="db-modal-title">
-                        <span className="db-modal-icon water-icon">💧</span>
+                        <span className="db-modal-icon water-icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <FontAwesomeIcon icon={faDroplet} style={{ color: "#0ea5e9" }} />
+                        </span>
                         Water Consumed Today
                     </div>
                     <button className="db-modal-close" onClick={onClose} type="button">
@@ -660,11 +733,13 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
 
                     {/* Quick add presets */}
                     <div className="db-modal-section">
-                        <div className="db-modal-section-title">⚡ Quick Add</div>
+                        <div className="db-modal-section-title">
+                            <FontAwesomeIcon icon={faBolt} style={{ marginRight: 6 }} /> Quick Add
+                        </div>
                         <div className="water-preset-grid">
                             {presets.map(p => (
                                 <button key={p.label} className="water-preset-btn" onClick={() => add(p.ml)}>
-                                    <span className="preset-icon">{p.icon}</span>
+                                    <FontAwesomeIcon icon={p.icon} style={{ fontSize: '18px', color: '#0ea5e9', marginBottom: '4px' }} />
                                     <span className="preset-label">{p.label}</span>
                                     <span className="preset-ml">+{p.ml} ml</span>
                                 </button>
@@ -674,7 +749,9 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
 
                     {/* Custom amount */}
                     <div className="db-modal-section">
-                        <div className="db-modal-section-title">📏 Custom Amount</div>
+                        <div className="db-modal-section-title">
+                            <FontAwesomeIcon icon={faRuler} style={{ marginRight: 6 }} /> Custom Amount
+                        </div>
                         <div className="water-custom-row">
                             <div className="water-custom-input-wrap">
                                 <input
@@ -1151,6 +1228,46 @@ const UserDashboard: React.FC = () => {
     const [height, setHeight] = useState(170);
     const [weight, setWeight] = useState(72);
 
+    // Weight inline edit states
+    const [isEditingWeight, setIsEditingWeight] = useState(false);
+    const [tempWeight, setTempWeight] = useState("72");
+
+    useEffect(() => {
+        if (weight) {
+            setTempWeight(weight.toString());
+        }
+    }, [weight]);
+
+    const handleSaveWeight = async () => {
+        const val = parseFloat(tempWeight);
+        if (isNaN(val) || val <= 0) return;
+        
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch("http://localhost:5004/api/user/me", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token
+                },
+                body: JSON.stringify({
+                    weight: val
+                })
+            });
+
+            if (response.ok) {
+                setWeight(val);
+                setIsEditingWeight(false);
+            } else {
+                alert("Could not update weight.");
+            }
+        } catch (err) {
+            console.error(err);
+            setWeight(val);
+            setIsEditingWeight(false);
+        }
+    };
+
     // Modal states
     const [calModal, setCalModal] = useState(false);
     const [waterModal, setWaterModal] = useState(false);
@@ -1347,249 +1464,369 @@ const UserDashboard: React.FC = () => {
 
             {/* ── SIDEBAR ── */}
             <aside className="db-sidebar">
-                <div className="db-logo">
-                    <img src="/favicon.svg" alt="OmniTrack Logo" />
+                <div className="db-logo-wrapper">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="db-logo-svg">
+                        <circle cx="16" cy="16" r="12" stroke="url(#logo-grad)" strokeWidth="4" strokeLinecap="round" strokeDasharray="50 15" />
+                        <defs>
+                            <linearGradient id="logo-grad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stopColor="#3b82f6" />
+                                <stop offset="100%" stopColor="#2563eb" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span className="db-logo-text">OmniTrack</span>
                 </div>
 
-                <nav className="db-nav">
-                    <button className="db-nav-btn active" onClick={() => navigate('/dashboard')} title="Home">
-                        <FontAwesomeIcon icon={faHouse} />
+                <nav className="db-nav-links">
+                    <button className="db-nav-item active" onClick={() => navigate('/dashboard')}>
+                        <FontAwesomeIcon icon={faHouse} className="nav-item-icon" />
+                        <span>Dashboard</span>
                     </button>
-                    <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Calendar">
-                        <FontAwesomeIcon icon={faCalendarDays} />
+                    <button className="db-nav-item" onClick={() => navigate('/calendar')}>
+                        <FontAwesomeIcon icon={faCalendarDays} className="nav-item-icon" />
+                        <span>Progress / Calendar</span>
                     </button>
-                    <button className="db-nav-btn" onClick={() => navigate('/profile')} title="Profile">
-                        <FontAwesomeIcon icon={faUser} />
+                    <button className="db-nav-item" onClick={() => navigate('/profile')}>
+                        <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
+                        <span>Profile</span>
                     </button>
-                    <button className="db-nav-btn" onClick={() => navigate('/settings')} title="Settings">
-                        <FontAwesomeIcon icon={faUserGear} />
+                    <button className="db-nav-item" onClick={() => navigate('/settings')}>
+                        <FontAwesomeIcon icon={faUserGear} className="nav-item-icon" />
+                        <span>Settings</span>
                     </button>
                 </nav>
 
-                <div className="db-sidebar-bottom">
-                    <button className="db-avatar" onClick={() => navigate('/profile')}>{initials}</button>
+                <div className="db-sidebar-user">
+                    <div className="user-avatar-wrap" onClick={() => navigate('/profile')}>
+                        <div className="user-avatar-img">{initials}</div>
+                    </div>
+                    <div className="user-details-mini">
+                        <div className="user-name-row">
+                            <span className="user-display-name">{username}</span>
+                            <FontAwesomeIcon icon={faChevronRight} className="user-arrow-icon" />
+                        </div>
+                        <span className="user-level">Level 12</span>
+                        <div className="user-xp-bar-container">
+                            <div className="user-xp-bar-fill" style={{ width: '60%' }} />
+                        </div>
+                        <span className="user-xp-text">3,450 XP</span>
+                    </div>
                 </div>
             </aside>
 
-            {/* ── CENTER ── */}
+            {/* ── MAIN DASHBOARD AREA ── */}
             <main className="db-center">
 
                 {/* Header */}
-                <div className="db-header">
-                    <div>
-                        <h1>Good day, {username} 👋</h1>
-                        <p>{dateStr}</p>
+                <div className="db-header-new">
+                    <div className="header-greeting-group">
+                        <h1>Good morning, {username}!</h1>
+                        <p>Here's your overview for today.</p>
                     </div>
-                    <div className="db-header-right">
-                        <button className="db-icon-btn">
-                            <FontAwesomeIcon icon={faMagnifyingGlass} />
-                        </button>
-                        <button className="db-icon-btn">
+                    <div className="header-actions-group">
+                        <button className="header-circle-btn notification-btn">
                             <FontAwesomeIcon icon={faBell} />
+                            <span className="bell-badge-dot" />
+                        </button>
+                        <button className="header-pill-btn date-selector-btn">
+                            <FontAwesomeIcon icon={faCalendarDays} className="btn-icon-left" />
+                            <span>{dateStr.split(',')[1]?.trim() || "May 18, 2024"}</span>
+                            <FontAwesomeIcon icon={faChevronDown} className="btn-icon-right" />
                         </button>
                     </div>
                 </div>
 
-                {/* Stats row */}
-                <div className="db-stats-row">
+                {/* Grid Container */}
+                <div className="db-dashboard-grid">
 
-                    {/* Calories — clickable */}
-                    <div
-                        className="db-card db-card-clickable"
-                        onClick={() => setCalModal(true)}
-                        title="Click to log food"
-                    >
-                        <div className="db-card-lbl">
-                            <FontAwesomeIcon icon={faFire} style={{ color: "#f97316", marginRight: 6 }} />
-                            Calories consumed today
+                    {/* CARD 1: Calories Consumed */}
+                    <div className="db-grid-card card-calories" onClick={() => setCalModal(true)}>
+                        <div className="card-header-row">
+                            <div className="card-icon-container cal-icon-bg">
+                                <FontAwesomeIcon icon={faFire} />
+                            </div>
+                            <span className="card-title">Calories Consumed</span>
                         </div>
-                        <div className="cal-top">
-                            <div className="cal-num">{(todayCal + totalFoodCal).toLocaleString("en-US")}<em>kcal</em></div>
-                            <div className="cal-pill">{calPct}%</div>
+                        <div className="card-big-value">
+                            <strong>{Math.round(todayCal + totalFoodCal).toLocaleString("en-US")}</strong>
+                            <span className="value-gray"> / {CAL_GOAL.toLocaleString("en-US")} kcal</span>
                         </div>
-                        <div className="cal-sub">
-                            Goal: <strong>{CAL_GOAL.toLocaleString("en-US")} kcal</strong> ({calPct}% reached)
+                        <div className="card-progress-section">
+                            <div className="thick-progress-bar">
+                                <div className="progress-fill cal-fill-bg" style={{ width: `${Math.min(calPct, 100)}%` }} />
+                            </div>
+                            <span className="progress-percent">{calPct}%</span>
                         </div>
-                        <div className="cal-prog">
-                            <div className="cal-prog-fill" style={{ width: `${Math.min(calPct, 100)}%` }} />
-                        </div>
-                        <div className="db-card-click-hint">
-                            <FontAwesomeIcon icon={faPlus} /> Log food
+                        <div className="card-helper-text">
+                            Remaining: {Math.max(0, CAL_GOAL - Math.round(todayCal + totalFoodCal)).toLocaleString("en-US")} kcal
                         </div>
                     </div>
 
-                    {/* Water — clickable */}
-                    <div
-                        className="db-card db-card-clickable"
-                        onClick={() => setWaterModal(true)}
-                        title="Click to log water"
-                    >
-                        <div className="db-card-lbl">
-                            <FontAwesomeIcon icon={faDroplet} style={{ color: "#60b8f5", marginRight: 6 }} />
-                            Water consumed today
-                        </div>
-                        <div className="water-body">
-                            <div className="water-bottle-wrap">
-                                <WaterBottle pct={waterPct} />
+                    {/* CARD 2: Water Consumed */}
+                    <div className="db-grid-card card-water" onClick={() => setWaterModal(true)}>
+                        <div className="card-header-row">
+                            <div className="card-icon-container water-icon-bg">
+                                <FontAwesomeIcon icon={faDroplet} />
                             </div>
-                            <div className="water-details">
-                                <div className="water-num">{waterMl.toLocaleString("en-US")}<em>ml</em></div>
-                                <div className="water-sub">of <strong>{WATER_MAX.toLocaleString("en-US")} ml</strong> daily</div>
-                                <div className="water-prog">
-                                    <div className="water-prog-fill" style={{ width: `${Math.min(waterPct * 100, 100)}%` }} />
+                            <span className="card-title">Water Consumed</span>
+                        </div>
+                        <div className="card-big-value">
+                            <strong>{(waterMl / 1000).toFixed(1)}</strong>
+                            <span className="value-gray"> / {(WATER_MAX / 1000).toFixed(1)} L</span>
+                        </div>
+                        <div className="card-progress-section">
+                            <div className="thick-progress-bar">
+                                <div className="progress-fill water-fill-bg" style={{ width: `${Math.min(waterPct * 100, 100)}%` }} />
+                            </div>
+                            <span className="progress-percent">{Math.round(waterPct * 100)}%</span>
+                        </div>
+                        <div className="card-helper-text">
+                            Remaining: {Math.max(0, (WATER_MAX - waterMl) / 1000).toFixed(1)} L
+                        </div>
+                    </div>
+
+                    {/* CARD 3: Workouts This Week */}
+                    <div className="db-grid-card card-workouts" onClick={() => setWorkoutModal(true)}>
+                        <div className="card-header-row">
+                            <div className="card-icon-container workout-icon-bg">
+                                <FontAwesomeIcon icon={faDumbbell} />
+                            </div>
+                            <span className="card-title">Workouts This Week</span>
+                        </div>
+                        <div className="card-workout-body-wrap">
+                            <div className="workout-stats-col">
+                                <div className="card-big-value">
+                                    <strong>{workouts.length}</strong>
+                                    <span className="value-gray"> / 5 sessions</span>
+                                </div>
+                                <div className="card-progress-section">
+                                    <div className="thick-progress-bar">
+                                        <div className="progress-fill workout-fill-bg" style={{ width: `${Math.min((workouts.length / 5) * 100, 100)}%` }} />
+                                    </div>
+                                    <span className="progress-percent">{Math.round(Math.min((workouts.length / 5) * 100, 100))}%</span>
+                                </div>
+                            </div>
+                            <div className="workout-illustration-container">
+                                <img src="/runner_illustration.png" alt="Runner Illustration" className="runner-illustration-img" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* CARD 4: Last 7 Days - Spans 2 Columns */}
+                    <div className="db-grid-card card-weekly-progress span-2">
+                        <div className="weekly-header-row">
+                            <span className="weekly-card-title">Last 7 Days</span>
+                            <div className="weekly-actions">
+                                <div className="weekly-tabs">
+                                    <button className="weekly-tab active">Daily Goals</button>
+                                    <button className="weekly-tab">Daily Weight</button>
+                                </div>
+                                <button className="help-circle-btn">
+                                    <FontAwesomeIcon icon={faQuestion} />
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="weekly-legends-row">
+                            <div className="legend-dot-item">
+                                <span className="legend-dot-marker blue-dot" />
+                                <span className="legend-dot-label">Water (L)</span>
+                            </div>
+                            <div className="legend-dot-item">
+                                <span className="legend-dot-marker orange-dot" />
+                                <span className="legend-dot-label">Calories (kcal)</span>
+                            </div>
+                        </div>
+
+                        <div className="weekly-chart-wrapper">
+                            <BarChart />
+                        </div>
+
+                        <div className="weekly-summary-stats">
+                            <div className="summary-widget">
+                                <div className="widget-header">
+                                    <FontAwesomeIcon icon={faDroplet} className="widget-icon blue-text" />
+                                    <span className="widget-label">Avg. Water / Day</span>
+                                </div>
+                                <div className="widget-value">2.6 L</div>
+                            </div>
+                            <div className="summary-divider" />
+                            <div className="summary-widget">
+                                <div className="widget-header">
+                                    <FontAwesomeIcon icon={faFire} className="widget-icon orange-text" />
+                                    <span className="widget-label">Avg. Calories / Day</span>
+                                </div>
+                                <div className="widget-value">2,210 kcal</div>
+                            </div>
+                            <div className="summary-divider" />
+                            <div className="summary-widget">
+                                <div className="widget-header">
+                                    <FontAwesomeIcon icon={faTrophy} className="widget-icon yellow-text" />
+                                    <span className="widget-label">Best Day</span>
+                                </div>
+                                <div className="widget-best-details">
+                                    <span className="widget-best-day">May 15</span>
+                                    <span className="widget-best-meta">3.2 L · 2,840 kcal</span>
                                 </div>
                             </div>
                         </div>
-                        <div className="db-card-click-hint">
-                            <FontAwesomeIcon icon={faDroplet} /> Log water
-                        </div>
                     </div>
-                </div>
 
-                {/* Chart */}
-                <div className="db-card db-chart-card">
-                    <div className="chart-hdr">
-                        <span className="db-card-lbl">Weekly progress</span>
-                        <div className="chart-legend">
-                            <div className="legend-item"><span style={{ background: "#f97316" }} className="legend-dot" />Calories</div>
-                            <div className="legend-item"><span style={{ background: "#38bdf8" }} className="legend-dot" />Water</div>
-                        </div>
-                    </div>
-                    <div className="chart-box"><BarChart /></div>
-                </div>
-
-                {/* Bottom row */}
-                <div className="db-bottom-row">
-
-                    {/* Workouts — clickable */}
-                    <div
-                        className="db-card db-card-clickable"
-                        onClick={() => setWorkoutModal(true)}
-                        title="Click to log workout"
-                    >
-                        <div className="db-card-lbl">
-                            <FontAwesomeIcon icon={faDumbbell} style={{ color: "#6366f1", marginRight: 6 }} />
-                            My Workouts
-                        </div>
-
-                        {workouts.length === 0 ? (
-                            <div className="workout-empty-state">
-                                <div className="workout-empty-icon">🏋️</div>
-                                <div className="workout-empty-text">No workouts logged yet</div>
-                                <div className="workout-empty-sub">Click to add your first workout</div>
+                    {/* CARD 5: Today's Weight */}
+                    <div className="db-grid-card card-weight">
+                        <div className="weight-header-row">
+                            <div className="weight-title-group">
+                                <FontAwesomeIcon icon={faWeightScale} className="weight-title-icon" />
+                                <span className="weight-card-title">Today's Weight</span>
                             </div>
-                        ) : (
-                            <div className="workout-preview-list">
-                                {workouts.slice(-2).map((w, i) => {
-                                    const tc = WORKOUT_TYPE_COLORS[w.type] || WORKOUT_TYPE_COLORS["Strength"];
-                                    return (
-                                        <div className="workout-preview-item" key={i}>
-                                            <span className="workout-type-badge-db" style={{ background: tc.bg, color: tc.color }}>
-                                                <FontAwesomeIcon icon={tc.icon} style={{ marginRight: 4 }} />
-                                                {w.type}
-                                            </span>
-                                            <span className="workout-preview-name">{w.label}</span>
-                                            <span className="workout-preview-time">{w.duration}m · {new Date(w.date).toLocaleDateString()}</span>
-                                        </div>
-                                    );
-                                })}
-                                {workouts.length > 2 && (
-                                    <div className="workout-more">+{workouts.length - 2} more workouts in history</div>
+                            <button className="weight-add-btn-mini" onClick={() => setIsEditingWeight(true)}>
+                                <FontAwesomeIcon icon={faPlus} className="btn-icon-left" />
+                                <span>Add Weight</span>
+                            </button>
+                        </div>
+
+                        <div className="weight-stats-split">
+                            <div className="weight-stat-box">
+                                <span className="weight-stat-label">Current Weight</span>
+                                {isEditingWeight ? (
+                                    <div className="weight-edit-inline">
+                                        <input 
+                                            type="number" 
+                                            step="0.1" 
+                                            className="weight-inline-input"
+                                            value={tempWeight} 
+                                            onChange={e => setTempWeight(e.target.value)} 
+                                            autoFocus
+                                        />
+                                        <button className="weight-inline-save" onClick={handleSaveWeight}>Save</button>
+                                        <button className="weight-inline-cancel" onClick={() => { setIsEditingWeight(false); setTempWeight(weight.toString()); }}>X</button>
+                                    </div>
+                                ) : (
+                                    <div className="weight-stat-value-row">
+                                        <span className="weight-stat-value"><strong>{weight}</strong> kg</span>
+                                        <button className="weight-edit-trigger" onClick={() => setIsEditingWeight(true)}>
+                                            <FontAwesomeIcon icon={faPencil} />
+                                        </button>
+                                    </div>
                                 )}
                             </div>
-                        )}
-                        <div className="db-card-click-hint">
-                            <FontAwesomeIcon icon={faPlus} /> Log workout
+                            <div className="weight-stat-box">
+                                <span className="weight-stat-label">Change from yesterday</span>
+                                <div className="weight-change-value-row green-text">
+                                    <FontAwesomeIcon icon={faArrowDown} className="weight-change-icon" />
+                                    <span className="weight-change-value">-0.4 kg</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Sparkline Weight chart */}
+                        <div className="weight-sparkline-container">
+                            {(() => {
+                                const weightHistory = [weight + 0.8, weight + 0.5, weight + 0.9, weight + 0.3, weight + 0.1, weight + 0.4, weight];
+                                const minW = Math.min(...weightHistory) - 0.5;
+                                const maxW = Math.max(...weightHistory) + 0.5;
+                                const mapY = (w: number) => 65 - ((w - minW) / (maxW - minW || 1)) * 40;
+                                
+                                const widthTotal = 240;
+                                const step = widthTotal / 6;
+                                const points = weightHistory.map((w, idx) => ({ x: 10 + idx * step, y: mapY(w), val: w }));
+                                const pathD = points.reduce((acc, p, idx) => acc + (idx === 0 ? `M ${p.x} ${p.y}` : ` L ${p.x} ${p.y}`), "");
+                                const areaD = pathD + ` L ${points[points.length - 1].x} 75 L ${points[0].x} 75 Z`;
+                                
+                                const labels = ["May 12", "May 13", "May 14", "May 15", "May 16", "May 17", "May 18"];
+                                
+                                return (
+                                    <svg viewBox="0 0 260 95" width="100%" height="95" className="sparkline-svg">
+                                        <defs>
+                                            <linearGradient id="weight-grad" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
+                                                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
+                                            </linearGradient>
+                                        </defs>
+                                        <path d={areaD} fill="url(#weight-grad)" />
+                                        <path d={pathD} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" />
+                                        {points.map((p, idx) => (
+                                            <g key={idx}>
+                                                <circle cx={p.x} cy={p.y} r={idx === points.length - 1 ? "4" : "3"} 
+                                                    fill="#3b82f6" stroke="#ffffff" strokeWidth="1.5" />
+                                            </g>
+                                        ))}
+                                        {(() => {
+                                            const lastP = points[points.length - 1];
+                                            const bubbleY = lastP.y - 18;
+                                            return (
+                                                <g>
+                                                    <rect x={lastP.x - 20} y={bubbleY - 8} width="35" height="14" rx="4" fill="#2563eb" />
+                                                    <text x={lastP.x - 3} y={bubbleY + 2} textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="700">{weight.toFixed(1)}</text>
+                                                </g>
+                                            );
+                                        })()}
+                                        <text x={points[0].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[0]}</text>
+                                        <text x={points[1].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[1]}</text>
+                                        <text x={points[2].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[2]}</text>
+                                        <text x={points[3].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[3]}</text>
+                                        <text x={points[4].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[4]}</text>
+                                        <text x={points[5].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[5]}</text>
+                                        <text x={points[6].x} y="90" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[6]}</text>
+                                    </svg>
+                                );
+                            })()}
+                        </div>
+
+                        <div className="weight-card-footer">
+                            <button className="weight-history-link" onClick={() => navigate('/calendar')}>
+                                <span>View weight history</span>
+                                <FontAwesomeIcon icon={faChevronRight} className="footer-arrow-icon" />
+                            </button>
                         </div>
                     </div>
 
-                    {/* Quick stats */}
-                    <div className="db-card">
-                        <div className="db-card-lbl">Quick stats</div>
-                        <div className="qs-list">
-                            <div className="qs-row">
-                                <div className="qs-left">
-                                    <div className="qs-ico" style={{ background: "var(--cal-soft)", color: "var(--cal-color)" }}>
-                                        <FontAwesomeIcon icon={faFire} />
-                                    </div>
-                                    <span className="qs-lbl">Calories this week</span>
+                    {/* CARD 6: Recent Workouts */}
+                    <div className="db-grid-card card-recent-workouts">
+                        <div className="recent-workouts-header">
+                            <span className="recent-workouts-title">Recent Workouts</span>
+                            <button className="view-all-workouts-link" onClick={() => setWorkoutModal(true)}>
+                                View all
+                            </button>
+                        </div>
+
+                        <div className="recent-workouts-list">
+                            {workouts.length === 0 ? (
+                                <div className="workouts-empty-state">
+                                    <FontAwesomeIcon icon={faDumbbell} className="empty-dumbbell-icon" />
+                                    <span>No workouts logged yet.</span>
                                 </div>
-                                <span className="qs-val">13,470</span>
-                            </div>
-                            <div className="qs-row">
-                                <div className="qs-left">
-                                    <div className="qs-ico" style={{ background: "var(--water-soft)", color: "var(--water-color)" }}>
-                                        <FontAwesomeIcon icon={faDroplet} />
-                                    </div>
-                                    <span className="qs-lbl">Water this week</span>
-                                </div>
-                                <span className="qs-val">15.4 L</span>
-                            </div>
-                            <div className="qs-row">
-                                <div className="qs-left">
-                                    <div className="qs-ico" style={{ background: "var(--green-soft)", color: "var(--green)" }}>
-                                        <FontAwesomeIcon icon={faDumbbell} />
-                                    </div>
-                                    <span className="qs-lbl">Goal days reached</span>
-                                </div>
-                                <span className="qs-val">5 / 7</span>
-                            </div>
+                            ) : (
+                                workouts.slice(-4).reverse().map((w, idx) => {
+                                    const typeStyles = {
+                                        Strength: { bg: "#f3e8ff", color: "#7c3aed", icon: faDumbbell },
+                                        Cardio: { bg: "#dbeafe", color: "#2563eb", icon: faPersonWalking },
+                                        Mobility: { bg: "#ffedd5", color: "#f97316", icon: faPersonWalking }
+                                    };
+                                    const style = typeStyles[w.type] || typeStyles["Strength"];
+                                    
+                                    return (
+                                        <div className="recent-workout-item" key={idx}>
+                                            <div className="recent-workout-icon-container" style={{ backgroundColor: style.bg, color: style.color }}>
+                                                <FontAwesomeIcon icon={style.icon} />
+                                            </div>
+                                            <div className="recent-workout-details">
+                                                <span className="recent-workout-name">{w.label}</span>
+                                                <span className="recent-workout-meta">
+                                                    {new Date(w.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · {w.duration} min
+                                                </span>
+                                            </div>
+                                            <div className="recent-workout-checkmark">
+                                                <FontAwesomeIcon icon={faCircleCheck} className="green-checkmark-icon" />
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
                         </div>
                     </div>
                 </div>
             </main>
-
-            {/* ── RIGHT DARK PANEL — BMI ── */}
-            <aside className="db-right">
-                <div>
-                    <div className="bmi-title">BMI Calculator</div>
-                    <div className="bmi-sub">Calculate your body mass index</div>
-                </div>
-
-                {/* Sliders */}
-                <div className="bmi-slider-card">
-                    <div className="sl-row">
-                        <div className="sl-hdr">
-                            <span className="sl-lbl">Height</span>
-                            <span className="sl-val">{height}<em>cm</em></span>
-                        </div>
-                        <input type="range" className="bmi-range"
-                            min={140} max={210} value={height}
-                            onChange={e => setHeight(Number(e.target.value))}
-                            style={{ background: `linear-gradient(90deg, #6366f1 ${((height - 140) / 70) * 100}%, rgba(255,255,255,0.12) ${((height - 140) / 70) * 100}%)` }}
-                        />
-                    </div>
-                    <div className="sl-row">
-                        <div className="sl-hdr">
-                            <span className="sl-lbl">Weight</span>
-                            <span className="sl-val">{weight}<em>kg</em></span>
-                        </div>
-                        <input type="range" className="bmi-range"
-                            min={40} max={150} value={weight}
-                            onChange={e => setWeight(Number(e.target.value))}
-                            style={{ background: `linear-gradient(90deg, #6366f1 ${((weight - 40) / 110) * 100}%, rgba(255,255,255,0.12) ${((weight - 40) / 110) * 100}%)` }}
-                        />
-                    </div>
-                </div>
-
-                {/* BMI Result */}
-                <div className="bmi-result-card">
-                    <div className="bmi-result-lbl">Body Mass Index (BMI)</div>
-                    <div className="bmi-big">{bmi.toFixed(1)}</div>
-                    <div className="bmi-badge" style={{ background: status.bg, color: status.color }}>
-                        {status.label}
-                    </div>
-
-                    <div className="bmi-bar-wrap">
-                        <div className="bmi-bar">
-                            <div className="bmi-indicator" style={{ left: bmiBarPos(bmi) }} />
-                        </div>
-                        <div className="bmi-bar-ticks">
-                            <span>15</span><span>18.5</span><span>25</span><span>30</span><span>40</span>
-                        </div>
-                    </div>
-                </div>
-            </aside>
 
             {/* ── MODALS ── */}
             {calModal && (
