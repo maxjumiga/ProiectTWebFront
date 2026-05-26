@@ -75,7 +75,11 @@
     margin-bottom: 40px;
 }
 
-.db-logo-svg {
+.db-logo-svg,
+.db-logo-img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
     flex-shrink: 0;
 }
 

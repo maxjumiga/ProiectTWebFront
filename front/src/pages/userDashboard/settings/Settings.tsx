@@ -32,10 +32,12 @@ import {
     faPen,
     faEye,
     faEyeSlash,
-    faXmark
+    faXmark,
+    faChevronRight
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./Settings.css";
+import "../UserDashboard.css";
 
 // ─── Toggle component ─────────────────────────────────────────────────────────
 const Toggle = ({ checked, onChange }: { checked: boolean; onChange: () => void }) => (
@@ -283,7 +285,13 @@ const SettingsPage: React.FC = () => {
 
 
 
-    const initials = userData.name ? userData.name.charAt(0).toUpperCase() : "";
+    const initials = (userData.name || "")
+        .split(" ")
+        .filter(Boolean)
+        .map((w: string) => w[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2) || "U";
 
     // ── Nav items ──
     const navItems: { id: NavSection; label: string; icon: React.ReactNode }[] = [
@@ -293,21 +301,44 @@ const SettingsPage: React.FC = () => {
     ];
 
     return (
-        <div className="settings-root">
+        <div className="db-root">
 
-            {/* ── Sidebar ── */}
+            {/* ── SIDEBAR ── */}
             <aside className="db-sidebar">
-                <div className="db-logo">
-                    <img src="/favicon.svg" alt="OmniTrack Logo" />
+                <div className="db-logo-wrapper">
+                    <img src="/OmniTrackLogo.png" alt="OmniTrack Logo" className="db-logo-img" />
+                    <span className="db-logo-text">OmniTrack</span>
                 </div>
-                <nav className="db-nav">
-                    <button className="db-nav-btn" onClick={() => navigate('/dashboard')} title="Home"><FontAwesomeIcon icon={faHouse} /></button>
-                    <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Calendar"><FontAwesomeIcon icon={faCalendarDays} /></button>
-                    <button className="db-nav-btn" onClick={() => navigate('/profile')} title="Profile"><FontAwesomeIcon icon={faUser} /></button>
-                    <button className="db-nav-btn active" onClick={() => navigate('/settings')} title="Settings"><FontAwesomeIcon icon={faUserGear} /></button>
+
+                <nav className="db-nav-links">
+                    <button className="db-nav-item" onClick={() => navigate('/dashboard')}>
+                        <FontAwesomeIcon icon={faHouse} className="nav-item-icon" />
+                        <span>Dashboard</span>
+                    </button>
+                    <button className="db-nav-item" onClick={() => navigate('/calendar')}>
+                        <FontAwesomeIcon icon={faCalendarDays} className="nav-item-icon" />
+                        <span>Progress</span>
+                    </button>
+                    <button className="db-nav-item" onClick={() => navigate('/profile')}>
+                        <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
+                        <span>Profile</span>
+                    </button>
+                    <button className="db-nav-item active" onClick={() => navigate('/settings')}>
+                        <FontAwesomeIcon icon={faUserGear} className="nav-item-icon" />
+                        <span>Settings</span>
+                    </button>
                 </nav>
-                <div className="db-sidebar-bottom">
-                    <button className="db-avatar" onClick={() => navigate('/profile')}>{initials}</button>
+
+                <div className="db-sidebar-user">
+                    <div className="user-avatar-wrap" onClick={() => navigate('/profile')}>
+                        <div className="user-avatar-img">{initials}</div>
+                    </div>
+                    <div className="user-details-mini">
+                        <div className="user-name-row">
+                            <span className="user-display-name">{userData.name || "User"}</span>
+                            <FontAwesomeIcon icon={faChevronRight} className="user-arrow-icon" />
+                        </div>
+                    </div>
                 </div>
             </aside>
 

@@ -1603,15 +1603,7 @@ const UserDashboard: React.FC = () => {
             {/* ── SIDEBAR ── */}
             <aside className="db-sidebar">
                 <div className="db-logo-wrapper">
-                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="db-logo-svg">
-                        <circle cx="16" cy="16" r="12" stroke="url(#logo-grad)" strokeWidth="4" strokeLinecap="round" strokeDasharray="50 15" />
-                        <defs>
-                            <linearGradient id="logo-grad" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0%" stopColor="#3b82f6" />
-                                <stop offset="100%" stopColor="#2563eb" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
+                    <img src="/OmniTrackLogo.png" alt="OmniTrack Logo" className="db-logo-img" />
                     <span className="db-logo-text">OmniTrack</span>
                 </div>
 

@@ -24,7 +24,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
-import "../userDashboard/UserDashboard.css";
+import "../UserDashboard.css";
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -275,15 +275,7 @@ const ProfilePage: React.FC = () => {
             {/* ── SIDEBAR ── */}
             <aside className="db-sidebar">
                 <div className="db-logo-wrapper">
-                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="db-logo-svg">
-                        <circle cx="16" cy="16" r="12" stroke="url(#logo-grad)" strokeWidth="4" strokeLinecap="round" strokeDasharray="50 15" />
-                        <defs>
-                            <linearGradient id="logo-grad" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0%" stopColor="#3b82f6" />
-                                <stop offset="100%" stopColor="#2563eb" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
+                    <img src="/OmniTrackLogo.png" alt="OmniTrack Logo" className="db-logo-img" />
                     <span className="db-logo-text">OmniTrack</span>
                 </div>
 
@@ -677,85 +669,7 @@ const ProfilePage: React.FC = () => {
                 </div>
             </main>
 
-            {/* ── Right dark panel ── */}
-            <aside className="profile-right">
-                <div>
-                    <div className="pr-section-title">Badges earned</div>
-                    <div className="pr-section-sub">YOUR ACHIEVEMENTS</div>
-                    <div className="badge-grid">
-                        <div className="badge-item">
-                            <div className="badge-emoji">🏆</div>
-                            <div className="badge-name">Champion</div>
-                            <div className="badge-desc">30 consecutive days</div>
-                        </div>
-                        <div className="badge-item">
-                            <div className="badge-emoji">💧</div>
-                            <div className="badge-name">Hydrated</div>
-                            <div className="badge-desc">Water goal 7 days</div>
-                        </div>
-                        <div className="badge-item">
-                            <div className="badge-emoji">🔥</div>
-                            <div className="badge-name">Burner</div>
-                            <div className="badge-desc">500 kcal/zi x5</div>
-                        </div>
-                        <div className="badge-item">
-                            <div className="badge-emoji">⚡</div>
-                            <div className="badge-name">Speedy</div>
-                            <div className="badge-desc">10k steps in a day</div>
-                        </div>
-                        <div className="badge-item">
-                            <div className="badge-emoji">🌙</div>
-                            <div className="badge-name">Nocturnal</div>
-                            <div className="badge-desc">Log after 10pm</div>
-                        </div>
-                        <div className="badge-item">
-                            <div className="badge-emoji">🥗</div>
-                            <div className="badge-name">Nutrition</div>
-                            <div className="badge-desc">7 days on goal</div>
-                        </div>
-                    </div>
-                </div>
 
-                <hr className="pr-divider" />
-
-                <div>
-                    <div className="pr-section-title">Recent activity</div>
-                    <div className="activity-feed">
-                        <div className="feed-item">
-                            <div className="feed-dot" style={{ background: "#10b981" }} />
-                            <div className="feed-text">Water goal reached</div>
-                            <div className="feed-time">today</div>
-                        </div>
-                        <div className="feed-item">
-                            <div className="feed-dot" style={{ background: "#6366f1" }} />
-                            <div className="feed-text">Profile updated</div>
-                            <div className="feed-time">yesterday</div>
-                        </div>
-                        <div className="feed-item">
-                            <div className="feed-dot" style={{ background: "#f97316" }} />
-                            <div className="feed-text">New badge: 🏆 Champion</div>
-                            <div className="feed-time">3d</div>
-                        </div>
-                        <div className="feed-item">
-                            <div className="feed-dot" style={{ background: "#a855f7" }} />
-                            <div className="feed-text">2FA enabled</div>
-                            <div className="feed-time">5d</div>
-                        </div>
-                    </div>
-                </div>
-
-                <hr className="pr-divider" />
-
-                <button className="logout-btn" onClick={() => {
-                    localStorage.removeItem('user');
-                    localStorage.removeItem('token');
-                    sessionStorage.removeItem('isAuthenticated');
-                    navigate('/login');
-                }}>
-                    <FontAwesomeIcon icon={faRightFromBracket} />
-                    Sign out
-                </button>
-            </aside>
 
             {/* ── Password Change Modal ── */}
             {showPasswordModal && (
