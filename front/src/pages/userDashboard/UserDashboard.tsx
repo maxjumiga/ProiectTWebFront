@@ -35,6 +35,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import "./UserDashboard.css";
 
+const formatDateKey = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+};
+
 // ─── Chart Data ───────────────────────────────────────────────────────────────
 const DAYS_LABELS = ["May 12", "May 13", "May 14", "May 15", "May 16", "May 17", "May 18"];
 const CAL_DATA = [1842, 2100, 1800, 2350, 1950, 2210, 1420];
@@ -1234,6 +1241,21 @@ const UserDashboard: React.FC = () => {
     const [todayCalories, setTodayCalories] = useState(0);
     const [height, setHeight] = useState(170);
     const [weight, setWeight] = useState(72);
+    const [weightHistoryLogs, setWeightHistoryLogs] = useState<Record<string, number>>(() => {
+        const wVal = 72;
+        const tempLogs: Record<string, number> = {};
+        const dates = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            dates.push(d);
+        }
+        tempLogs[formatDateKey(dates[0])] = wVal + 1.5;
+        tempLogs[formatDateKey(dates[2])] = wVal + 0.9;
+        tempLogs[formatDateKey(dates[4])] = wVal + 0.6;
+        tempLogs[formatDateKey(dates[5])] = wVal + 0.2;
+        return tempLogs;
+    });
 
     // Weight inline edit states
     const [isEditingWeight, setIsEditingWeight] = useState(false);
@@ -1265,6 +1287,11 @@ const UserDashboard: React.FC = () => {
             if (response.ok) {
                 setWeight(val);
                 setIsEditingWeight(false);
+                const todayStr = formatDateKey(new Date());
+                setWeightHistoryLogs(prev => ({
+                    ...prev,
+                    [todayStr]: val
+                }));
             } else {
                 alert("Could not update weight.");
             }
@@ -1272,6 +1299,11 @@ const UserDashboard: React.FC = () => {
             console.error(err);
             setWeight(val);
             setIsEditingWeight(false);
+            const todayStr = formatDateKey(new Date());
+            setWeightHistoryLogs(prev => ({
+                ...prev,
+                [todayStr]: val
+            }));
         }
     };
 
@@ -1460,6 +1492,20 @@ const UserDashboard: React.FC = () => {
 
                 if (userData.weight) {
                     setWeight(userData.weight);
+                    
+                    const wVal = userData.weight;
+                    const tempLogs: Record<string, number> = {};
+                    const dates = [];
+                    for (let i = 6; i >= 0; i--) {
+                        const d = new Date();
+                        d.setDate(d.getDate() - i);
+                        dates.push(d);
+                    }
+                    tempLogs[formatDateKey(dates[0])] = wVal + 1.5;
+                    tempLogs[formatDateKey(dates[2])] = wVal + 0.9;
+                    tempLogs[formatDateKey(dates[4])] = wVal + 0.6;
+                    tempLogs[formatDateKey(dates[5])] = wVal + 0.2;
+                    setWeightHistoryLogs(tempLogs);
                 }
 
             } catch (err) {
@@ -1523,6 +1569,33 @@ const UserDashboard: React.FC = () => {
     const bestDayLabel = weeklyLabels[bestDayIdx] || "N/A";
     const bestDayWaterLabel = weeklyWater.length > bestDayIdx ? `${(weeklyWater[bestDayIdx] / 1000).toFixed(1)} L` : "0.0 L";
     const bestDayCalLabel = weeklyCal.length > bestDayIdx ? `${weeklyCal[bestDayIdx].toLocaleString("en-US")} kcal` : "0 kcal";
+
+    // Weight history & change calculations for sparkline
+    const dates: Date[] = [];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dates.push(d);
+    }
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const weightLabels = dates.map(d => `${months[d.getMonth()]} ${d.getDate()}`);
+
+    const weightHistory = dates.map(d => {
+        const key = formatDateKey(d);
+        const todayStr = formatDateKey(new Date());
+        if (key === todayStr) {
+            return weight;
+        }
+        return weightHistoryLogs[key] !== undefined && weightHistoryLogs[key] !== null
+            ? weightHistoryLogs[key]
+            : weight;
+    });
+
+    const yesterdayW = weightHistory[5] !== undefined ? weightHistory[5] : weight;
+    const change = weight - yesterdayW;
+    const isChangePositive = change > 0;
+    const isChangeNegative = change < 0;
+    const changeText = change === 0 ? "0.0 kg" : `${isChangePositive ? '+' : ''}${change.toFixed(1)} kg`;
 
     return (
         <div className="db-root">
@@ -1771,9 +1844,10 @@ const UserDashboard: React.FC = () => {
                             </div>
                             <div className="weight-stat-box">
                                 <span className="weight-stat-label">Change from yesterday</span>
-                                <div className="weight-change-value-row green-text">
-                                    <FontAwesomeIcon icon={faArrowDown} className="weight-change-icon" />
-                                    <span className="weight-change-value">-0.4 kg</span>
+                                <div className={`weight-change-value-row ${isChangeNegative ? "green-text" : isChangePositive ? "red-text" : "muted-text"}`}>
+                                    {isChangeNegative && <FontAwesomeIcon icon={faArrowDown} className="weight-change-icon" />}
+                                    {isChangePositive && <FontAwesomeIcon icon={faPlus} className="weight-change-icon" style={{ fontSize: '10px', marginRight: '2px' }} />}
+                                    <span className="weight-change-value">{changeText}</span>
                                 </div>
                             </div>
                         </div>
@@ -1781,59 +1855,81 @@ const UserDashboard: React.FC = () => {
                         {/* Sparkline Weight chart */}
                         <div className="weight-sparkline-container">
                             {(() => {
-                                const weightHistory = [weight + 0.8, weight + 0.5, weight + 0.9, weight + 0.3, weight + 0.1, weight + 0.4, weight];
-                                const minW = Math.min(...weightHistory) - 0.5;
-                                const maxW = Math.max(...weightHistory) + 0.5;
-                                const mapY = (w: number) => 110 - ((w - minW) / (maxW - minW || 1)) * 80;
+                                const minW = Math.min(...weightHistory) - 1;
+                                const maxW = Math.max(...weightHistory) + 1;
+                                const range = maxW - minW || 1;
                                 
-                                const widthTotal = 240;
-                                const step = widthTotal / 6;
-                                const points = weightHistory.map((w, idx) => ({ x: 10 + idx * step, y: mapY(w), val: w }));
+                                // Plot dimensions
+                                const widthTotal = 400;
+                                const heightTotal = 200;
+                                const paddingLeft = 45;
+                                const paddingRight = 20;
+                                const paddingTop = 25;
+                                const paddingBottom = 35;
+                                
+                                const chartW = widthTotal - paddingLeft - paddingRight;
+                                const chartH = heightTotal - paddingTop - paddingBottom;
+                                
+                                const mapY = (w: number) => paddingTop + chartH - ((w - minW) / range) * chartH;
+                                const step = chartW / 6;
+                                
+                                const points = weightHistory.map((w, idx) => ({
+                                    x: paddingLeft + idx * step,
+                                    y: mapY(w),
+                                    val: w
+                                }));
+                                
                                 const pathD = points.reduce((acc, p, idx) => acc + (idx === 0 ? `M ${p.x} ${p.y}` : ` L ${p.x} ${p.y}`), "");
-                                const areaD = pathD + ` L ${points[points.length - 1].x} 130 L ${points[0].x} 130 Z`;
+                                const areaD = pathD + ` L ${points[points.length - 1].x} ${paddingTop + chartH} L ${points[0].x} ${paddingTop + chartH} Z`;
                                 
-                                const dates = [];
-                                for (let i = 6; i >= 0; i--) {
-                                    const d = new Date();
-                                    d.setDate(d.getDate() - i);
-                                    dates.push(d);
-                                }
-                                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                                const labels = dates.map(d => `${months[d.getMonth()]} ${d.getDate()}`);
+                                // Y ticks at min, mid, max
+                                const yTicks = [minW, (minW + maxW) / 2, maxW];
                                 
                                 return (
-                                    <svg viewBox="0 0 260 150" width="100%" height="150" className="sparkline-svg">
+                                    <svg viewBox={`0 0 ${widthTotal} ${heightTotal}`} width="100%" height={heightTotal} className="sparkline-svg">
                                         <defs>
                                             <linearGradient id="weight-grad" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
+                                                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.25" />
                                                 <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
                                             </linearGradient>
                                         </defs>
-                                        <path d={areaD} fill="url(#weight-grad)" />
-                                        <path d={pathD} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" />
-                                        {points.map((p, idx) => (
-                                            <g key={idx}>
-                                                <circle cx={p.x} cy={p.y} r={idx === points.length - 1 ? "4" : "3"} 
-                                                    fill="#3b82f6" stroke="#ffffff" strokeWidth="1.5" />
-                                            </g>
-                                        ))}
-                                        {(() => {
-                                            const lastP = points[points.length - 1];
-                                            const bubbleY = lastP.y - 18;
+                                        
+                                        {/* Grid lines */}
+                                        {yTicks.map((tickVal, idx) => {
+                                            const y = mapY(tickVal);
                                             return (
-                                                <g>
-                                                    <rect x={lastP.x - 20} y={bubbleY - 8} width="35" height="14" rx="4" fill="#2563eb" />
-                                                    <text x={lastP.x - 3} y={bubbleY + 2} textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="700">{weight.toFixed(1)}</text>
+                                                <g key={idx} className="chart-grid-group">
+                                                    <line x1={paddingLeft} x2={widthTotal - paddingRight} y1={y} y2={y} stroke="#f1f5f9" strokeWidth="1" strokeDasharray="3 3" />
+                                                    <text x={paddingLeft - 10} y={y + 3} textAnchor="end" fontSize="9" fill="#94a3b8" fontWeight="600">{tickVal.toFixed(1)}</text>
                                                 </g>
                                             );
-                                        })()}
-                                        <text x={points[0].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[0]}</text>
-                                        <text x={points[1].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[1]}</text>
-                                        <text x={points[2].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[2]}</text>
-                                        <text x={points[3].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[3]}</text>
-                                        <text x={points[4].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[4]}</text>
-                                        <text x={points[5].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[5]}</text>
-                                        <text x={points[6].x} y="145" textAnchor="middle" fontSize="7" fill="#94a3b8" fontWeight="600">{labels[6]}</text>
+                                        })}
+                                        
+                                        {/* Shaded Area */}
+                                        <path d={areaD} fill="url(#weight-grad)" />
+                                        
+                                        {/* Line path */}
+                                        <path d={pathD} fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0px 3px 5px rgba(59, 130, 246, 0.25))" }} />
+                                        
+                                        {/* Data points */}
+                                        {points.map((p, idx) => (
+                                            <g key={idx} className="chart-point-group">
+                                                <circle cx={p.x} cy={p.y} r={idx === points.length - 1 ? "5" : "4"} 
+                                                    fill="#ffffff" stroke="#3b82f6" strokeWidth="2.5" />
+                                                
+                                                {/* Tooltip / Weight value right above point */}
+                                                <text x={p.x} y={p.y - 12} textAnchor="middle" fontSize="9.5" fontWeight="800" fill="#2563eb">
+                                                    {p.val.toFixed(1)}
+                                                </text>
+                                            </g>
+                                        ))}
+                                        
+                                        {/* X Axis Labels (Dates) */}
+                                        {points.map((p, idx) => (
+                                            <text key={idx} x={p.x} y={heightTotal - 10} textAnchor="middle" fontSize="9" fill="#94a3b8" fontWeight="600">
+                                                {weightLabels[idx]}
+                                            </text>
+                                        ))}
                                     </svg>
                                 );
                             })()}

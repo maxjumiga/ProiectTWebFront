@@ -14,6 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./Calendar.css";
+import "../userDashboard/UserDashboard.css";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -251,6 +252,15 @@ const CalendarPage: React.FC = () => {
     const [selectedDayData, setSelectedDayData] = useState<DayData | null>(null);
     const [user, setUser] = useState<any>(null);
 
+    const username = user?.name || "User";
+    const initials = username
+        .split(" ")
+        .filter(Boolean)
+        .map((w: string) => w[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2) || "U";
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -396,37 +406,52 @@ const CalendarPage: React.FC = () => {
     });
 
     return (
-        <div className="cal-root">
+        <div className="db-root">
 
             {/* ── SIDEBAR ── */}
-            <aside className="cal-sidebar">
-                <div className="cal-logo">
-                    <img src="/favicon.svg" alt="OmniTrack Logo" />
+            <aside className="db-sidebar">
+                <div className="db-logo-wrapper">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="db-logo-svg">
+                        <circle cx="16" cy="16" r="12" stroke="url(#logo-grad)" strokeWidth="4" strokeLinecap="round" strokeDasharray="50 15" />
+                        <defs>
+                            <linearGradient id="logo-grad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stopColor="#3b82f6" />
+                                <stop offset="100%" stopColor="#2563eb" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span className="db-logo-text">OmniTrack</span>
                 </div>
-                <nav className="cal-nav">
-                    <button className="cal-nav-btn" onClick={() => navigate('/dashboard')} title="Home">
-                        <FontAwesomeIcon icon={faHouse} />
+
+                <nav className="db-nav-links">
+                    <button className="db-nav-item" onClick={() => navigate('/dashboard')}>
+                        <FontAwesomeIcon icon={faHouse} className="nav-item-icon" />
+                        <span>Dashboard</span>
                     </button>
-                    <button className="cal-nav-btn active" title="Calendar">
-                        <FontAwesomeIcon icon={faCalendarDays} />
+                    <button className="db-nav-item active" onClick={() => navigate('/calendar')}>
+                        <FontAwesomeIcon icon={faCalendarDays} className="nav-item-icon" />
+                        <span>Progress</span>
                     </button>
-                    <button className="cal-nav-btn" onClick={() => navigate('/profile')} title="Profile">
-                        <FontAwesomeIcon icon={faUser} />
+                    <button className="db-nav-item" onClick={() => navigate('/profile')}>
+                        <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
+                        <span>Profile</span>
                     </button>
-                    <button className="cal-nav-btn" onClick={() => navigate('/settings')} title="Settings">
-                        <FontAwesomeIcon icon={faUserGear} />
+                    <button className="db-nav-item" onClick={() => navigate('/settings')}>
+                        <FontAwesomeIcon icon={faUserGear} className="nav-item-icon" />
+                        <span>Settings</span>
                     </button>
                 </nav>
-                <div className="cal-sidebar-bottom">
-                    <button className="cal-avatar" onClick={() => navigate('/profile')}>
-                        {(user?.name || "Ion Popescu")
-                            .split(" ")
-                            .filter(Boolean)
-                            .map((w: string) => w[0])
-                            .join("")
-                            .toUpperCase()
-                            .slice(0, 2) || "U"}
-                    </button>
+
+                <div className="db-sidebar-user">
+                    <div className="user-avatar-wrap" onClick={() => navigate('/profile')}>
+                        <div className="user-avatar-img">{initials}</div>
+                    </div>
+                    <div className="user-details-mini">
+                        <div className="user-name-row">
+                            <span className="user-display-name">{username}</span>
+                            <FontAwesomeIcon icon={faChevronRight} className="user-arrow-icon" />
+                        </div>
+                    </div>
                 </div>
             </aside>
 
@@ -560,105 +585,6 @@ const CalendarPage: React.FC = () => {
                 </div>
 
             </main>
-
-            {/* ── RIGHT DARK PANEL ── */}
-            <aside className="cal-right">
-
-                {/* Title */}
-                <div>
-                    <div className="rp-title">Monthly stats</div>
-                    <div className="rp-sub">Summary {MONTH_NAMES_EN[month].toLowerCase()} {year}</div>
-                </div>
-
-                {/* Goal rings */}
-                <div className="rp-card">
-                    <div className="rp-label">Average goals</div>
-                    <div className="rp-goal-row">
-                        <Ring pct={calPct} color="#f97316" size={44} />
-                        <div>
-                            <div className="rp-goal-info-title">Calories</div>
-                            <div className="rp-goal-info-sub">{Math.round(calPct * 100)}% of goal</div>
-                        </div>
-                    </div>
-                    <div style={{ marginTop: "8px" }} className="rp-goal-row">
-                        <Ring pct={waterPct} color="#38bdf8" size={44} />
-                        <div>
-                            <div className="rp-goal-info-title">Water</div>
-                            <div className="rp-goal-info-sub">{Math.round(waterPct * 100)}% of goal</div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Summary stats */}
-                <div className="rp-card">
-                    <div className="rp-label">Current week</div>
-                    <div className="rp-stat-row">
-                        <div className="rp-stat-left">
-                            <div className="rp-stat-ico" style={{ background: "rgba(249,115,22,0.15)" }}>🔥</div>
-                            <span className="rp-stat-lbl">Avg Cal.</span>
-                        </div>
-                        <span className="rp-stat-val">{avgCal.toLocaleString("en-US")}</span>
-                    </div>
-                    <div className="rp-stat-row">
-                        <div className="rp-stat-left">
-                            <div className="rp-stat-ico" style={{ background: "rgba(56,189,248,0.15)" }}>💧</div>
-                            <span className="rp-stat-lbl">Avg Water</span>
-                        </div>
-                        <span className="rp-stat-val">{(avgWater / 1000).toFixed(1)} L</span>
-                    </div>
-                    <div className="rp-stat-row">
-                        <div className="rp-stat-left">
-                            <div className="rp-stat-ico" style={{ background: "rgba(16,185,129,0.15)" }}>🏋️</div>
-                            <span className="rp-stat-lbl">Workouts</span>
-                        </div>
-                        <span className="rp-stat-val">{totalWorkouts}</span>
-                    </div>
-                    <div className="rp-stat-row">
-                        <div className="rp-stat-left">
-                            <div className="rp-stat-ico" style={{ background: "rgba(99,102,241,0.15)" }}>🎯</div>
-                            <span className="rp-stat-lbl">Goal days</span>
-                        </div>
-                        <span className="rp-stat-val">{daysWithGoal} / {allEntries.length}</span>
-                    </div>
-                </div>
-
-                {/* Recent workouts */}
-                <div className="rp-card">
-                    <div className="rp-label">Recent workouts</div>
-                    {recentWorkouts.length === 0 ? (
-                        <div style={{ fontSize: "11px", color: "var(--dark-muted)" }}>No workouts recorded.</div>
-                    ) : (
-                        recentWorkouts.map(({ workout: w }, i) => (
-                            <div className="rp-workout-item" key={i}>
-                                <div className="rp-workout-dot" style={{ background: WORKOUT_COLORS[w.type] }} />
-                                <span className="rp-workout-name">{w.label}</span>
-                                <span className="rp-workout-duration">{w.duration} min</span>
-                            </div>
-                        ))
-                    )}
-                </div>
-
-                {/* Activity streak grid — last 28 days */}
-                <div className="rp-card">
-                    <div className="rp-label">Activity — last 28 days</div>
-                    <div className="rp-streak-grid">
-                        {streakCells.map((s, i) => (
-                            <div key={i} className={`rp-streak-cell ${s}`} />
-                        ))}
-                    </div>
-                    <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "9px", color: "var(--dark-muted)", fontFamily: "Space Mono" }}>
-                            <div style={{ width: "9px", height: "9px", borderRadius: "3px", background: "rgba(16,185,129,0.3)" }} />
-                            Active
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "9px", color: "var(--dark-muted)", fontFamily: "Space Mono" }}>
-                            <div style={{ width: "9px", height: "9px", borderRadius: "3px", background: "rgba(255,255,255,0.05)" }} />
-                            Inactive
-                        </div>
-                    </div>
-                </div>
-
-            </aside>
 
             {/* ── DAY MODAL ── */}
             {selectedDate && (

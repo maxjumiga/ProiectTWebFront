@@ -20,9 +20,11 @@ import {
     faWeightScale,
     faDroplet,
     faDumbbell,
+    faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
+import "../userDashboard/UserDashboard.css";
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -269,28 +271,51 @@ const ProfilePage: React.FC = () => {
         .slice(0, 2) || "U";
 
     return (
-        <div className="profile-root">
-            {/* ── Sidebar ── */}
+        <div className="db-root">
+            {/* ── SIDEBAR ── */}
             <aside className="db-sidebar">
-                <div className="db-logo">
-                    <img src="/favicon.svg" alt="OmniTrack Logo" />
+                <div className="db-logo-wrapper">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="db-logo-svg">
+                        <circle cx="16" cy="16" r="12" stroke="url(#logo-grad)" strokeWidth="4" strokeLinecap="round" strokeDasharray="50 15" />
+                        <defs>
+                            <linearGradient id="logo-grad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stopColor="#3b82f6" />
+                                <stop offset="100%" stopColor="#2563eb" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span className="db-logo-text">OmniTrack</span>
                 </div>
-                <nav className="db-nav">
-                    <button className="db-nav-btn" onClick={() => navigate('/dashboard')} title="Dashboard">
-                        <FontAwesomeIcon icon={faHouse} />
+
+                <nav className="db-nav-links">
+                    <button className="db-nav-item" onClick={() => navigate('/dashboard')}>
+                        <FontAwesomeIcon icon={faHouse} className="nav-item-icon" />
+                        <span>Dashboard</span>
                     </button>
-                    <button className="db-nav-btn" onClick={() => navigate('/calendar')} title="Calendar">
-                        <FontAwesomeIcon icon={faCalendarDays} />
+                    <button className="db-nav-item" onClick={() => navigate('/calendar')}>
+                        <FontAwesomeIcon icon={faCalendarDays} className="nav-item-icon" />
+                        <span>Progress</span>
                     </button>
-                    <button className="db-nav-btn active" onClick={() => navigate('/profile')} title="Profile">
-                        <FontAwesomeIcon icon={faUser} />
+                    <button className="db-nav-item active" onClick={() => navigate('/profile')}>
+                        <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
+                        <span>Profile</span>
                     </button>
-                    <button className="db-nav-btn" onClick={() => navigate('/settings')} title="Settings">
-                        <FontAwesomeIcon icon={faUserGear} />
+                    <button className="db-nav-item" onClick={() => navigate('/settings')}>
+                        <FontAwesomeIcon icon={faUserGear} className="nav-item-icon" />
+                        <span>Settings</span>
                     </button>
                 </nav>
-                <div className="db-sidebar-bottom">
-                    <div className="db-avatar">{initials}</div>
+
+                <div className="db-sidebar-user">
+                    <div className="user-avatar-wrap" onClick={() => navigate('/profile')}>
+                        <div className="user-avatar-img">{initials}</div>
+                    </div>
+                    <div className="user-details-mini">
+                        <div className="user-name-row">
+                            <span className="user-display-name">{username}</span>
+                            <FontAwesomeIcon icon={faChevronRight} className="user-arrow-icon" />
+                        </div>
+                    </div>
                 </div>
             </aside>
 
@@ -308,6 +333,29 @@ const ProfilePage: React.FC = () => {
                         </button>
                         <button className="ph-icon-btn" onClick={() => navigate('/settings')} title="Settings">
                             <FontAwesomeIcon icon={faUserGear} />
+                        </button>
+                        <button className="profile-logout-btn" onClick={() => {
+                            localStorage.removeItem('user');
+                            localStorage.removeItem('token');
+                            sessionStorage.removeItem('isAuthenticated');
+                            navigate('/login');
+                        }} title="Sign out" style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            background: '#fee2e2',
+                            color: '#dc2626',
+                            border: 'none',
+                            padding: '10px 16px',
+                            borderRadius: '10px',
+                            fontSize: '13px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            marginLeft: '12px'
+                        }}>
+                            <FontAwesomeIcon icon={faRightFromBracket} />
+                            <span>Sign out</span>
                         </button>
                     </div>
                 </div>

@@ -878,12 +878,40 @@
 /* Weight sparkline */
 .weight-sparkline-container {
     width: 100%;
-    height: 150px;
+    height: 200px;
     margin-bottom: 12px;
 }
 
 .sparkline-svg {
     overflow: visible;
+}
+
+.red-text {
+    color: #ef4444;
+}
+
+.muted-text {
+    color: var(--text-muted);
+}
+
+.chart-point-group circle {
+    transition: r 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), stroke-width 0.2s ease;
+    cursor: pointer;
+}
+
+.chart-point-group:hover circle {
+    r: 7;
+    stroke-width: 3.5px;
+}
+
+.chart-point-group text {
+    opacity: 0.9;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.chart-point-group:hover text {
+    opacity: 1;
+    font-size: 11px;
 }
 
 .weight-card-footer {
