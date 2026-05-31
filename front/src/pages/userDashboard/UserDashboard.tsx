@@ -25,6 +25,7 @@ import {
     faChevronRight,
     faAppleWhole,
     faMoon,
+    faSun,
     faCoffee,
     faUtensils,
     faGlassWater,
@@ -88,7 +89,6 @@ interface ExerciseItem {
     primaryMuscleGroup: string;
     secondaryMuscleGroup?: string;
     difficulty: string;
-    fatigueCost: string;
 }
 
 type WorkoutType = "Strength" | "Cardio" | "Mobility";
@@ -864,8 +864,7 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
                             name: we.exerciseName || "Unknown Exercise",
                             primaryMuscleGroup: we.primaryMuscleGroup || "N/A",
                             secondaryMuscleGroup: we.secondaryMuscleGroup,
-                            difficulty: we.difficulty || "Beginner",
-                            fatigueCost: we.fatigueCost || 0
+                            difficulty: we.difficulty || "Beginner"
                         },
                         sets: we.sets,
                         reps: we.reps,
@@ -1235,6 +1234,21 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ workouts: initialWorkouts
 const UserDashboard: React.FC = () => {
     const navigate = useNavigate();
 
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        return localStorage.getItem('theme') === 'dark';
+    });
+
+    const toggleTheme = () => {
+        const newTheme = !isDarkMode ? 'dark' : 'light';
+        setIsDarkMode(!isDarkMode);
+        localStorage.setItem('theme', newTheme);
+        if (newTheme === 'dark') {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+    };
+
     const [user, setUser] = useState<any>(null);
 
     const [waterMl, setWaterMl] = useState(0);
@@ -1344,8 +1358,7 @@ const UserDashboard: React.FC = () => {
                             name: we.exerciseName || "Unknown Exercise",
                             primaryMuscleGroup: we.primaryMuscleGroup || "N/A",
                             secondaryMuscleGroup: we.secondaryMuscleGroup,
-                            difficulty: we.difficulty || "Beginner",
-                            fatigueCost: we.fatigueCost || 0
+                            difficulty: we.difficulty || "Beginner"
                         },
                         sets: we.sets,
                         reps: we.reps,
@@ -1649,6 +1662,13 @@ const UserDashboard: React.FC = () => {
                         <p>Here's your overview for today.</p>
                     </div>
                     <div className="header-actions-group">
+                        <button
+                            className="header-circle-btn theme-toggle-btn"
+                            onClick={toggleTheme}
+                            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                        >
+                            <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
+                        </button>
                         <button className="header-circle-btn notification-btn">
                             <FontAwesomeIcon icon={faBell} />
                             <span className="bell-badge-dot" />

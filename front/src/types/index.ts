@@ -24,8 +24,6 @@ export type GrupMuscular =
 
 export type DificultateExercitiu = 'beginner' | 'intermediate' | 'advanced';
 
-export type CostOboseala = 'veryLow' | 'low' | 'moderate' | 'high' | 'veryHigh';
-
 export interface User {
     id: number;
     name: string;
@@ -52,5 +50,4 @@ export interface Exercitiu {
     grupMuscular: GrupMuscular;
     grupaSecundara: string;
     dificultate: DificultateExercitiu;
-    costOboseala: CostOboseala;
 }

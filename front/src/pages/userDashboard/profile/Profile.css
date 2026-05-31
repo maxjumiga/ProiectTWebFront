@@ -1437,3 +1437,142 @@
     font-size: 12px;
     line-height: 1.5;
 }
+
+/* ═══════════════════════════════════════════
+   DARK MODE — Profile
+   ═══════════════════════════════════════════ */
+.dark-theme .profile-root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --border: #2a2d3a;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-soft: rgba(99, 102, 241, 0.12);
+}
+
+.dark-theme .profile-main {
+    background: #0f1117;
+}
+
+.dark-theme .profile-header {
+    background: #0f1117;
+    border-bottom-color: #2a2d3a;
+}
+
+.dark-theme .profile-header-left h1 {
+    color: #e2e8f0;
+}
+
+.dark-theme .profile-header-left p {
+    color: #94a3b8;
+}
+
+.dark-theme .ph-icon-btn {
+    background: #1e2130;
+    border-color: #2a2d3a;
+    color: #94a3b8;
+}
+
+.dark-theme .ph-icon-btn:hover {
+    background: #252840;
+    color: #e2e8f0;
+}
+
+/* Profile cards */
+.dark-theme .p-card {
+    background: #1a1d27;
+    border-color: #2a2d3a;
+    box-shadow: none;
+}
+
+.dark-theme .p-card-label {
+    color: #64748b;
+    border-bottom-color: #2a2d3a;
+}
+
+/* Avatar & Info */
+.dark-theme .profile-name {
+    color: #e2e8f0;
+}
+
+.dark-theme .profile-username {
+    color: #94a3b8;
+}
+
+.dark-theme .profile-email {
+    color: #94a3b8;
+    background: #13161f;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .profile-member-since {
+    color: #64748b;
+}
+
+/* Traits */
+.dark-theme .traits-grid {
+    background: transparent;
+}
+
+.dark-theme .trait-item {
+    background: #13161f;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .trait-item::after {
+    border-color: #2a2d3a;
+}
+
+.dark-theme .trait-label {
+    color: #64748b;
+}
+
+.dark-theme .trait-value {
+    color: #e2e8f0;
+}
+
+.dark-theme .trait-edit-btn {
+    background: #1e2130;
+    border-color: #2a2d3a;
+    color: #94a3b8;
+}
+
+.dark-theme .trait-edit-btn:hover {
+    background: #252840;
+    color: #e2e8f0;
+}
+
+/* Health snapshot & BMI */
+.dark-theme .security-row {
+    border-bottom-color: #2a2d3a;
+}
+
+.dark-theme .security-row-left {
+    color: #94a3b8;
+}
+
+/* Objective bars */
+.dark-theme .obj-bar-track {
+    background: #2a2d3a;
+}
+
+/* Bio area */
+.dark-theme .bio-text {
+    color: #e2e8f0;
+}
+
+.dark-theme .bio-empty {
+    background: #13161f;
+    border-color: #2a2d3a;
+    color: #64748b;
+}
+
+/* Scrollbars */
+.dark-theme .profile-main::-webkit-scrollbar-track {
+    background: #0f1117;
+}
+
+.dark-theme .profile-main::-webkit-scrollbar-thumb {
+    background: #2a2d3a;
+}

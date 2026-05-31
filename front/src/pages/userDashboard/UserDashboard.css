@@ -2141,3 +2141,570 @@
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ═══════════════════════════════════════════
+   THEME TOGGLE BUTTON
+   ═══════════════════════════════════════════ */
+.theme-toggle-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle-btn svg {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+
+.theme-toggle-btn:hover svg {
+    transform: rotate(20deg) scale(1.15);
+}
+
+/* Sun icon glow in dark mode */
+.dark-theme .theme-toggle-btn {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.12);
+    border-color: rgba(251, 191, 36, 0.2);
+}
+
+.dark-theme .theme-toggle-btn:hover {
+    background: rgba(251, 191, 36, 0.2);
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
+}
+
+/* ═══════════════════════════════════════════
+   DARK MODE — CSS VARIABLE OVERRIDES
+   Scoped to .dark-theme so landing/onboarding
+   pages are completely unaffected.
+   ═══════════════════════════════════════════ */
+.dark-theme .db-root {
+    --bg-main: #0f1117;
+    --surface-white: #1a1d27;
+    --border-color: #2a2d3a;
+    --border-color-hover: #3a3d4a;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --card-shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.3);
+    --card-shadow-hover: 0 10px 25px -5px rgba(0,0,0,0.5), 0 8px 10px -6px rgba(0,0,0,0.4);
+}
+
+/* Sidebar */
+.dark-theme .db-sidebar {
+    background: #13161f;
+    border-right-color: #2a2d3a;
+}
+
+.dark-theme .db-sidebar-user {
+    background: #1a1d27;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .db-nav-item {
+    color: var(--text-secondary);
+}
+
+.dark-theme .db-nav-item:hover,
+.dark-theme .db-nav-item.active {
+    background: rgba(99, 102, 241, 0.15);
+    color: #a78bfa;
+}
+
+.dark-theme .db-nav-item.active .nav-item-icon {
+    color: #a78bfa;
+}
+
+.dark-theme .db-logo-text {
+    color: var(--text-primary);
+}
+
+/* Topbar header */
+.dark-theme .db-header-new {
+    background: transparent;
+    border-bottom-color: transparent;
+}
+
+.dark-theme .header-greeting-group h1 {
+    color: var(--text-primary);
+}
+
+.dark-theme .header-greeting-group p {
+    color: var(--text-secondary);
+}
+
+.dark-theme .header-circle-btn {
+    background: #1e2130;
+    border-color: #2a2d3a;
+    color: var(--text-secondary);
+}
+
+.dark-theme .header-circle-btn:hover {
+    background: #252840;
+    border-color: #3a3d4a;
+    color: var(--text-primary);
+}
+
+.dark-theme .header-pill-btn {
+    background: #1e2130;
+    border-color: #2a2d3a;
+    color: var(--text-secondary);
+}
+
+/* Cards */
+.dark-theme .db-grid-card {
+    background: var(--surface-white);
+    border-color: #2a2d3a;
+}
+
+.dark-theme .card-title {
+    color: var(--text-secondary);
+}
+
+.dark-theme .card-big-value strong {
+    color: var(--text-primary);
+}
+
+.dark-theme .value-gray {
+    color: var(--text-muted);
+}
+
+.dark-theme .card-helper-text {
+    color: var(--text-muted);
+}
+
+.dark-theme .thick-progress-bar {
+    background: #2a2d3a;
+}
+
+/* Weekly chart card */
+.dark-theme .db-weekly-card {
+    background: var(--surface-white);
+    border-color: #2a2d3a;
+}
+
+.dark-theme .weekly-header-row .section-title,
+.dark-theme .weekly-header-row h2 {
+    color: var(--text-primary);
+}
+
+/* Stats / widget cards */
+.dark-theme .db-widget-card,
+.dark-theme .db-stat-card {
+    background: var(--surface-white);
+    border-color: #2a2d3a;
+}
+
+.dark-theme .widget-header,
+.dark-theme .widget-label {
+    color: var(--text-secondary);
+}
+
+.dark-theme .widget-value,
+.dark-theme .stat-value {
+    color: var(--text-primary);
+}
+
+/* Modals */
+.dark-theme .db-modal-card {
+    background: #1a1d27;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .db-modal-header {
+    border-bottom-color: #2a2d3a;
+}
+
+.dark-theme .db-modal-title {
+    color: var(--text-primary);
+}
+
+.dark-theme .db-modal-close {
+    background: #252840;
+    border-color: #2a2d3a;
+    color: var(--text-secondary);
+}
+
+.dark-theme .db-modal-close:hover {
+    background: #2e3150;
+    color: var(--text-primary);
+}
+
+.dark-theme .db-modal-section-title {
+    color: var(--text-primary);
+}
+
+.dark-theme .db-input {
+    background: #13161f;
+    border-color: #2a2d3a;
+    color: var(--text-primary);
+}
+
+.dark-theme .db-input::placeholder {
+    color: var(--text-muted);
+}
+
+.dark-theme .db-input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.dark-theme .db-select {
+    background: #13161f;
+    border-color: #2a2d3a;
+    color: var(--text-primary);
+}
+
+.dark-theme .db-field-label {
+    color: var(--text-secondary);
+}
+
+/* Food / Water modal specific */
+.dark-theme .food-dropdown {
+    background: #1a1d27;
+    border-color: #2a2d3a;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.dark-theme .food-dropdown-item {
+    color: var(--text-primary);
+    border-bottom-color: #2a2d3a;
+}
+
+.dark-theme .food-dropdown-item:hover {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.dark-theme .food-dropdown-cal {
+    color: var(--text-muted);
+}
+
+.dark-theme .macro-preview {
+    background: #13161f;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .macro-preview-title {
+    color: var(--text-secondary);
+}
+
+.dark-theme .meal-group-label {
+    color: var(--text-secondary);
+    border-bottom-color: #2a2d3a;
+}
+
+.dark-theme .food-log-item {
+    border-bottom-color: #2a2d3a;
+}
+
+.dark-theme .food-log-name {
+    color: var(--text-primary);
+}
+
+.dark-theme .food-log-grams,
+.dark-theme .food-log-kcal {
+    color: var(--text-muted);
+}
+
+.dark-theme .water-preset-btn {
+    background: #13161f;
+    border-color: #2a2d3a;
+    color: var(--text-secondary);
+}
+
+.dark-theme .water-preset-btn:hover {
+    background: #1e2130;
+    border-color: #3a3d4a;
+}
+
+.dark-theme .water-modal-big {
+    color: var(--text-primary);
+}
+
+.dark-theme .water-modal-sub {
+    color: var(--text-secondary);
+}
+
+.dark-theme .water-modal-prog {
+    background: #2a2d3a;
+}
+
+/* Sidebar modal */
+.dark-theme .modal-sidebar {
+    background: #13161f;
+    border-right-color: #2a2d3a;
+}
+
+.dark-theme .sidebar-header-modal {
+    color: var(--text-secondary);
+    border-bottom-color: #2a2d3a;
+}
+
+.dark-theme .history-item {
+    color: var(--text-primary);
+    border-bottom-color: #2a2d3a;
+}
+
+.dark-theme .history-item:hover {
+    background: rgba(99, 102, 241, 0.08);
+}
+
+.dark-theme .history-item.active {
+    background: rgba(99, 102, 241, 0.15);
+}
+
+.dark-theme .history-item-meta {
+    color: var(--text-muted);
+}
+
+.dark-theme .history-new-btn {
+    color: var(--color-blue);
+    border-color: rgba(59, 130, 246, 0.25);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+/* BMI card */
+.dark-theme .bmi-scale-track {
+    background: #2a2d3a;
+}
+
+.dark-theme .bmi-zone-label {
+    color: var(--text-muted);
+}
+
+/* Weight card */
+.dark-theme .weight-header-row {
+    color: var(--text-primary);
+}
+
+/* SVG chart grid lines */
+.dark-theme .db-svg-chart line[stroke="#f1f5f9"] {
+    stroke: #2a2d3a;
+}
+
+.dark-theme .db-svg-chart text[fill="#94a3b8"] {
+    fill: #64748b;
+}
+
+/* Scrollbars */
+.dark-theme ::-webkit-scrollbar-track {
+    background: #13161f;
+}
+
+.dark-theme ::-webkit-scrollbar-thumb {
+    background: #2a2d3a;
+}
+
+.dark-theme ::-webkit-scrollbar-thumb:hover {
+    background: #3a3d4a;
+}
+
+/* ─── ADDITIONAL DARK MODE FIXES ──────────────────────────────────────────── */
+
+/* Main dashboard scrollable area */
+.dark-theme .db-center {
+    background: #0f1117;
+}
+
+/* Modal inner section panels */
+.dark-theme .db-modal-section {
+    background: #13161f;
+    border-color: #2a2d3a;
+}
+
+/* Weekly summary stats strip */
+.dark-theme .weekly-summary-stats {
+    background: #13161f;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .summary-divider {
+    background-color: #2a2d3a;
+}
+
+/* Food log items */
+.dark-theme .food-log-item {
+    background: #1e2130;
+    border-color: #2a2d3a;
+}
+
+/* Workout modal main content */
+.dark-theme .modal-main-content {
+    background: #1a1d27;
+}
+
+.dark-theme .modal-footer-rework {
+    border-top-color: #2a2d3a;
+    background: #1a1d27;
+}
+
+/* Exercise items */
+.dark-theme .ex-item-rework {
+    background: #1e2130;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .ex-item-name {
+    color: #e2e8f0;
+}
+
+.dark-theme .ex-item-muscles {
+    color: #64748b;
+}
+
+.dark-theme .ex-stat {
+    color: #e2e8f0;
+}
+
+/* Exercise adder & search */
+.dark-theme .ex-adder-box {
+    background: #13161f;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .exercise-dropdown {
+    background: #1a1d27;
+    border-color: #2a2d3a;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.5);
+}
+
+.dark-theme .ex-drop-item {
+    border-bottom-color: #2a2d3a;
+    color: #e2e8f0;
+}
+
+.dark-theme .ex-drop-item:hover {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.dark-theme .ex-drop-name {
+    color: #e2e8f0;
+}
+
+.dark-theme .ex-drop-meta {
+    color: #64748b;
+}
+
+/* Mini input fields inside workout form */
+.dark-theme .mini-field input {
+    background: #13161f;
+    border-color: #2a2d3a;
+    color: #e2e8f0;
+}
+
+.dark-theme .mini-field input:focus {
+    border-color: #6366f1;
+}
+
+.dark-theme .mini-field label {
+    color: #64748b;
+}
+
+/* Exercise count badge */
+.dark-theme .exercise-count-badge {
+    background: #2a2d3a;
+    color: #94a3b8;
+}
+
+/* Custom dropdown */
+.dark-theme .db-select-custom {
+    background: #13161f;
+    border-color: #2a2d3a;
+    color: #e2e8f0;
+}
+
+.dark-theme .custom-dropdown-list {
+    background: #1a1d27;
+    border-color: #2a2d3a;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.dark-theme .custom-drop-item {
+    color: #e2e8f0;
+}
+
+.dark-theme .custom-drop-item:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: #a78bfa;
+}
+
+.dark-theme .custom-drop-item.selected {
+    background: rgba(99, 102, 241, 0.2);
+    color: #a78bfa;
+}
+
+/* Workout cancel/delete buttons */
+.dark-theme .btn-cancel {
+    border-color: #2a2d3a;
+    color: #94a3b8;
+}
+
+.dark-theme .btn-cancel:hover {
+    background-color: #1e2130;
+    color: #e2e8f0;
+}
+
+/* Water action remove button */
+.dark-theme .water-action-remove {
+    background-color: #1e2130;
+    color: #94a3b8;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .water-action-remove:hover:not(:disabled) {
+    background-color: #252840;
+    color: #e2e8f0;
+}
+
+/* Water status section */
+.dark-theme .water-status-section {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.15);
+}
+
+/* Weight inline editing */
+.dark-theme .weight-inline-input {
+    background: #13161f;
+    border-color: #6366f1;
+    color: #e2e8f0;
+}
+
+.dark-theme .weight-inline-cancel {
+    background: #1e2130;
+    color: #94a3b8;
+}
+
+/* Secondary button */
+.dark-theme .db-btn-secondary {
+    background: #1e2130;
+    border-color: #2a2d3a;
+    color: #94a3b8;
+}
+
+.dark-theme .db-btn-secondary:hover {
+    border-color: #6366f1;
+    color: #a78bfa;
+    background: rgba(99, 102, 241, 0.1);
+}
+
+/* Diff badges in dark mode */
+.dark-theme .diff-badge.beginner {
+    background: rgba(21, 128, 61, 0.2);
+    color: #4ade80;
+}
+
+.dark-theme .diff-badge.intermediate {
+    background: rgba(161, 98, 7, 0.2);
+    color: #fbbf24;
+}
+
+.dark-theme .diff-badge.advanced {
+    background: rgba(185, 28, 28, 0.2);
+    color: #f87171;
+}
+
+/* db-center scrollbar */
+.dark-theme .db-center::-webkit-scrollbar-thumb {
+    background: #2a2d3a;
+}
+
+.dark-theme .db-center::-webkit-scrollbar-track {
+    background: #0f1117;
+}

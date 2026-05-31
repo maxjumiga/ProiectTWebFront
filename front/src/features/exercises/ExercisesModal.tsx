@@ -1,8 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCheck } from '@fortawesome/free-solid-svg-icons';
-import type { CostOboseala, DificultateExercitiu, GrupMuscular } from '../../types';
+import type { DificultateExercitiu, GrupMuscular } from '../../types';
 import {
-    costObosealaOptions,
     dificultateOptions,
     grupMuscularOptions,
     type ExercitiiForm,
@@ -70,7 +69,7 @@ export default function ExercisesModal({
                     </div>
 
                     <div className="form-row">
-                        <div className="form-group">
+                        <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                             <label>Secondary muscle group</label>
                             <input
                                 className="form-input"
@@ -78,15 +77,6 @@ export default function ExercisesModal({
                                 placeholder="e.g.: Triceps"
                                 value={form.grupaSecundara}
                                 onChange={e => onFormChange({ ...form, grupaSecundara: e.target.value })}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Fatigue cost</label>
-                            <CustomSelect
-                                value={form.costOboseala}
-                                onChange={val => onFormChange({ ...form, costOboseala: val as CostOboseala })}
-                                options={costObosealaOptions}
-                                variant="form"
                             />
                         </div>
                     </div>

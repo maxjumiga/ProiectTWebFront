@@ -2,7 +2,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import type { DificultateExercitiu, Exercitiu, GrupMuscular } from '../../types';
 import {
-    costObosealaLabel,
     dificultateColorClass,
     dificultateLabel,
     grupColorClass,
@@ -26,7 +25,6 @@ export default function ExercisesTable({ filtered, onEdit, onDelete }: Exercises
                             <th>Muscle Group</th>
                             <th>Secondary Muscle</th>
                             <th>Difficulty</th>
-                            <th>Fatigue Cost</th>
                             <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
@@ -54,9 +52,6 @@ export default function ExercisesTable({ filtered, onEdit, onDelete }: Exercises
                                         <span className={`badge ex-badge-dif ${dificultateColorClass[ex.dificultate as DificultateExercitiu]}`}>
                                             {dificultateLabel[ex.dificultate as DificultateExercitiu]}
                                         </span>
-                                    </td>
-                                    <td className="ga-num-cell">
-                                        <span>{costObosealaLabel[ex.costOboseala]}</span>
                                     </td>
                                     <td>
                                         <div className="um-actions">

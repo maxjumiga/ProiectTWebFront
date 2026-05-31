@@ -916,3 +916,136 @@
     font-size: 30px;
     margin-bottom: 8px;
 }
+
+/* ═══════════════════════════════════════════
+   DARK MODE — Calendar
+   ═══════════════════════════════════════════ */
+.dark-theme .cal-root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --border: #2a2d3a;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --input-bg: #13161f;
+    --accent-soft: rgba(99, 102, 241, 0.12);
+}
+
+.dark-theme .cal-center {
+    background: #0f1117;
+}
+
+.dark-theme .cal-header h1 {
+    color: #e2e8f0;
+}
+
+.dark-theme .cal-header p {
+    color: #94a3b8;
+}
+
+.dark-theme .cal-month-title {
+    color: #e2e8f0;
+}
+
+.dark-theme .cal-nav-arrow {
+    background: #1e2130;
+    border-color: #2a2d3a;
+    color: #94a3b8;
+}
+
+.dark-theme .cal-nav-arrow:hover {
+    background: #252840;
+    color: #e2e8f0;
+}
+
+.dark-theme .cal-grid-card {
+    background: #1a1d27;
+    border-color: #2a2d3a;
+    box-shadow: none;
+}
+
+.dark-theme .cal-weekday {
+    color: #64748b;
+}
+
+.dark-theme .cal-day {
+    background: transparent;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .cal-day:hover {
+    background: rgba(99, 102, 241, 0.06);
+}
+
+.dark-theme .cal-day.other-month {
+    opacity: 0.3;
+}
+
+.dark-theme .cal-day-num {
+    color: #94a3b8;
+}
+
+.dark-theme .cal-day.today .cal-day-num {
+    background: #6366f1;
+    color: #fff;
+}
+
+.dark-theme .cal-stats-row .cal-stat-card {
+    background: #1a1d27;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .cal-stat-lbl {
+    color: #64748b;
+}
+
+.dark-theme .cal-stat-num {
+    color: #e2e8f0;
+}
+
+.dark-theme .cal-stat-desc {
+    color: #94a3b8;
+}
+
+/* Day detail modal */
+.dark-theme .cal-day-modal-overlay {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.dark-theme .cal-day-modal {
+    background: #1a1d27;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .modal-day-title {
+    color: #e2e8f0;
+}
+
+.dark-theme .modal-section-title {
+    color: #94a3b8;
+    border-bottom-color: #2a2d3a;
+}
+
+.dark-theme .modal-stat-row {
+    color: #e2e8f0;
+}
+
+.dark-theme .modal-empty {
+    color: #64748b;
+}
+
+.dark-theme .modal-close-btn {
+    background: #252840;
+    border-color: #2a2d3a;
+    color: #94a3b8;
+}
+
+.dark-theme .modal-close-btn:hover {
+    background: #2e3150;
+    color: #e2e8f0;
+}
+
+.dark-theme .cal-weekdays {
+    background: #13161f;
+    border-bottom-color: #2a2d3a;
+}

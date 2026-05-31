@@ -1,4 +1,4 @@
-import type { CostOboseala, DificultateExercitiu, GrupMuscular } from '../../types';
+import type { DificultateExercitiu, GrupMuscular } from '../../types';
 
 export const grupMuscularOptions: { value: string; label: string }[] = [
     { value: 'neck', label: 'Neck' },
@@ -28,13 +28,6 @@ export const dificultateOptions: { value: string; label: string }[] = [
     { value: 'advanced', label: 'Advanced' },
 ];
 
-export const costObosealaOptions: { value: string; label: string }[] = [
-    { value: 'veryLow', label: 'Very Low' },
-    { value: 'low', label: 'Low' },
-    { value: 'moderate', label: 'Moderate' },
-    { value: 'high', label: 'High' },
-    { value: 'veryHigh', label: 'Very High' },
-];
 
 export const grupMuscularLabel: Record<GrupMuscular, string> = {
     neck: 'Neck',
@@ -82,20 +75,12 @@ export const dificultateLabel: Record<DificultateExercitiu, string> = {
     advanced: 'Advanced',
 };
 
-export const costObosealaLabel: Record<CostOboseala, string> = {
-    veryLow: 'Very Low',
-    low: 'Low',
-    moderate: 'Moderate',
-    high: 'High',
-    veryHigh: 'Very High',
-};
 
 export type ExercitiiForm = {
     nume: string;
     grupMuscular: GrupMuscular;
     grupaSecundara: string;
     dificultate: DificultateExercitiu;
-    costOboseala: CostOboseala;
 };
 
 export const emptyExercitiiForm = (): ExercitiiForm => ({
@@ -103,7 +88,6 @@ export const emptyExercitiiForm = (): ExercitiiForm => ({
     grupMuscular: 'chest',
     grupaSecundara: '',
     dificultate: 'beginner',
-    costOboseala: 'low',
 });
 
 export function validateExercitiiForm(form: ExercitiiForm): string {

@@ -1,6 +1,5 @@
 import type {
     Aliment,
-    CostOboseala,
     DificultateExercitiu,
     Exercitiu,
     GrupMuscular,
@@ -54,10 +53,6 @@ function normalizeDifficulty(value: string): DificultateExercitiu {
 
 function normalizeMuscleGroup(value: string): GrupMuscular {
     return (value.charAt(0).toLowerCase() + value.slice(1)) as GrupMuscular;
-}
-
-function normalizeFatigueCost(value: string): CostOboseala {
-    return (value.charAt(0).toLowerCase() + value.slice(1)) as CostOboseala;
 }
 
 function toPascalCase(value: string) {
@@ -153,7 +148,6 @@ export async function getAdminExercises(): Promise<Exercitiu[]> {
         primaryMuscleGroup: string;
         secondaryMuscleGroup?: string;
         difficulty: string;
-        fatigueCost: string;
     }>>('/exercise/list');
 
     return data.map(exercise => ({
@@ -162,7 +156,6 @@ export async function getAdminExercises(): Promise<Exercitiu[]> {
         grupMuscular: normalizeMuscleGroup(exercise.primaryMuscleGroup),
         grupaSecundara: exercise.secondaryMuscleGroup ?? '',
         dificultate: normalizeDifficulty(exercise.difficulty),
-        costOboseala: normalizeFatigueCost(exercise.fatigueCost),
     }));
 }
 
@@ -174,7 +167,6 @@ export async function createAdminExercise(exercise: Omit<Exercitiu, 'id'>) {
             primaryMuscleGroup: toPascalCase(exercise.grupMuscular),
             secondaryMuscleGroup: exercise.grupaSecundara || null,
             difficulty: toPascalCase(exercise.dificultate),
-            fatigueCost: toPascalCase(exercise.costOboseala),
         }),
     });
 }
@@ -187,7 +179,6 @@ export async function updateAdminExercise(id: number, exercise: Omit<Exercitiu, 
             primaryMuscleGroup: toPascalCase(exercise.grupMuscular),
             secondaryMuscleGroup: exercise.grupaSecundara || null,
             difficulty: toPascalCase(exercise.dificultate),
-            fatigueCost: toPascalCase(exercise.costOboseala),
         }),
     });
 }

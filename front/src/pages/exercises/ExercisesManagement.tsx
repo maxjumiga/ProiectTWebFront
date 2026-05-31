@@ -87,7 +87,6 @@ export default function ExercisesManagement() {
             grupMuscular: ex.grupMuscular,
             grupaSecundara: ex.grupaSecundara,
             dificultate: ex.dificultate,
-            costOboseala: ex.costOboseala,
         });
         setEditError('');
     }
