@@ -1628,8 +1628,7 @@ const UserDashboard: React.FC = () => {
     const WATER_MAX = 3000;
     const CAL_GOAL = 2200;
     const todayCal = todayCalories;
-    const totalFoodCal = foodLog.reduce((sum, log) => sum + Math.round(log.food.calories * log.grams / 100), 0);
-    const calPct = Math.round(((todayCal + totalFoodCal) / CAL_GOAL) * 100);
+    const calPct = Math.round((todayCal / CAL_GOAL) * 100);
     const waterPct = waterMl / WATER_MAX;
 
     const bmi = calcBMI(height, weight);
@@ -1782,7 +1781,7 @@ const UserDashboard: React.FC = () => {
                             <span className="card-title">Calories Consumed</span>
                         </div>
                         <div className="card-big-value">
-                            <strong>{Math.round(todayCal + totalFoodCal).toLocaleString("en-US")}</strong>
+                            <strong>{Math.round(todayCal).toLocaleString("en-US")}</strong>
                             <span className="value-gray"> / {CAL_GOAL.toLocaleString("en-US")} kcal</span>
                         </div>
                         <div className="card-progress-section">
@@ -1792,7 +1791,7 @@ const UserDashboard: React.FC = () => {
                             <span className="progress-percent">{calPct}%</span>
                         </div>
                         <div className="card-helper-text">
-                            Remaining: {Math.max(0, CAL_GOAL - Math.round(todayCal + totalFoodCal)).toLocaleString("en-US")} kcal
+                            Remaining: {Math.max(0, CAL_GOAL - Math.round(todayCal)).toLocaleString("en-US")} kcal
                         </div>
                     </div>
 
