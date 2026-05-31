@@ -1008,16 +1008,16 @@
 }
 
 /* Day detail modal */
-.dark-theme .cal-day-modal-overlay {
+.dark-theme .modal-overlay {
     background: rgba(0, 0, 0, 0.7);
 }
 
-.dark-theme .cal-day-modal {
+.dark-theme .modal-card {
     background: #1a1d27;
     border-color: #2a2d3a;
 }
 
-.dark-theme .modal-day-title {
+.dark-theme .modal-date {
     color: #e2e8f0;
 }
 
@@ -1026,7 +1026,14 @@
     border-bottom-color: #2a2d3a;
 }
 
-.dark-theme .modal-stat-row {
+.dark-theme .modal-section,
+.dark-theme .workout-item {
+    background: #13161f;
+    border-color: #2a2d3a;
+}
+
+.dark-theme .modal-cal-row,
+.dark-theme .modal-water-row {
     color: #e2e8f0;
 }
 
@@ -1034,13 +1041,13 @@
     color: #64748b;
 }
 
-.dark-theme .modal-close-btn {
+.dark-theme .modal-close {
     background: #252840;
     border-color: #2a2d3a;
     color: #94a3b8;
 }
 
-.dark-theme .modal-close-btn:hover {
+.dark-theme .modal-close:hover {
     background: #2e3150;
     color: #e2e8f0;
 }
