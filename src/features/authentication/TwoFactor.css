@@ -1,0 +1,176 @@
+.2fa-card {
+    position: relative;
+}
+
+.shield-icon-container {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.shield-hero-icon {
+    font-size: 28px;
+    color: var(--accent);
+}
+
+/* Centered form label */
+.text-center {
+    text-align: center;
+}
+
+/* Email pill container */
+.email-pill-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.email-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.email-pill svg {
+    color: var(--accent);
+}
+
+/* Alert boxes */
+.alert {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1.4;
+    animation: alertSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes alertSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-error {
+    background-color: rgba(239, 68, 68, 0.08);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.alert-success {
+    background-color: rgba(16, 185, 129, 0.08);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.alert-info {
+    background-color: rgba(14, 165, 233, 0.08);
+    color: #0ea5e9;
+    border: 1px solid rgba(14, 165, 233, 0.15);
+}
+
+/* OTP group layout */
+.otp-group {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.otp-input {
+    width: 60px;
+    height: 64px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-primary);
+    background: var(--input-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    caret-color: var(--accent);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01) inset;
+}
+
+.otp-input:focus {
+    border-color: var(--border-focus);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.otp-input.filled {
+    border-color: var(--accent);
+    background: rgba(99, 102, 241, 0.03);
+}
+
+.otp-input.input-error {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* Timer and resend link styling */
+.resend-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+}
+
+.resend-btn {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Sora', sans-serif;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.resend-btn:hover {
+    color: #4f46e5;
+    text-decoration: underline;
+}
+
+.resend-btn:disabled {
+    color: var(--text-muted);
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+.resend-timer {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
