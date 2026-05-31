@@ -30,7 +30,7 @@ import "../UserDashboard.css";
 
 const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
-    
+
     // State pentru utilizatorul curent
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -75,10 +75,10 @@ const ProfilePage: React.FC = () => {
             });
             if (response.ok) {
                 const result = await response.json();
-                
+
                 // În funcție de formatul ServiceResponse din C#, datele sunt sub proprietatea 'data' sau direct în root
                 const userData = (result.isSuccess && result.data) ? result.data : result;
-                
+
                 setUser(userData);
             }
         } catch (err) {
@@ -165,9 +165,9 @@ const ProfilePage: React.FC = () => {
     const bmi = +(weightKg / (heightM * heightM)).toFixed(1);
     const getBmiCategory = (b: number) => {
         if (b < 18.5) return { label: "Underweight", color: "#38bdf8", bg: "rgba(56,189,248,0.12)" };
-        if (b < 25)   return { label: "Normal weight", color: "#10b981", bg: "rgba(16,185,129,0.12)" };
-        if (b < 30)   return { label: "Overweight", color: "#f97316", bg: "rgba(249,115,22,0.12)" };
-        return           { label: "Obese", color: "#ef4444", bg: "rgba(239,68,68,0.12)" };
+        if (b < 25) return { label: "Normal weight", color: "#10b981", bg: "rgba(16,185,129,0.12)" };
+        if (b < 30) return { label: "Overweight", color: "#f97316", bg: "rgba(249,115,22,0.12)" };
+        return { label: "Obese", color: "#ef4444", bg: "rgba(239,68,68,0.12)" };
     };
     const bmiCat = getBmiCategory(bmi);
     const bmiPct = Math.min(Math.max(((bmi - 10) / 30) * 100, 0), 100);
@@ -286,7 +286,7 @@ const ProfilePage: React.FC = () => {
                     </button>
                     <button className="db-nav-item" onClick={() => navigate('/calendar')}>
                         <FontAwesomeIcon icon={faCalendarDays} className="nav-item-icon" />
-                        <span>Progress</span>
+                        <span>Calendar</span>
                     </button>
                     <button className="db-nav-item active" onClick={() => navigate('/profile')}>
                         <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
@@ -384,8 +384,8 @@ const ProfilePage: React.FC = () => {
                             <div className="bio-header">
                                 <span className="bio-title">About Me</span>
                                 {!isEditingBio && (
-                                    <button 
-                                        className="bio-edit-btn" 
+                                    <button
+                                        className="bio-edit-btn"
                                         onClick={() => {
                                             setEditedBio(user?.bio || "");
                                             setIsEditingBio(true);
@@ -429,7 +429,7 @@ const ProfilePage: React.FC = () => {
                     {/* ── Card 2: Traits ── */}
                     <div className="p-card">
                         <div className="p-card-label">Physical traits</div>
-                        
+
                         {isEditingTraits ? (
                             <div className="traits-grid">
                                 <div className="trait-item gender">
@@ -503,13 +503,13 @@ const ProfilePage: React.FC = () => {
                                     <button className="trait-edit-btn" onClick={handleSaveTraits}>
                                         Save
                                     </button>
-                                    <button 
-                                        className="trait-edit-btn" 
-                                        onClick={() => setIsEditingTraits(false)} 
-                                        style={{ 
-                                            background: "rgba(239, 68, 68, 0.08)", 
-                                            color: "#ef4444", 
-                                            borderColor: "rgba(239, 68, 68, 0.18)" 
+                                    <button
+                                        className="trait-edit-btn"
+                                        onClick={() => setIsEditingTraits(false)}
+                                        style={{
+                                            background: "rgba(239, 68, 68, 0.08)",
+                                            color: "#ef4444",
+                                            borderColor: "rgba(239, 68, 68, 0.18)"
                                         }}
                                     >
                                         Cancel

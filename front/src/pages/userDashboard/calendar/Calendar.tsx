@@ -422,7 +422,7 @@ const CalendarPage: React.FC = () => {
                     </button>
                     <button className="db-nav-item active" onClick={() => navigate('/calendar')}>
                         <FontAwesomeIcon icon={faCalendarDays} className="nav-item-icon" />
-                        <span>Progress</span>
+                        <span>Calendar</span>
                     </button>
                     <button className="db-nav-item" onClick={() => navigate('/profile')}>
                         <FontAwesomeIcon icon={faUser} className="nav-item-icon" />

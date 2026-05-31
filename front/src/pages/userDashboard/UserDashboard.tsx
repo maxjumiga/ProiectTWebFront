@@ -77,6 +77,7 @@ interface FoodItem {
 type MealTime = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
 interface FoodLog {
+    id?: number;
     food: FoodItem;
     mealTime: MealTime;
     grams: number;
@@ -122,7 +123,7 @@ const BarChart: React.FC<BarChartProps> = ({ labels, calData, waterData }) => {
     const n = labels.length || 7;
     const gW = cW / n;
     const bW = 12, gap = 4;
-    
+
     const maxWaterScale = 4.0; // Liters
     const maxCalScale = 4000;  // kcal
     const CAL_GOAL = 2200;
@@ -140,7 +141,7 @@ const BarChart: React.FC<BarChartProps> = ({ labels, calData, waterData }) => {
                     <stop offset="100%" stopColor="#dbeafe" stopOpacity="0.5" />
                 </linearGradient>
             </defs>
-            
+
             {/* Horizontal Grid lines (5 ticks) */}
             {[0, 0.25, 0.5, 0.75, 1].map((v, i) => {
                 const y = pT + cH - v * cH;
@@ -162,7 +163,7 @@ const BarChart: React.FC<BarChartProps> = ({ labels, calData, waterData }) => {
                 const yWaterGoal = pT + cH - (WATER_GOAL / maxWaterScale) * cH;
                 return (
                     <g>
-                        <line x1={pL} x2={W - pR} y1={yWaterGoal} y2={yWaterGoal} 
+                        <line x1={pL} x2={W - pR} y1={yWaterGoal} y2={yWaterGoal}
                             stroke="#3b82f6" strokeWidth="1.2" strokeDasharray="4 4" opacity="0.8" />
                         <text x={W - pR + 10} y={yWaterGoal - 4} fontSize="9" fill="#2563eb" fontWeight="700">3.0 L (Goal)</text>
                     </g>
@@ -174,7 +175,7 @@ const BarChart: React.FC<BarChartProps> = ({ labels, calData, waterData }) => {
                 const yCalGoal = pT + cH - (CAL_GOAL / maxCalScale) * cH;
                 return (
                     <g>
-                        <line x1={pL} x2={W - pR} y1={yCalGoal} y2={yCalGoal} 
+                        <line x1={pL} x2={W - pR} y1={yCalGoal} y2={yCalGoal}
                             stroke="#f97316" strokeWidth="1.2" strokeDasharray="4 4" opacity="0.8" />
                         <text x={W - pR + 10} y={yCalGoal + 10} fontSize="9" fill="#ea580c" fontWeight="700">2,200 kcal (Goal)</text>
                     </g>
@@ -184,7 +185,7 @@ const BarChart: React.FC<BarChartProps> = ({ labels, calData, waterData }) => {
             {/* Bars and labels */}
             {labels.map((d: string, i: number) => {
                 const cx = pL + i * gW + gW / 2;
-                
+
                 // Water in liters for scaling
                 const waterL = (waterData[i] || 0) / 1000;
                 const calories = calData[i] || 0;
@@ -196,10 +197,10 @@ const BarChart: React.FC<BarChartProps> = ({ labels, calData, waterData }) => {
                     <g key={i}>
                         {/* Water Bar (Blue) */}
                         <rect x={cx - bW - gap / 2} y={pT + cH - wh} width={bW} height={wh} fill="url(#wg)" rx="4" />
-                        
+
                         {/* Calories Bar (Orange) */}
                         <rect x={cx + gap / 2} y={pT + cH - ch} width={bW} height={ch} fill="url(#cg)" rx="4" />
-                        
+
                         {/* X-Axis Date Label */}
                         <text x={cx} y={H - 8} textAnchor="middle" fontSize="10" fill="#94a3b8" fontWeight="600">{d}</text>
                     </g>
@@ -254,9 +255,11 @@ interface CaloriesModalProps {
     foodLog: FoodLog[];
     onClose: () => void;
     onAddFood: (log: FoodLog) => void;
+    onResetFood: () => void;
+    onDeleteFood: (id: number) => void;
 }
 
-const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFood }) => {
+const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFood, onResetFood, onDeleteFood }) => {
     const [search, setSearch] = useState("");
     const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
     const [mealTime, setMealTime] = useState<MealTime>("Breakfast");
@@ -413,9 +416,14 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                         </span>
                         Calories Consumed Today
                     </div>
-                    <button className="db-modal-close" onClick={onClose} type="button">
-                        <FontAwesomeIcon icon={faXmark} />
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <button className="db-btn-secondary" onClick={onResetFood} style={{ padding: '6px 12px', fontSize: '11px', color: '#ef4444', borderColor: '#fee2e2', background: '#fef2f2' }}>
+                            Reset All
+                        </button>
+                        <button className="db-modal-close" onClick={onClose} type="button">
+                            <FontAwesomeIcon icon={faXmark} />
+                        </button>
+                    </div>
                 </div>
 
                 <div className="db-modal-body">
@@ -440,6 +448,11 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                                                     <div className="food-log-meta">
                                                         <span className="food-log-grams">{log.grams}g</span>
                                                         <span className="food-log-kcal">{kcal} kcal</span>
+                                                        {log.id && (
+                                                            <button className="ex-remove-minimal" onClick={() => onDeleteFood(log.id!)} style={{ marginLeft: 6, width: 24, height: 24, fontSize: '11px' }}>
+                                                                <FontAwesomeIcon icon={faXmark} />
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             );
@@ -617,9 +630,10 @@ interface WaterModalProps {
     waterMax: number;
     onClose: () => void;
     onUpdate: (ml: number) => void;
+    onResetWater: () => void;
 }
 
-const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onUpdate }) => {
+const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onUpdate, onResetWater }) => {
     const [customStr, setCustomStr] = useState("");
     const customVal = parseInt(customStr, 10);
     const customOk = !isNaN(customVal) && customVal > 0;
@@ -712,9 +726,14 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
                         </span>
                         Water Consumed Today
                     </div>
-                    <button className="db-modal-close" onClick={onClose} type="button">
-                        <FontAwesomeIcon icon={faXmark} />
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <button className="db-btn-secondary" onClick={onResetWater} style={{ padding: '6px 12px', fontSize: '11px', color: '#ef4444', borderColor: '#fee2e2', background: '#fef2f2' }}>
+                            Reset All
+                        </button>
+                        <button className="db-modal-close" onClick={onClose} type="button">
+                            <FontAwesomeIcon icon={faXmark} />
+                        </button>
+                    </div>
                 </div>
 
                 <div className="db-modal-body">
@@ -797,11 +816,6 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
                             </button>
                         </div>
                     </div>
-
-                    {/* Reset */}
-                    <button className="db-btn-ghost" onClick={() => onUpdate(0)}>
-                        Reset today's water intake
-                    </button>
                 </div>
             </div>
         </div>
@@ -1284,7 +1298,7 @@ const UserDashboard: React.FC = () => {
     const handleSaveWeight = async () => {
         const val = parseFloat(tempWeight);
         if (isNaN(val) || val <= 0) return;
-        
+
         try {
             const token = localStorage.getItem("token");
             const response = await fetch("http://localhost:5004/api/user/me", {
@@ -1401,12 +1415,12 @@ const UserDashboard: React.FC = () => {
             });
 
             const results = await Promise.all(promises);
-            
+
             const labels = dates.map(d => {
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 return `${months[d.getMonth()]} ${d.getDate()}`;
             });
-            
+
             const cals = results.map(r => r.calories || 0);
             const waters = results.map(r => r.waterMl || 0);
 
@@ -1469,6 +1483,81 @@ const UserDashboard: React.FC = () => {
         }
     };
 
+    const fetchTodayFoodLogs = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch("http://localhost:5004/api/FoodLog/today/details", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                const mapped: FoodLog[] = data.map((d: any) => ({
+                    id: d.id,
+                    food: {
+                        id: d.foodId,
+                        name: d.foodName,
+                        calories: d.caloriesPer100g,
+                        protein: d.proteinPer100g,
+                        carbs: d.carbsPer100g,
+                        fat: d.fatPer100g,
+                        fiber: d.fiberPer100g || 0,
+                        vitaminC: d.vitaminCPer100g || 0,
+                        unit: "100g"
+                    },
+                    mealTime: "Snack", // Defaulting since backend doesn't store meal time
+                    grams: d.quantityGrams
+                }));
+                setFoodLog(mapped);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleResetWater = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await fetch("http://localhost:5004/api/WaterLog/today/reset", {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchWaterToday();
+            fetchWeeklyProgress();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleResetFood = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await fetch("http://localhost:5004/api/FoodLog/today/reset", {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchTodayFoodLogs();
+            fetchTodayCalories();
+            fetchWeeklyProgress();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleDeleteFood = async (id: number) => {
+        try {
+            const token = localStorage.getItem("token");
+            await fetch(`http://localhost:5004/api/FoodLog/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchTodayFoodLogs();
+            fetchTodayCalories();
+            fetchWeeklyProgress();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -1505,7 +1594,7 @@ const UserDashboard: React.FC = () => {
 
                 if (userData.weight) {
                     setWeight(userData.weight);
-                    
+
                     const wVal = userData.weight;
                     const tempLogs: Record<string, number> = {};
                     const dates = [];
@@ -1530,6 +1619,7 @@ const UserDashboard: React.FC = () => {
         fetchUser();
         fetchWaterToday();
         fetchTodayCalories();
+        fetchTodayFoodLogs();
         fetchWorkouts();
         fetchWeeklyProgress();
 
@@ -1561,13 +1651,13 @@ const UserDashboard: React.FC = () => {
         .slice(0, 2) || "U";
 
     // Averages & Best Day calculations
-    const avgWaterNum = weeklyWater.length > 0 
-        ? (weeklyWater.reduce((a, b) => a + b, 0) / weeklyWater.length / 1000) 
+    const avgWaterNum = weeklyWater.length > 0
+        ? (weeklyWater.reduce((a, b) => a + b, 0) / weeklyWater.length / 1000)
         : 0;
     const avgWaterLabel = `${avgWaterNum.toFixed(1)} L`;
 
-    const avgCalNum = weeklyCal.length > 0 
-        ? Math.round(weeklyCal.reduce((a, b) => a + b, 0) / weeklyCal.length) 
+    const avgCalNum = weeklyCal.length > 0
+        ? Math.round(weeklyCal.reduce((a, b) => a + b, 0) / weeklyCal.length)
         : 0;
     const avgCalLabel = `${avgCalNum.toLocaleString("en-US")} kcal`;
 
@@ -1627,7 +1717,7 @@ const UserDashboard: React.FC = () => {
                     </button>
                     <button className="db-nav-item" onClick={() => navigate('/calendar')}>
                         <FontAwesomeIcon icon={faCalendarDays} className="nav-item-icon" />
-                        <span>Progress</span>
+                        <span>Calendar</span>
                     </button>
                     <button className="db-nav-item" onClick={() => navigate('/profile')}>
                         <FontAwesomeIcon icon={faUser} className="nav-item-icon" />
@@ -1770,7 +1860,7 @@ const UserDashboard: React.FC = () => {
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div className="weekly-legends-row">
                             <div className="legend-dot-item">
                                 <span className="legend-dot-marker blue-dot" />
@@ -1834,12 +1924,12 @@ const UserDashboard: React.FC = () => {
                                 <span className="weight-stat-label">Current Weight</span>
                                 {isEditingWeight ? (
                                     <div className="weight-edit-inline">
-                                        <input 
-                                            type="number" 
-                                            step="0.1" 
+                                        <input
+                                            type="number"
+                                            step="0.1"
                                             className="weight-inline-input"
-                                            value={tempWeight} 
-                                            onChange={e => setTempWeight(e.target.value)} 
+                                            value={tempWeight}
+                                            onChange={e => setTempWeight(e.target.value)}
                                             autoFocus
                                         />
                                         <button className="weight-inline-save" onClick={handleSaveWeight}>Save</button>
@@ -1870,7 +1960,7 @@ const UserDashboard: React.FC = () => {
                                 const minW = Math.min(...weightHistory) - 1;
                                 const maxW = Math.max(...weightHistory) + 1;
                                 const range = maxW - minW || 1;
-                                
+
                                 // Plot dimensions
                                 const widthTotal = 400;
                                 const heightTotal = 200;
@@ -1878,25 +1968,25 @@ const UserDashboard: React.FC = () => {
                                 const paddingRight = 20;
                                 const paddingTop = 25;
                                 const paddingBottom = 35;
-                                
+
                                 const chartW = widthTotal - paddingLeft - paddingRight;
                                 const chartH = heightTotal - paddingTop - paddingBottom;
-                                
+
                                 const mapY = (w: number) => paddingTop + chartH - ((w - minW) / range) * chartH;
                                 const step = chartW / 6;
-                                
+
                                 const points = weightHistory.map((w, idx) => ({
                                     x: paddingLeft + idx * step,
                                     y: mapY(w),
                                     val: w
                                 }));
-                                
+
                                 const pathD = points.reduce((acc, p, idx) => acc + (idx === 0 ? `M ${p.x} ${p.y}` : ` L ${p.x} ${p.y}`), "");
                                 const areaD = pathD + ` L ${points[points.length - 1].x} ${paddingTop + chartH} L ${points[0].x} ${paddingTop + chartH} Z`;
-                                
+
                                 // Y ticks at min, mid, max
                                 const yTicks = [minW, (minW + maxW) / 2, maxW];
-                                
+
                                 return (
                                     <svg viewBox={`0 0 ${widthTotal} ${heightTotal}`} width="100%" height={heightTotal} className="sparkline-svg">
                                         <defs>
@@ -1905,7 +1995,7 @@ const UserDashboard: React.FC = () => {
                                                 <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
                                             </linearGradient>
                                         </defs>
-                                        
+
                                         {/* Grid lines */}
                                         {yTicks.map((tickVal, idx) => {
                                             const y = mapY(tickVal);
@@ -1916,26 +2006,26 @@ const UserDashboard: React.FC = () => {
                                                 </g>
                                             );
                                         })}
-                                        
+
                                         {/* Shaded Area */}
                                         <path d={areaD} fill="url(#weight-grad)" />
-                                        
+
                                         {/* Line path */}
                                         <path d={pathD} fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0px 3px 5px rgba(59, 130, 246, 0.25))" }} />
-                                        
+
                                         {/* Data points */}
                                         {points.map((p, idx) => (
                                             <g key={idx} className="chart-point-group">
-                                                <circle cx={p.x} cy={p.y} r={idx === points.length - 1 ? "5" : "4"} 
+                                                <circle cx={p.x} cy={p.y} r={idx === points.length - 1 ? "5" : "4"}
                                                     fill="#ffffff" stroke="#3b82f6" strokeWidth="2.5" />
-                                                
+
                                                 {/* Tooltip / Weight value right above point */}
                                                 <text x={p.x} y={p.y - 12} textAnchor="middle" fontSize="9.5" fontWeight="800" fill="#2563eb">
                                                     {p.val.toFixed(1)}
                                                 </text>
                                             </g>
                                         ))}
-                                        
+
                                         {/* X Axis Labels (Dates) */}
                                         {points.map((p, idx) => (
                                             <text key={idx} x={p.x} y={heightTotal - 10} textAnchor="middle" fontSize="9" fill="#94a3b8" fontWeight="600">
@@ -1964,10 +2054,12 @@ const UserDashboard: React.FC = () => {
                     foodLog={foodLog}
                     onClose={() => setCalModal(false)}
                     onAddFood={log => {
-                        setFoodLog(prev => [...prev, log]);
+                        fetchTodayFoodLogs();
                         fetchTodayCalories();
                         fetchWeeklyProgress();
                     }}
+                    onResetFood={handleResetFood}
+                    onDeleteFood={handleDeleteFood}
                 />
             )}
             {waterModal && (
@@ -1979,6 +2071,7 @@ const UserDashboard: React.FC = () => {
                         setWaterMl(ml);
                         fetchWeeklyProgress();
                     }}
+                    onResetWater={handleResetWater}
                 />
             )}
             {workoutModal && (
