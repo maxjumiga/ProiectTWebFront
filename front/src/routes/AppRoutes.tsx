@@ -1,0 +1,90 @@
+// ============================================================
+// AppRoutes.tsx — Sistemul central de rutare al aplicatiei
+// Contine rutele publice/auth ale colegilor (Landing, Login,
+// Register, Onboarding, Dashboard user, Profile, Settings,
+// Calendar) cat si rutele panoului admin (JumigaMaximilian)
+// protejate de AdminAuthRoute cu login propriu la /admin/login.
+// ============================================================
+
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
+// -- Pagini colegi --
+import Landing from '../pages/landing/Landing';
+import LoginPage from '../features/authentication/Authentication';
+import TwoFactorPage from '../features/authentication/TwoFactor';
+import RegisterPage from '../features/registration/Registration';
+import ForgotPasswordFlow from '../features/forgotPassword/ForgotPassword';
+import Dashboard from '../pages/userDashboard/UserDashboard';
+import Profile from '../pages/userDashboard/profile/Profile';
+import Settings from '../pages/userDashboard/settings/Settings';
+import Calendar from '../pages/userDashboard/calendar/Calendar';
+import Onboarding from '../features/onboarding/Onboarding';
+import AuthRoute from './AuthRoute';
+import GuestRoute from './GuestRoute';
+
+// -- Pagini admin (JumigaMaximilian) --
+import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
+import AdminDashboard from '../pages/adminDashboard/AdminDashboard';
+import UserManagement from '../pages/users/UserManagement';
+import FoodManagement from '../pages/food/FoodManagement';
+import ExercisesManagement from '../pages/exercises/ExercisesManagement';
+
+import AdminAuthRoute from './AdminAuthRoute';
+
+// Layout-ul panoului admin: Sidebar fix + Header + continut pagina
+function AdminLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <div className="app-shell">
+            <Sidebar />
+            <div className="main-area">
+                <Header />
+                <main className="page-content">
+                    {children}
+                </main>
+            </div>
+        </div>
+    );
+}
+
+export default function AppRoutes() {
+    return (
+        <Router>
+            <Routes>
+                {/* Public Routes — pagina principala */}
+                <Route path="/" element={<Landing />} />
+
+                {/* Guest Routes — doar pentru utilizatori neautentificati */}
+                <Route element={<GuestRoute />}>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/two-factor" element={<TwoFactorPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route
+                        path="/forgot-password"
+                        element={<ForgotPasswordFlow />}
+                    />
+                </Route>
+
+                {/* Protected Routes — utilizator autentificat (colegi) */}
+                <Route element={<AuthRoute />}>
+                    <Route path="/onboarding" element={<Onboarding />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/calendar" element={<Calendar />} />
+                </Route>
+
+                {/* Admin Panel Routes — protejate de AdminAuthRoute (isAdminAuthenticated) */}
+                <Route element={<AdminAuthRoute />}>
+                    <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+                    <Route path="/users" element={<AdminLayout><UserManagement /></AdminLayout>} />
+                    <Route path="/food" element={<AdminLayout><FoodManagement /></AdminLayout>} />
+                    <Route path="/exercises" element={<AdminLayout><ExercisesManagement /></AdminLayout>} />
+                </Route>
+
+                {/* Fallback — orice ruta necunoscuta → Landing */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+        </Router>
+    );
+}
