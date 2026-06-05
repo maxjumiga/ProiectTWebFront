@@ -21,14 +21,59 @@ interface CaloriesModalProps {
     onDeleteFood: (id: number) => void;
 }
 
+const getNutrientVal = (nutrients: any[], ids: number[], names: string[]): number => {
+    if (!nutrients || !Array.isArray(nutrients)) return 0;
+    
+    // 1. Try finding by ID
+    const byId = nutrients.find((n: any) => {
+        const nId = n.nutrientId || n.id || (n.nutrient && (n.nutrient.id || n.nutrient.nutrientId));
+        return nId && ids.includes(Number(nId));
+    });
+    if (byId) {
+        const val = byId.value !== undefined ? byId.value : (byId.amount !== undefined ? byId.amount : byId.val);
+        if (val !== undefined && val !== null && !isNaN(Number(val))) {
+            return Number(val);
+        }
+    }
+    
+    // 2. Try finding by nutrientNumber
+    const byNum = nutrients.find((n: any) => {
+        const nNum = n.nutrientNumber || n.number || (n.nutrient && n.nutrient.number);
+        return nNum && ids.map(String).includes(String(nNum));
+    });
+    if (byNum) {
+        const val = byNum.value !== undefined ? byNum.value : (byNum.amount !== undefined ? byNum.amount : byNum.val);
+        if (val !== undefined && val !== null && !isNaN(Number(val))) {
+            return Number(val);
+        }
+    }
+    
+    // 3. Try finding by Name match
+    const byName = nutrients.find((n: any) => {
+        const nName = n.nutrientName || n.name || (n.nutrient && n.nutrient.name);
+        return nName && names.some(name => String(nName).toLowerCase().includes(name.toLowerCase()));
+    });
+    if (byName) {
+        const val = byName.value !== undefined ? byName.value : (byName.amount !== undefined ? byName.amount : byName.val);
+        if (val !== undefined && val !== null && !isNaN(Number(val))) {
+            return Number(val);
+        }
+    }
+    
+    return 0;
+};
+
 const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFood, onResetFood, onDeleteFood }) => {
     const [search, setSearch] = useState("");
     const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
     const [mealTime, setMealTime] = useState<MealTime>("Breakfast");
     const [grams, setGrams] = useState(100);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [mealDropdownOpen, setMealDropdownOpen] = useState(false);
     const [foods, setFoods] = useState<FoodItem[]>([]);
+    
     const dropRef = useRef<HTMLDivElement>(null);
+    const mealDropRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (search.trim().length < 2) {
@@ -51,15 +96,17 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                 }
 
                 const data = await response.json();
-                const mappedFoods: FoodItem[] = data.foods.map((f: any) => ({
+                console.log("Raw USDA search response:", data);
+
+                const mappedFoods: FoodItem[] = (data.foods || []).map((f: any) => ({
                     id: f.fdcId,
                     name: f.description,
-                    calories: 0,
-                    protein: 0,
-                    carbs: 0,
-                    fat: 0,
-                    vitaminC: 0,
-                    fiber: 0,
+                    calories: getNutrientVal(f.foodNutrients || f.nutrients || [], [1008, 2047, 2048], ["energy", "kcal"]),
+                    protein: getNutrientVal(f.foodNutrients || f.nutrients || [], [1003], ["protein"]),
+                    carbs: getNutrientVal(f.foodNutrients || f.nutrients || [], [1005], ["carbohydrate"]),
+                    fat: getNutrientVal(f.foodNutrients || f.nutrients || [], [1004], ["lipid", "fat"]),
+                    vitaminC: getNutrientVal(f.foodNutrients || f.nutrients || [], [1162], ["vitamin c", "ascorbic"]),
+                    fiber: getNutrientVal(f.foodNutrients || f.nutrients || [], [1079], ["fiber"]),
                     unit: "100g"
                 }));
 
@@ -70,6 +117,7 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                         )
                 );
 
+                console.log("Mapped food items:", uniqueFoods);
                 setFoods(uniqueFoods);
             } catch (err) {
                 console.error(err);
@@ -88,6 +136,9 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
             if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
                 setDropdownOpen(false);
             }
+            if (mealDropRef.current && !mealDropRef.current.contains(e.target as Node)) {
+                setMealDropdownOpen(false);
+            }
         };
         document.addEventListener("mousedown", handler);
         return () => document.removeEventListener("mousedown", handler);
@@ -95,6 +146,9 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
 
     const handleAdd = async () => {
         if (!selectedFood || grams <= 0) return;
+
+        // Persist the selected meal time as the most recent log selection
+        localStorage.setItem("last_added_meal_time", mealTime);
 
         try {
             const token = localStorage.getItem("token");
@@ -106,11 +160,21 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                 },
                 body: JSON.stringify({
                     fdcId: selectedFood.id,
-                    quantityGrams: grams
+                    quantityGrams: grams,
+                    mealTime: mealTime,
+                    mealType: mealTime,
+                    meal: mealTime
                 })
             });
 
-            if (!response.ok) {
+            if (response.ok) {
+                const createdLog = await response.json().catch(() => null);
+                if (createdLog && createdLog.id) {
+                    const saved = JSON.parse(localStorage.getItem("food_meal_times") || "{}");
+                    saved[createdLog.id] = mealTime;
+                    localStorage.setItem("food_meal_times", JSON.stringify(saved));
+                }
+            } else {
                 const text = await response.text();
                 console.log(text);
             }
@@ -166,119 +230,187 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                 </div>
 
                 <div className="db-modal-body">
+                    {/* Add Food Form */}
                     <div className="db-modal-section">
-                        <div className="db-flex-row" style={{ gap: 12, flexWrap: 'wrap' }}>
-                            <div className="db-card-stub">
-                                <div className="db-card-title">Search food</div>
-                                <div className="search-input-wrap" ref={dropRef}>
-                                    <FontAwesomeIcon icon={faMagnifyingGlass} className="search-prefix-icon" />
-                                    <input
-                                        type="text"
-                                        className="db-input"
-                                        placeholder="Search USDA foods..."
-                                        value={search}
-                                        onChange={e => setSearch(e.target.value)}
-                                        onFocus={() => setDropdownOpen(true)}
-                                    />
+                        <div className="db-modal-section-title">
+                            <FontAwesomeIcon icon={faPlus} style={{ marginRight: 6 }} /> Add Food Item
+                        </div>
+                        <div className="add-food-grid">
+                            {/* Search Bar */}
+                            <div className="add-food-field">
+                                <label className="db-field-label">Search Food</label>
+                                <div className="add-food-search-wrap" ref={dropRef}>
+                                    <div className="add-food-input-row">
+                                        <FontAwesomeIcon icon={faMagnifyingGlass} className="search-prefix-icon" />
+                                        <input
+                                            type="text"
+                                            className="db-input"
+                                            placeholder="Search USDA foods (e.g. apple, chicken, rice)..."
+                                            value={search}
+                                            onChange={e => setSearch(e.target.value)}
+                                            onFocus={() => setDropdownOpen(true)}
+                                        />
+                                    </div>
                                     {dropdownOpen && foods.length > 0 && (
-                                        <div className="search-dropdown animate-fup">
+                                        <div className="food-dropdown">
                                             {foods.map(food => (
-                                                <button
+                                                <div
                                                     key={food.id}
-                                                    type="button"
-                                                    className="search-item"
+                                                    className="food-dropdown-item"
                                                     onClick={() => {
                                                         setSelectedFood(food);
                                                         setSearch(food.name);
                                                         setDropdownOpen(false);
                                                     }}
                                                 >
-                                                    {food.name}
-                                                </button>
+                                                    <span className="food-dropdown-name">{food.name}</span>
+                                                    {food.calories > 0 && (
+                                                        <span className="food-dropdown-cal">{food.calories.toFixed(0)} kcal/100g</span>
+                                                    )}
+                                                </div>
                                             ))}
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="db-card-stub" style={{ flex: '1 1 260px' }}>
-                                <div className="db-card-title">Selected food</div>
-                                {selectedFood ? (
-                                    <div className="food-summary-card">
-                                        <div>{selectedFood.name}</div>
-                                        <div className="food-summary-row">
-                                            <div>{selectedFood.unit}</div>
-                                            <div>{grams} g</div>
+                            {/* Meal Time & Amount inputs */}
+                            <div className="add-food-sub-row">
+                                <div className="add-food-field" style={{ position: 'relative' }} ref={mealDropRef}>
+                                    <label className="db-field-label">Meal Time</label>
+                                    <button
+                                        type="button"
+                                        className="db-select"
+                                        onClick={() => setMealDropdownOpen(!mealDropdownOpen)}
+                                        style={{ textAlign: 'left', cursor: 'pointer' }}
+                                    >
+                                        {mealTime}
+                                    </button>
+                                    {mealDropdownOpen && (
+                                        <div className="food-dropdown" style={{ top: 'calc(100% + 4px)', zIndex: 110 }}>
+                                            {(["Breakfast", "Lunch", "Dinner", "Snack"] as MealTime[]).map(time => (
+                                                <div
+                                                    key={time}
+                                                    className="food-dropdown-item"
+                                                    style={{ 
+                                                        fontWeight: mealTime === time ? '700' : 'normal',
+                                                        background: mealTime === time ? 'var(--color-blue-soft)' : 'transparent'
+                                                    }}
+                                                    onClick={() => {
+                                                        setMealTime(time);
+                                                        setMealDropdownOpen(false);
+                                                    }}
+                                                >
+                                                    <span className="food-dropdown-name">{time}</span>
+                                                </div>
+                                            ))}
                                         </div>
-                                        <div className="food-summary-row">
-                                            <div>{selectedFood.calories ? macro(selectedFood.calories) : "—"} kcal</div>
-                                            <div>{selectedFood.protein ? macro(selectedFood.protein) : "—"} g protein</div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="food-summary-empty">Select a food item to add.</div>
-                                )}
+                                    )}
+                                </div>
+                                <div className="add-food-field">
+                                    <label className="db-field-label">Amount (grams)</label>
+                                    <input
+                                        type="number"
+                                        className="db-input"
+                                        value={grams}
+                                        min={1}
+                                        onChange={e => setGrams(Math.max(1, Number(e.target.value)))}
+                                    />
+                                </div>
                             </div>
 
-                            <div className="db-card-stub" style={{ width: 180 }}>
-                                <div className="db-card-title">Meal time</div>
-                                <div className="db-pill-list">
-                                    {(["Breakfast", "Lunch", "Dinner", "Snack"] as MealTime[]).map(time => (
-                                        <button
-                                            key={time}
-                                            className={`db-pill${mealTime === time ? ' active' : ''}`}
-                                            onClick={() => setMealTime(time)}
-                                            type="button"
-                                        >
-                                            {time}
-                                        </button>
-                                    ))}
+                            {/* Selected Food Macro Preview */}
+                            {selectedFood ? (
+                                <div className="macro-preview">
+                                    <div className="macro-preview-title">Nutrient Preview (for {grams}g)</div>
+                                    <div className="macro-grid">
+                                        <div className="macro-chip cal-chip">
+                                            <span className="macro-val">{macro(selectedFood.calories)}</span>
+                                            <span className="macro-lbl">Calories (kcal)</span>
+                                        </div>
+                                        <div className="macro-chip prot-chip">
+                                            <span className="macro-val">{macro(selectedFood.protein)}g</span>
+                                            <span className="macro-lbl">Protein</span>
+                                        </div>
+                                        <div className="macro-chip carb-chip">
+                                            <span className="macro-val">{macro(selectedFood.carbs)}g</span>
+                                            <span className="macro-lbl">Carbs</span>
+                                        </div>
+                                        <div className="macro-chip fat-chip">
+                                            <span className="macro-val">{macro(selectedFood.fat)}g</span>
+                                            <span className="macro-lbl">Fat</span>
+                                        </div>
+                                        <div className="macro-chip fiber-chip">
+                                            <span className="macro-val">{macro(selectedFood.fiber)}g</span>
+                                            <span className="macro-lbl">Fiber</span>
+                                        </div>
+                                        <div className="macro-chip vitc-chip">
+                                            <span className="macro-val">{macro(selectedFood.vitaminC)}mg</span>
+                                            <span className="macro-lbl">Vitamin C</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="db-card-title" style={{ marginTop: 12 }}>Amount</div>
-                                <input
-                                    type="number"
-                                    className="db-input"
-                                    value={grams}
-                                    min={1}
-                                    onChange={e => setGrams(Number(e.target.value))}
-                                />
-                            </div>
+                            ) : (
+                                <div style={{ padding: '16px', background: '#f8fafc', border: '1px dashed var(--border-color)', borderRadius: '12px', textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)', fontWeight: 600 }}>
+                                    Select a food item to preview nutrition and add to log.
+                                </div>
+                            )}
+
+                            {/* Action Button */}
+                            <button
+                                className="db-btn-primary"
+                                style={{ marginTop: 6 }}
+                                onClick={handleAdd}
+                                disabled={!selectedFood || grams <= 0}
+                            >
+                                <FontAwesomeIcon icon={faPlus} /> Add to Log
+                            </button>
                         </div>
                     </div>
 
+                    {/* Today's Food Log */}
                     <div className="db-modal-section">
-                        <div className="section-header-row">
-                            <div className="db-modal-section-title">Today&apos;s Food Log</div>
+                        <div className="db-modal-section-title">
+                            Today's Food Log
                         </div>
-                        <div className="log-grid">
+                        <div className="food-log-list">
                             {Object.entries(groupedLog).map(([group, entries]) => (
-                                <div key={group} className="log-group-card">
-                                    <div className="log-group-header">
-                                        <span>{group}</span>
-                                        <FontAwesomeIcon icon={mealIcons[group as MealTime]} />
+                                <div key={group} className="meal-group">
+                                    <div className="meal-group-label">
+                                        <FontAwesomeIcon icon={mealIcons[group as MealTime]} style={{ marginRight: 6 }} />
+                                        {group}
                                     </div>
                                     {entries.length === 0 ? (
-                                        <div className="log-empty">No items</div>
-                                    ) : entries.map((item, idx) => (
-                                        <div key={idx} className="log-entry-row">
-                                            <div>
-                                                <div className="log-entry-name">{item.food.name}</div>
-                                                <div className="log-entry-meta">{item.grams} g</div>
-                                            </div>
-                                            <button className="icon-btn" onClick={() => item.id && onDeleteFood(item.id)}>
-                                                <FontAwesomeIcon icon={faXmark} />
-                                            </button>
+                                        <div style={{ padding: '8px 12px', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                                            No items logged
                                         </div>
-                                    ))}
+                                    ) : (
+                                        entries.map((item, idx) => {
+                                            const itemKcal = item.food.calories ? ((item.food.calories * item.grams) / 100).toFixed(0) : "0";
+                                            return (
+                                                <div key={idx} className="food-log-item">
+                                                    <span className="food-log-name" title={item.food.name}>
+                                                        {item.food.name}
+                                                    </span>
+                                                    <div className="food-log-meta">
+                                                        <span className="food-log-grams">{item.grams} g</span>
+                                                        <span className="food-log-kcal">{itemKcal} kcal</span>
+                                                        <button 
+                                                            className="db-modal-close" 
+                                                            style={{ width: 22, height: 22, fontSize: 10, borderRadius: 6, border: 'none', background: 'rgba(239, 68, 68, 0.08)', color: '#dc2626', cursor: 'pointer' }} 
+                                                            onClick={() => item.id && onDeleteFood(item.id)}
+                                                            title="Delete entry"
+                                                        >
+                                                            <FontAwesomeIcon icon={faXmark} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    )}
                                 </div>
                             ))}
                         </div>
-                    </div>
-
-                    <div className="db-modal-section" style={{ marginTop: 10 }}>
-                        <button className="db-btn-primary" onClick={handleAdd} disabled={!selectedFood || grams <= 0}>
-                            <FontAwesomeIcon icon={faPlus} /> Add to Log
-                        </button>
                     </div>
                 </div>
             </div>
