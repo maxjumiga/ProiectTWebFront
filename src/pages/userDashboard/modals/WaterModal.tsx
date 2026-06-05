@@ -60,7 +60,8 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
                 throw new Error("Failed to add water");
             }
 
-            onUpdate(Math.min(waterMl + ml, waterMax));
+            onUpdate(waterMl + ml);
+            setCustomStr("");
         } catch (err) {
             console.error(err);
         }
@@ -83,6 +84,7 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
             }
 
             onUpdate(Math.max(waterMl - ml, 0));
+            setCustomStr("");
         } catch (err) {
             console.error(err);
         }
@@ -169,18 +171,21 @@ const WaterModal: React.FC<WaterModalProps> = ({ waterMl, waterMax, onClose, onU
                         <div className="db-modal-section-title">
                             <FontAwesomeIcon icon={faXmark} style={{ marginRight: 6 }} /> Custom Amount
                         </div>
-                        <div className="custom-water-row">
-                            <input
-                                type="number"
-                                className="db-input"
-                                placeholder="Add custom ml"
-                                value={customStr}
-                                onChange={e => setCustomStr(e.target.value)}
-                            />
-                            <button className="db-btn-primary" type="button" onClick={() => customOk && add(customVal)} disabled={!customOk}>
+                        <div className="water-custom-row">
+                            <div className="water-custom-input-wrap">
+                                <input
+                                    type="number"
+                                    className="db-input water-custom-input"
+                                    placeholder="Add custom amount"
+                                    value={customStr}
+                                    onChange={e => setCustomStr(e.target.value)}
+                                />
+                                <span className="water-custom-unit">ml</span>
+                            </div>
+                            <button className="water-action-btn water-action-add" type="button" onClick={() => customOk && add(customVal)} disabled={!customOk}>
                                 Add
                             </button>
-                            <button className="db-btn-secondary" type="button" onClick={() => customOk && sub(customVal)} disabled={!customOk}>
+                            <button className="water-action-btn water-action-remove" type="button" onClick={() => customOk && sub(customVal)} disabled={!customOk}>
                                 Remove
                             </button>
                         </div>
