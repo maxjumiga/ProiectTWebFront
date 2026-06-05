@@ -101,12 +101,12 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                 const mappedFoods: FoodItem[] = (data.foods || []).map((f: any) => ({
                     id: f.fdcId,
                     name: f.description,
-                    calories: getNutrientVal(f.foodNutrients || f.nutrients || [], [1008, 2047, 2048], ["energy", "kcal"]),
-                    protein: getNutrientVal(f.foodNutrients || f.nutrients || [], [1003], ["protein"]),
-                    carbs: getNutrientVal(f.foodNutrients || f.nutrients || [], [1005], ["carbohydrate"]),
-                    fat: getNutrientVal(f.foodNutrients || f.nutrients || [], [1004], ["lipid", "fat"]),
-                    vitaminC: getNutrientVal(f.foodNutrients || f.nutrients || [], [1162], ["vitamin c", "ascorbic"]),
-                    fiber: getNutrientVal(f.foodNutrients || f.nutrients || [], [1079], ["fiber"]),
+                    calories: f.calories ?? 0,
+                    protein: f.protein ?? 0,
+                    carbs: f.carbohydrates ?? 0,
+                    fat: f.fat ?? 0,
+                    vitaminC: f.vitaminC ?? 0,
+                    fiber: f.fiber ?? 0,
                     unit: "100g"
                 }));
 
