@@ -28,6 +28,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
 import "../UserDashboard.css";
+import WorkoutDetailsModal from "../modals/WorkoutDetailsModal";
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -63,10 +64,13 @@ const ProfilePage: React.FC = () => {
     const [passwordSuccess, setPasswordSuccess] = useState("");
     const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
+    // Workout details modal
+    const [viewingWorkout, setViewingWorkout] = useState<any>(null);
+
     // Fake password pentru afișare
     const fakePassword = "MySecretPass123";
     const token = localStorage.getItem("token");
-    
+
     const fetchUser = async () => {
         try {
             setLoading(true);
@@ -505,7 +509,6 @@ const ProfilePage: React.FC = () => {
                                     >
                                         <option value="M">M</option>
                                         <option value="F">F</option>
-                                        <option value="Other">Other</option>
                                     </select>
                                 </div>
                                 <div className="trait-item age">
@@ -533,6 +536,7 @@ const ProfilePage: React.FC = () => {
                                     <input
                                         id="weightInput"
                                         type="number"
+                                        step="0.1"
                                         className="trait-input-field"
                                         value={editedWeight}
                                         onChange={(e) => setEditedWeight(Number(e.target.value))}
@@ -605,7 +609,7 @@ const ProfilePage: React.FC = () => {
                                     </span>
                                 </div>
                             </div>
-                            
+
                             <div className="weight-history-list" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                 {weightHistory.slice(0, 4).map((log, i) => (
                                     <div key={log.id || i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', borderLeft: '2px solid #10b981' }}>
@@ -615,7 +619,7 @@ const ProfilePage: React.FC = () => {
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                                             <span style={{ color: 'var(--text-primary)', fontWeight: '500' }}>{log.weight} kg</span>
-                                            <button 
+                                            <button
                                                 onClick={() => handleDeleteWeight(log.id)}
                                                 style={{ background: 'none', border: 'none', color: '#ef4444', opacity: 0.6, cursor: 'pointer', fontSize: '14px', padding: '4px' }}
                                                 title="Delete weight log"
@@ -637,41 +641,28 @@ const ProfilePage: React.FC = () => {
                     <div className="p-card recent-workouts-card">
                         <div className="p-card-label">Recent Workouts</div>
                         <div className="recent-workouts-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '1rem' }}>
-                            {recentWorkouts.map((workout, idx) => {
-                                // WorkoutType enum values check
-                                let typeLabel = "Workout";
-                                if (workout.type === 0) typeLabel = "Cardio";
-                                else if (workout.type === 1) typeLabel = "Strength";
-                                else if (workout.type === 2) typeLabel = "Flexibility";
-                                
-                                return (
-                                    <div key={workout.id || idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', borderLeft: '3px solid #6366f1' }}>
-                                        <div style={{ flex: 1 }}>
-                                            <div style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '15px', marginBottom: '6px' }}>
-                                                {workout.label || 'Workout Session'}
-                                            </div>
-                                            <div style={{ color: 'var(--text-secondary)', fontSize: '13px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                                                <span><FontAwesomeIcon icon={faClock} style={{ marginRight: '6px', opacity: 0.7 }}/> {workout.duration} min</span>
-                                                <span style={{ opacity: 0.3 }}>|</span>
-                                                <span><FontAwesomeIcon icon={faCalendarDay} style={{ marginRight: '6px', opacity: 0.7 }}/> {new Date(workout.date).toLocaleDateString()}</span>
-                                            </div>
-                                        </div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
-                                            <div style={{ fontSize: '12px', padding: '4px 10px', background: 'rgba(99,102,241,0.1)', color: '#818cf8', borderRadius: '6px', fontWeight: '500' }}>
-                                                {typeLabel}
-                                            </div>
-                                            <button 
-                                                onClick={() => handleDeleteWorkout(workout.id)}
-                                                style={{ background: 'none', border: 'none', color: '#ef4444', opacity: 0.6, cursor: 'pointer', fontSize: '13px', padding: '4px' }}
-                                                title="Delete workout"
-                                                type="button"
-                                            >
-                                                <FontAwesomeIcon icon={faTrash} />
-                                            </button>
-                                        </div>
+                            {recentWorkouts.map((w, idx) => (
+                                <div className="recent-workout-item" key={w.id || idx} onClick={() => setViewingWorkout(w)} style={{ cursor: "pointer", display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', borderLeft: '3px solid #6366f1' }}>
+                                    <div className="workout-icon-box" style={{ background: `${w.type === 'Strength' || w.type === 1 ? '#dc2626' : w.type === 'Cardio' || w.type === 0 ? '#059669' : '#9333ea'}20`, color: w.type === 'Strength' || w.type === 1 ? '#dc2626' : w.type === 'Cardio' || w.type === 0 ? '#059669' : '#9333ea', padding: '10px', borderRadius: '8px' }}>
+                                        <FontAwesomeIcon icon={w.type === 'Strength' || w.type === 1 ? faDumbbell : w.type === 'Cardio' || w.type === 0 ? faHeartPulse : faPersonWalking} />
                                     </div>
-                                );
-                            })}
+                                    <div className="workout-text" style={{ flex: 1 }}>
+                                        <div className="w-name" style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '15px' }}>{w.label || 'Workout Session'}</div>
+                                        <div className="w-details" style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>{w.duration} min • {new Date(w.date).toLocaleDateString()}</div>
+                                    </div>
+                                    <button
+                                        className="delete-weight-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteWorkout(w.id);
+                                        }}
+                                        style={{ background: 'none', border: 'none', color: '#ef4444', opacity: 0.6, cursor: 'pointer' }}
+                                        title="Delete this workout"
+                                    >
+                                        <FontAwesomeIcon icon={faTrash} />
+                                    </button>
+                                </div>
+                            ))}
                             {recentWorkouts.length === 0 && (
                                 <div style={{ fontSize: '13px', color: 'var(--text-secondary)', fontStyle: 'italic', padding: '12px 0' }}>No recent workouts found.</div>
                             )}
@@ -815,6 +806,15 @@ const ProfilePage: React.FC = () => {
                         </form>
                     </div>
                 </div>
+            )}
+
+            {/* ── Workout Details Modal ── */}
+            {viewingWorkout && (
+                <WorkoutDetailsModal
+                    workout={viewingWorkout}
+                    user={user}
+                    onClose={() => setViewingWorkout(null)}
+                />
             )}
         </div>
     );

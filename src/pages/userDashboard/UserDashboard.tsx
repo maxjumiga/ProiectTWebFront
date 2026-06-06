@@ -522,14 +522,17 @@ const UserDashboard: React.FC = () => {
         .slice(0, 2) || "U";
 
     // Averages & Best Day calculations
-    const avgWaterNum = weeklyWater.length > 0
-        ? (weeklyWater.reduce((a, b) => a + b, 0) / weeklyWater.length / 1000)
-        : 0;
+    const activeDaysCount = weeklyCal.reduce((count, cal, i) => {
+        if (cal > 0 || weeklyWater[i] > 0) return count + 1;
+        return count;
+    }, 0);
+
+    const divisor = activeDaysCount > 0 ? activeDaysCount : 1;
+
+    const avgWaterNum = weeklyWater.reduce((a, b) => a + b, 0) / divisor / 1000;
     const avgWaterLabel = `${avgWaterNum.toFixed(1)} L`;
 
-    const avgCalNum = weeklyCal.length > 0
-        ? Math.round(weeklyCal.reduce((a, b) => a + b, 0) / weeklyCal.length)
-        : 0;
+    const avgCalNum = Math.round(weeklyCal.reduce((a, b) => a + b, 0) / divisor);
     const avgCalLabel = `${avgCalNum.toLocaleString("en-US")} kcal`;
 
     let bestDayIdx = 0;
@@ -686,6 +689,7 @@ const UserDashboard: React.FC = () => {
                         </div>
                         <span className="card-title" style={{ fontSize: '18px', fontWeight: '800' }}>Log Today's Workout</span>
                         <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '8px', fontWeight: '600' }}>Click here to add a new session</span>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', textAlign: 'center' }}>You can view your workouts in the calendar or profile.</span>
                     </div>
 
                     {/* CARD 4: Last 7 Days - Spans 2 Columns */}

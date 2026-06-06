@@ -15,6 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import "./Calendar.css";
 import "../UserDashboard.css";
+import WorkoutDetailsModal from "../modals/WorkoutDetailsModal";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -24,6 +25,7 @@ interface Workout {
     type: WorkoutType;
     label: string;
     duration: number;
+    workoutExercises: any[];
 }
 
 interface DayData {
@@ -104,12 +106,12 @@ const Ring = ({ pct, color, size = 44 }: { pct: number; color: string; size?: nu
 // ─── Day Detail Modal ─────────────────────────────────────────────────────────
 
 interface DayModalProps {
-    date: Date;
-    data: DayData | null;
+    data: any;
     onClose: () => void;
+    onWorkoutClick: (workout: any) => void;
 }
 
-const DayModal: React.FC<DayModalProps> = ({ date, data, onClose }) => {
+const DayModal: React.FC<DayModalProps> = ({ date, data, onClose, onWorkoutClick }) => {
     const dateStr = date.toLocaleDateString("en-US", {
         weekday: "long", day: "numeric", month: "long", year: "numeric",
     });
@@ -184,8 +186,8 @@ const DayModal: React.FC<DayModalProps> = ({ date, data, onClose }) => {
                                     </div>
                                 ) : (
                                     <div className="workout-list">
-                                        {data.workouts.map((w, i) => (
-                                            <div className="workout-item" key={i}>
+                                        {data.workouts.map((w: any, i: number) => (
+                                            <div className="workout-item" key={i} onClick={() => onWorkoutClick(w)} style={{ cursor: "pointer" }}>
 
                                                 <div
                                                     style={{
@@ -249,8 +251,9 @@ const CalendarPage: React.FC = () => {
     const [month, setMonth] = useState(now.getMonth());
     const [calendarData, setCalendarData] = useState<Record<string, DayData>>({});
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [selectedDayData, setSelectedDayData] = useState<DayData | null>(null);
+    const [selectedDayData, setSelectedDayData] = useState<any>(null);
     const [user, setUser] = useState<any>(null);
+    const [viewingWorkout, setViewingWorkout] = useState<any>(null);
 
     const username = user?.name || "User";
     const initials = username
@@ -584,6 +587,16 @@ const CalendarPage: React.FC = () => {
                     date={selectedDate}
                     data={selectedDayData}
                     onClose={() => setSelectedDate(null)}
+                    onWorkoutClick={(workout) => setViewingWorkout(workout)}
+                />
+            )}
+
+            {/* ── WORKOUT DETAILS MODAL ── */}
+            {viewingWorkout && (
+                <WorkoutDetailsModal
+                    workout={viewingWorkout}
+                    user={user}
+                    onClose={() => setViewingWorkout(null)}
                 />
             )}
         </div>
