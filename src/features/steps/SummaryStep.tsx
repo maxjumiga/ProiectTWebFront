@@ -62,14 +62,14 @@ export default function SummaryStep({ data, onComplete, onBack }: Props) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.35 }}
-                className="profile-card"
+                className="summary-info-card"
             >
-                <p className="profile-header">Your Info</p>
-                <div className="profile-list">
+                <p className="summary-info-header">Your Info</p>
+                <div className="summary-info-list">
                     {profile.map((p) => (
-                        <div key={p.label} className="profile-item">
-                            <span className="profile-item-label">{p.label}</span>
-                            <span className="profile-item-value">{p.value}</span>
+                        <div key={p.label} className="summary-info-item">
+                            <span className="summary-info-label">{p.label}</span>
+                            <span className="summary-info-value">{p.value}</span>
                         </div>
                     ))}
                 </div>

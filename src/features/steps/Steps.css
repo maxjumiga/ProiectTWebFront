@@ -571,7 +571,7 @@
 .stat-card {
     border: 1px solid transparent;
     border-radius: 1rem;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
 }
 
 .stat-card.blue {
@@ -594,63 +594,63 @@
 
 .stat-label {
     color: rgba(255, 255, 255, 0.9) !important;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.15rem;
 }
 
 .stat-value {
     color: #ffffff !important;
     font-weight: 800;
-    font-size: 1.35rem;
-    line-height: 1.25;
+    font-size: 1.15rem;
+    line-height: 1.2;
 }
 
 .stat-sub {
     color: rgba(255, 255, 255, 0.8) !important;
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
+    font-size: 0.7rem;
+    margin-top: 0.15rem;
 }
 
 
-.profile-card {
+.summary-info-card {
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 1rem;
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
-}
-
-.profile-header {
-    color: #475569;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    padding: 1rem 1.25rem;
     margin-bottom: 1rem;
 }
 
-.profile-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+.summary-info-header {
+    color: #475569;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
 }
 
-.profile-item {
+.summary-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.summary-info-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.profile-item-label {
+.summary-info-label {
     color: #475569;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
 }
 
-.profile-item-value {
+.summary-info-value {
     color: #1E1F35;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     font-weight: 600;
 }
 
