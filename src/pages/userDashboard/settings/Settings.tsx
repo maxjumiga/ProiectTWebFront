@@ -153,6 +153,61 @@ const SettingsPage: React.FC = () => {
         }
     };
 
+    const handleResetData = async () => {
+        if (!window.confirm("Are you sure you want to reset all your data? This is irreversible and all your logs will be deleted!")) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch("http://localhost:5004/api/User/reset-data", {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                alert("Data has been reset successfully.");
+                window.location.reload();
+            } else {
+                alert("Failed to reset data.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error connecting to server.");
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        if (!window.confirm("Are you ABSOLUTELY sure you want to delete your account? This is irreversible and all your data will be permanently lost!")) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch("http://localhost:5004/api/User/me-direct", {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                alert("Account deleted successfully.");
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                sessionStorage.removeItem("isAuthenticated");
+                navigate("/login");
+            } else {
+                alert("Failed to delete account.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error connecting to server.");
+        }
+    };
+
     const handleSave = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -697,7 +752,9 @@ const SettingsPage: React.FC = () => {
                                             <div className="s-sub">Deletes all calorie and water history. Irreversible.</div>
                                         </div>
                                     </div>
-                                    <button className="s-action-btn danger"><FontAwesomeIcon icon={faArrowsRotate} />Reset</button>
+                                    <button className="s-action-btn danger" onClick={handleResetData} type="button">
+                                        <FontAwesomeIcon icon={faArrowsRotate} />Reset
+                                    </button>
                                 </div>
                                 <div className="s-row">
                                     <div className="s-row-left">
@@ -707,7 +764,9 @@ const SettingsPage: React.FC = () => {
                                             <div className="s-sub">Permanently removes account and all associated data</div>
                                         </div>
                                     </div>
-                                    <button className="s-action-btn danger"><FontAwesomeIcon icon={faTrash} />Delete account</button>
+                                    <button className="s-action-btn danger" onClick={handleDeleteAccount} type="button">
+                                        <FontAwesomeIcon icon={faTrash} />Delete account
+                                    </button>
                                 </div>
                             </div>
                         </div>

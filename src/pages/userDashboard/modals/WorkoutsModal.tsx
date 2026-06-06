@@ -276,7 +276,7 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ onClose, onAddWorkout }) 
                                             <input type="number" min="1" value={exReps} onChange={e => setExReps(Number(e.target.value))} />
                                         </div>
                                         <div className="mini-field">
-                                            <label>kg</label>
+                                            <label>Weight(kg)</label>
                                             <input type="number" min="0" value={exWeight} onChange={e => setExWeight(Number(e.target.value))} />
                                         </div>
                                         <button
