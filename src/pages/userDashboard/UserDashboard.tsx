@@ -382,8 +382,6 @@ const UserDashboard: React.FC = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                const savedMealTimes = JSON.parse(localStorage.getItem("food_meal_times") || "{}");
-                const lastMeal = localStorage.getItem("last_added_meal_time") || "Snack";
                 const mapped: FoodLog[] = data.map((d: any) => ({
                     id: d.id,
                     food: {
@@ -397,20 +395,9 @@ const UserDashboard: React.FC = () => {
                         vitaminC: d.vitaminCPer100g || 0,
                         unit: "100g"
                     },
-                    mealTime: d.mealTime || d.mealType || d.meal || savedMealTimes[d.id] || lastMeal,
+                    mealTime: d.mealTime || "Snack",
                     grams: d.quantityGrams
                 }));
-                
-                let changed = false;
-                mapped.forEach(item => {
-                    if (item.id && !savedMealTimes[item.id]) {
-                        savedMealTimes[item.id] = item.mealTime;
-                        changed = true;
-                    }
-                });
-                if (changed) {
-                    localStorage.setItem("food_meal_times", JSON.stringify(savedMealTimes));
-                }
 
                 setFoodLog(mapped);
             }

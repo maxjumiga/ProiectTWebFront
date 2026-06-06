@@ -1434,6 +1434,28 @@
     color: var(--color-orange-dark);
 }
 
+.food-log-macro {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 6px;
+}
+
+.food-log-macro.prot {
+    background: var(--color-blue-soft);
+    color: var(--color-blue-dark);
+}
+
+.food-log-macro.carb {
+    background: rgba(234, 179, 8, 0.1);
+    color: #b45309;
+}
+
+.food-log-macro.fat {
+    background: rgba(239, 68, 68, 0.08);
+    color: #dc2626;
+}
+
 /* Water Modal specifics */
 .water-status-section {
     background: var(--color-blue-soft);

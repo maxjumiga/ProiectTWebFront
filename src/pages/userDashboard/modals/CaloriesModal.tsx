@@ -147,9 +147,6 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
     const handleAdd = async () => {
         if (!selectedFood || grams <= 0) return;
 
-        // Persist the selected meal time as the most recent log selection
-        localStorage.setItem("last_added_meal_time", mealTime);
-
         try {
             const token = localStorage.getItem("token");
             const response = await fetch("http://localhost:5004/api/FoodLog/create", {
@@ -161,22 +158,14 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                 body: JSON.stringify({
                     fdcId: selectedFood.id,
                     quantityGrams: grams,
-                    mealTime: mealTime,
-                    mealType: mealTime,
-                    meal: mealTime
+                    mealTime: mealTime
                 })
             });
 
-            if (response.ok) {
-                const createdLog = await response.json().catch(() => null);
-                if (createdLog && createdLog.id) {
-                    const saved = JSON.parse(localStorage.getItem("food_meal_times") || "{}");
-                    saved[createdLog.id] = mealTime;
-                    localStorage.setItem("food_meal_times", JSON.stringify(saved));
-                }
-            } else {
+            if (!response.ok) {
                 const text = await response.text();
-                console.log(text);
+                console.error("Error adding food:", text);
+                return;
             }
 
             onAddFood({
@@ -387,6 +376,9 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                                     ) : (
                                         entries.map((item, idx) => {
                                             const itemKcal = item.food.calories ? ((item.food.calories * item.grams) / 100).toFixed(0) : "0";
+                                            const itemProtein = item.food.protein ? ((item.food.protein * item.grams) / 100).toFixed(1) : "0";
+                                            const itemCarbs = item.food.carbs ? ((item.food.carbs * item.grams) / 100).toFixed(1) : "0";
+                                            const itemFat = item.food.fat ? ((item.food.fat * item.grams) / 100).toFixed(1) : "0";
                                             return (
                                                 <div key={idx} className="food-log-item">
                                                     <span className="food-log-name" title={item.food.name}>
@@ -395,6 +387,9 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ foodLog, onClose, onAddFo
                                                     <div className="food-log-meta">
                                                         <span className="food-log-grams">{item.grams} g</span>
                                                         <span className="food-log-kcal">{itemKcal} kcal</span>
+                                                        <span className="food-log-macro prot">P: {itemProtein}g</span>
+                                                        <span className="food-log-macro carb">C: {itemCarbs}g</span>
+                                                        <span className="food-log-macro fat">F: {itemFat}g</span>
                                                         <button 
                                                             className="db-modal-close" 
                                                             style={{ width: 22, height: 22, fontSize: 10, borderRadius: 6, border: 'none', background: 'rgba(239, 68, 68, 0.08)', color: '#dc2626', cursor: 'pointer' }} 
