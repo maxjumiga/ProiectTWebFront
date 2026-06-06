@@ -79,12 +79,7 @@ const SettingsPage: React.FC = () => {
     const [isEditingName, setIsEditingName] = useState(false);
     const [isEditingEmail, setIsEditingEmail] = useState(false);
 
-    // Notificări
-    const [notifEmail, setNotifEmail] = useState(true);
-    const [notifPush, setNotifPush] = useState(true);
-    const [notifReport, setNotifReport] = useState(false);
-    const [notifAppt, setNotifAppt] = useState(true);
-    const [notifTips, setNotifTips] = useState(false);
+
 
     // Aspect
     const [darkMode, setDarkMode] = useState(false);
@@ -386,31 +381,7 @@ const SettingsPage: React.FC = () => {
                 {/* ══ GENERAL ══ */}
                 {activeNav === "general" && (
                     <>
-                        <div className="settings-section">
-                            <div className="section-title"><FontAwesomeIcon icon={faBell} />Notification channels</div>
-                            <div className="s-card">
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico blue"><FontAwesomeIcon icon={faEnvelope} /></div>
-                                        <div>
-                                            <div className="s-lbl">Email notifications</div>
-                                            <div className="s-sub">Receive summaries and alerts on your Gmail</div>
-                                        </div>
-                                    </div>
-                                    <Toggle checked={notifEmail} onChange={() => setNotifEmail(v => !v)} />
-                                </div>
-                                <div className="s-row">
-                                    <div className="s-row-left">
-                                        <div className="s-ico purple"><FontAwesomeIcon icon={faBolt} /></div>
-                                        <div>
-                                            <div className="s-lbl">Push notifications</div>
-                                            <div className="s-sub">Real-time alerts directly in browser</div>
-                                        </div>
-                                    </div>
-                                    <Toggle checked={notifPush} onChange={() => setNotifPush(v => !v)} />
-                                </div>
-                            </div>
-                        </div>
+
 
                         <div className="settings-section">
                             <div className="section-title"><FontAwesomeIcon icon={faEnvelope} />Email frequency</div>

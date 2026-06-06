@@ -143,13 +143,13 @@ const LoginPage: React.FC = () => {
                     <form onSubmit={handleSubmit} autoComplete="off">
                         <div className="form-group">
                             <label className="form-label" htmlFor="email">
-                                Email / Username
+                                Email
                             </label>
                             <div className="input-wrapper">
                                 <input
                                     id="email"
                                     className="form-input"
-                                    type="text"
+                                    type="email"
                                     placeholder="example@gmail.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}

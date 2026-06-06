@@ -320,9 +320,6 @@ const ProfilePage: React.FC = () => {
                         <p>MANAGE YOUR ACCOUNT</p>
                     </div>
                     <div className="profile-header-right">
-                        <button className="ph-icon-btn" title="Notifications">
-                            <FontAwesomeIcon icon={faBell} />
-                        </button>
                         <button className="ph-icon-btn" onClick={() => navigate('/settings')} title="Settings">
                             <FontAwesomeIcon icon={faUserGear} />
                         </button>

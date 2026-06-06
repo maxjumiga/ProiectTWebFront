@@ -635,10 +635,7 @@ const UserDashboard: React.FC = () => {
                         >
                             <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
                         </button>
-                        <button className="header-circle-btn notification-btn">
-                            <FontAwesomeIcon icon={faBell} />
-                            <span className="bell-badge-dot" />
-                        </button>
+
                         <div className="header-pill-btn date-selector-btn" style={{ cursor: "default" }}>
                             <FontAwesomeIcon icon={faCalendarDays} className="btn-icon-left" />
                             <span>{dateStr.split(',')[1]?.trim() || "May 18, 2024"}</span>
