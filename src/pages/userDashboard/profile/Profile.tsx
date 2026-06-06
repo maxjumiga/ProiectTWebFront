@@ -21,6 +21,9 @@ import {
     faDroplet,
     faDumbbell,
     faChevronRight,
+    faClock,
+    faCalendarDay,
+    faTrash
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
@@ -37,9 +40,12 @@ const ProfilePage: React.FC = () => {
     // State pentru editarea trăsăturilor fizice
     const [isEditingTraits, setIsEditingTraits] = useState(false);
     const [editedGender, setEditedGender] = useState("M");
-    const [editedAge, setEditedAge] = useState(24);
-    const [editedHeight, setEditedHeight] = useState(180);
-    const [editedWeight, setEditedWeight] = useState(75);
+    const [editedAge, setEditedAge] = useState<number>(24);
+    const [editedHeight, setEditedHeight] = useState<number>(180);
+    const [editedWeight, setEditedWeight] = useState<number>(75);
+
+    const [weightHistory, setWeightHistory] = useState<any[]>([]);
+    const [recentWorkouts, setRecentWorkouts] = useState<any[]>([]);
 
     // State pentru descriere / bio
     const [isEditingBio, setIsEditingBio] = useState(false);
@@ -60,10 +66,11 @@ const ProfilePage: React.FC = () => {
     // Fake password pentru afișare
     const fakePassword = "MySecretPass123";
     const token = localStorage.getItem("token");
-
-    // Încărcăm datele utilizatorului la montarea componentei
+    
     const fetchUser = async () => {
         try {
+            setLoading(true);
+            const token = localStorage.getItem("token");
             if (!token) {
                 navigate("/login");
                 return;
@@ -88,8 +95,79 @@ const ProfilePage: React.FC = () => {
         }
     };
 
+    const fetchWeightHistory = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch("http://localhost:5004/api/WeightLog/history?limit=5", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setWeightHistory(data);
+            }
+        } catch (err) {
+            console.error("Error fetching weight history:", err);
+        }
+    };
+
+    const fetchRecentWorkouts = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch("http://localhost:5004/api/workout/list", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                // Sortează după dată descrescător
+                data.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+                setRecentWorkouts(data.slice(0, 3));
+            }
+        } catch (err) {
+            console.error("Error fetching recent workouts:", err);
+        }
+    };
+
+    const handleDeleteWeight = async (id: number) => {
+        if (!window.confirm("Are you sure you want to delete this weight log?")) return;
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`http://localhost:5004/api/WeightLog/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                fetchWeightHistory();
+                fetchUser(); // to update current weight maybe, though not strictly required
+            } else {
+                alert("Could not delete weight log.");
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleDeleteWorkout = async (id: number) => {
+        if (!window.confirm("Are you sure you want to delete this workout?")) return;
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`http://localhost:5004/api/workout/delete/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                fetchRecentWorkouts();
+            } else {
+                alert("Could not delete workout.");
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     useEffect(() => {
         fetchUser();
+        fetchWeightHistory();
+        fetchRecentWorkouts();
     }, []);
 
     // Inițializăm câmpurile de editare la deschiderea formularului
@@ -106,6 +184,7 @@ const ProfilePage: React.FC = () => {
     // Salvăm trăsăturile fizice în DB
     const handleSaveTraits = async () => {
         try {
+            // Updateăm gender, age, height
             const response = await fetch("http://localhost:5004/api/user/me", {
                 method: "PATCH",
                 headers: {
@@ -120,13 +199,27 @@ const ProfilePage: React.FC = () => {
                 })
             });
 
-            if (response.ok) {
-                // Reîncărcăm datele proaspete și închidem editarea
-                await fetchUser();
-                setIsEditingTraits(false);
-            } else {
+            if (!response.ok) {
                 alert("Nu s-au putut actualiza datele fizice.");
+                return;
             }
+
+            // Dacă greutatea s-a schimbat, logăm și în WeightLog
+            if (editedWeight !== user?.weight) {
+                await fetch("http://localhost:5004/api/WeightLog", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ weight: editedWeight, loggedAt: new Date().toISOString() })
+                });
+                // Refresh weight history
+                fetchWeightHistory();
+            }
+
+            await fetchUser();
+            setIsEditingTraits(false);
         } catch (err) {
             console.error(err);
             alert("Eroare de conexiune la server.");
@@ -159,34 +252,7 @@ const ProfilePage: React.FC = () => {
         }
     };
 
-    // BMI & health computations
-    const heightM = (user?.height || 170) / 100;
-    const weightKg = user?.weight || 70;
-    const bmi = +(weightKg / (heightM * heightM)).toFixed(1);
-    const getBmiCategory = (b: number) => {
-        if (b < 18.5) return { label: "Underweight", color: "#38bdf8", bg: "rgba(56,189,248,0.12)" };
-        if (b < 25) return { label: "Normal weight", color: "#10b981", bg: "rgba(16,185,129,0.12)" };
-        if (b < 30) return { label: "Overweight", color: "#f97316", bg: "rgba(249,115,22,0.12)" };
-        return { label: "Obese", color: "#ef4444", bg: "rgba(239,68,68,0.12)" };
-    };
-    const bmiCat = getBmiCategory(bmi);
-    const bmiPct = Math.min(Math.max(((bmi - 10) / 30) * 100, 0), 100);
-    // Body water % estimate (Watson formula simplified)
-    const bodyWaterPct = user?.gender === "F" ? 50 : 60;
-    // Ideal weight range (Devine formula)
-    const heightCm = user?.height || 170;
-    const idealMin = user?.gender === "F"
-        ? +(45.5 + 0.9 * (heightCm - 152.4)).toFixed(1)
-        : +(50 + 0.9 * (heightCm - 152.4)).toFixed(1);
-    const idealMax = +(idealMin + 7).toFixed(1);
-    // Fitness score (composite)
-    const fitnessScore = Math.min(100, Math.round(
-        (bmi >= 18.5 && bmi < 25 ? 40 : bmi >= 25 && bmi < 30 ? 25 : 10) +
-        (user?.age ? (user.age < 40 ? 30 : 20) : 20) +
-        30
-    ));
-    const circumference = 2 * Math.PI * 36;
-    const dashOffset = circumference - (fitnessScore / 100) * circumference;
+
 
 
     const handlePasswordChange = async (e: React.FormEvent) => {
@@ -521,145 +587,94 @@ const ProfilePage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* ── Card 3: Health Snapshot ── */}
-                    <div className="p-card health-snapshot-card">
-                        <div className="p-card-label">Health snapshot</div>
-
-                        <div className="health-snapshot-body">
-                            {/* Left: Fitness Score Ring */}
-                            <div className="fitness-ring-wrap">
-                                <svg width="88" height="88" viewBox="0 0 88 88">
-                                    <circle cx="44" cy="44" r="36" fill="none" stroke="rgba(99,102,241,0.1)" strokeWidth="8" />
-                                    <circle
-                                        cx="44" cy="44" r="36"
-                                        fill="none"
-                                        stroke="url(#ringGrad)"
-                                        strokeWidth="8"
-                                        strokeLinecap="round"
-                                        strokeDasharray={circumference}
-                                        strokeDashoffset={dashOffset}
-                                        transform="rotate(-90 44 44)"
-                                        style={{ transition: "stroke-dashoffset 1s ease" }}
-                                    />
-                                    <defs>
-                                        <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" stopColor="#6366f1" />
-                                            <stop offset="100%" stopColor="#a78bfa" />
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                                <div className="fitness-ring-inner">
-                                    <span className="fitness-score-num">{fitnessScore}</span>
-                                    <span className="fitness-score-lbl">score</span>
+                    {/* ── Card 3: Weight Journey ── */}
+                    <div className="p-card weight-journey-card">
+                        <div className="p-card-label">Weight Journey</div>
+                        <div className="weight-journey-body" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Current Weight</span>
+                                    <span style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+                                        {weightHistory.length > 0 ? weightHistory[0].weight : (user?.weight || '--')} <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 'normal' }}>kg</span>
+                                    </span>
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Starting Weight</span>
+                                    <span style={{ fontSize: '18px', color: 'var(--text-primary)', fontWeight: '500' }}>
+                                        {weightHistory.length > 0 ? weightHistory[weightHistory.length - 1].weight : (user?.weight || '--')} <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 'normal' }}>kg</span>
+                                    </span>
                                 </div>
                             </div>
-
-                            {/* Right: metrics */}
-                            <div className="health-metrics-col">
-                                {/* BMI */}
-                                <div className="hm-row">
-                                    <div className="hm-icon" style={{ background: bmiCat.bg, color: bmiCat.color }}>
-                                        <FontAwesomeIcon icon={faWeightScale} />
-                                    </div>
-                                    <div className="hm-info">
-                                        <div className="hm-label">BMI</div>
-                                        <div className="hm-val">
-                                            {bmi}
-                                            <span className="hm-badge" style={{ background: bmiCat.bg, color: bmiCat.color }}>{bmiCat.label}</span>
+                            
+                            <div className="weight-history-list" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                {weightHistory.slice(0, 4).map((log, i) => (
+                                    <div key={log.id || i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', borderLeft: '2px solid #10b981' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-secondary)', fontSize: '13px' }}>
+                                            <FontAwesomeIcon icon={faCalendarDay} style={{ color: '#10b981', opacity: 0.8 }} />
+                                            {new Date(log.loggedAt).toLocaleDateString()}
                                         </div>
-                                        <div className="bmi-bar">
-                                            <div className="bmi-bar-fill" style={{ width: `${bmiPct}%`, background: bmiCat.color }} />
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                                            <span style={{ color: 'var(--text-primary)', fontWeight: '500' }}>{log.weight} kg</span>
+                                            <button 
+                                                onClick={() => handleDeleteWeight(log.id)}
+                                                style={{ background: 'none', border: 'none', color: '#ef4444', opacity: 0.6, cursor: 'pointer', fontSize: '14px', padding: '4px' }}
+                                                title="Delete weight log"
+                                                type="button"
+                                            >
+                                                <FontAwesomeIcon icon={faTrash} />
+                                            </button>
                                         </div>
                                     </div>
-                                </div>
-
-                                {/* Body Water */}
-                                <div className="hm-row">
-                                    <div className="hm-icon" style={{ background: "rgba(56,189,248,0.12)", color: "#38bdf8" }}>
-                                        <FontAwesomeIcon icon={faDroplet} />
-                                    </div>
-                                    <div className="hm-info">
-                                        <div className="hm-label">Body water</div>
-                                        <div className="hm-val">{bodyWaterPct}<em>%</em></div>
-                                    </div>
-                                </div>
-
-                                {/* Ideal weight */}
-                                <div className="hm-row">
-                                    <div className="hm-icon" style={{ background: "rgba(16,185,129,0.12)", color: "#10b981" }}>
-                                        <FontAwesomeIcon icon={faDumbbell} />
-                                    </div>
-                                    <div className="hm-info">
-                                        <div className="hm-label">Ideal weight</div>
-                                        <div className="hm-val">{idealMin}–{idealMax}<em>kg</em></div>
-                                    </div>
-                                </div>
-
-                                {/* Heart rate zone (placeholder) */}
-                                <div className="hm-row">
-                                    <div className="hm-icon" style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444" }}>
-                                        <FontAwesomeIcon icon={faHeartPulse} />
-                                    </div>
-                                    <div className="hm-info">
-                                        <div className="hm-label">Max heart rate</div>
-                                        <div className="hm-val">{220 - (user?.age || 25)}<em>bpm</em></div>
-                                    </div>
-                                </div>
+                                ))}
+                                {weightHistory.length === 0 && (
+                                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', fontStyle: 'italic', padding: '12px 0' }}>No weight logs recorded yet.</div>
+                                )}
                             </div>
                         </div>
                     </div>
 
-                    {/* ── Card 4: Obiective & Activitate ── */}
-                    <div className="p-card">
-                        <div className="p-card-label">Obiective & Activitate</div>
-
-                        {/* Stats row */}
-                        <div className="activity-stats">
-                            <div className="act-stat">
-                                <div className="act-stat-num">38<em>zile</em></div>
-                                <div className="act-stat-lbl">Streak</div>
-                            </div>
-                            <div className="act-stat">
-                                <div className="act-stat-num">142</div>
-                                <div className="act-stat-lbl">Sesiuni</div>
-                            </div>
-                            <div className="act-stat">
-                                <div className="act-stat-num">91<em>%</em></div>
-                                <div className="act-stat-lbl">Consistency</div>
-                            </div>
-                        </div>
-
-                        {/* Goals */}
-                        <div className="goal-section-lbl">Obiective curente</div>
-                        <div className="goal-item">
-                            <div className="goal-icon">💧</div>
-                            <div className="goal-details">
-                                <div className="goal-name">Daily hydration</div>
-                                <div className="goal-bar">
-                                    <div className="goal-bar-fill" style={{ width: "74%", background: "linear-gradient(90deg, #38bdf8, #0ea5e9)" }} />
-                                </div>
-                            </div>
-                            <div className="goal-pct">74%</div>
-                        </div>
-                        <div className="goal-item">
-                            <div className="goal-icon">🔥</div>
-                            <div className="goal-details">
-                                <div className="goal-name">Calories burned</div>
-                                <div className="goal-bar">
-                                    <div className="goal-bar-fill" style={{ width: "58%", background: "linear-gradient(90deg, #f97316, #fb923c)" }} />
-                                </div>
-                            </div>
-                            <div className="goal-pct">58%</div>
-                        </div>
-                        <div className="goal-item">
-                            <div className="goal-icon">🏃</div>
-                            <div className="goal-details">
-                                <div className="goal-name">Daily steps</div>
-                                <div className="goal-bar">
-                                    <div className="goal-bar-fill" style={{ width: "85%", background: "linear-gradient(90deg, #10b981, #34d399)" }} />
-                                </div>
-                            </div>
-                            <div className="goal-pct">85%</div>
+                    {/* ── Card 4: Recent Workouts ── */}
+                    <div className="p-card recent-workouts-card">
+                        <div className="p-card-label">Recent Workouts</div>
+                        <div className="recent-workouts-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '1rem' }}>
+                            {recentWorkouts.map((workout, idx) => {
+                                // WorkoutType enum values check
+                                let typeLabel = "Workout";
+                                if (workout.type === 0) typeLabel = "Cardio";
+                                else if (workout.type === 1) typeLabel = "Strength";
+                                else if (workout.type === 2) typeLabel = "Flexibility";
+                                
+                                return (
+                                    <div key={workout.id || idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', borderLeft: '3px solid #6366f1' }}>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '15px', marginBottom: '6px' }}>
+                                                {workout.label || 'Workout Session'}
+                                            </div>
+                                            <div style={{ color: 'var(--text-secondary)', fontSize: '13px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                                <span><FontAwesomeIcon icon={faClock} style={{ marginRight: '6px', opacity: 0.7 }}/> {workout.duration} min</span>
+                                                <span style={{ opacity: 0.3 }}>|</span>
+                                                <span><FontAwesomeIcon icon={faCalendarDay} style={{ marginRight: '6px', opacity: 0.7 }}/> {new Date(workout.date).toLocaleDateString()}</span>
+                                            </div>
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
+                                            <div style={{ fontSize: '12px', padding: '4px 10px', background: 'rgba(99,102,241,0.1)', color: '#818cf8', borderRadius: '6px', fontWeight: '500' }}>
+                                                {typeLabel}
+                                            </div>
+                                            <button 
+                                                onClick={() => handleDeleteWorkout(workout.id)}
+                                                style={{ background: 'none', border: 'none', color: '#ef4444', opacity: 0.6, cursor: 'pointer', fontSize: '13px', padding: '4px' }}
+                                                title="Delete workout"
+                                                type="button"
+                                            >
+                                                <FontAwesomeIcon icon={faTrash} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            {recentWorkouts.length === 0 && (
+                                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', fontStyle: 'italic', padding: '12px 0' }}>No recent workouts found.</div>
+                            )}
                         </div>
                     </div>
 

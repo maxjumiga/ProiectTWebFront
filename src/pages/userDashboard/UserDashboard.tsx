@@ -679,31 +679,13 @@ const UserDashboard: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* CARD 3: Workouts This Week */}
-                    <div className="db-grid-card card-workouts" onClick={() => setWorkoutModal(true)}>
-                        <div className="card-header-row">
-                            <div className="card-icon-container workout-icon-bg">
-                                <FontAwesomeIcon icon={faDumbbell} />
-                            </div>
-                            <span className="card-title">Workouts This Week</span>
+                    {/* CARD 3: Workouts This Week (Simplified) */}
+                    <div className="db-grid-card card-workouts" onClick={() => setWorkoutModal(true)} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '30px' }}>
+                        <div className="card-icon-container workout-icon-bg" style={{ width: '60px', height: '60px', fontSize: '24px', marginBottom: '16px' }}>
+                            <FontAwesomeIcon icon={faDumbbell} />
                         </div>
-                        <div className="card-workout-body-wrap">
-                            <div className="workout-stats-col">
-                                <div className="card-big-value">
-                                    <strong>{workouts.length}</strong>
-                                    <span className="value-gray"> / 5 sessions</span>
-                                </div>
-                                <div className="card-progress-section">
-                                    <div className="thick-progress-bar">
-                                        <div className="progress-fill workout-fill-bg" style={{ width: `${Math.min((workouts.length / 5) * 100, 100)}%` }} />
-                                    </div>
-                                    <span className="progress-percent">{Math.round(Math.min((workouts.length / 5) * 100, 100))}%</span>
-                                </div>
-                            </div>
-                            <div className="workout-illustration-container">
-                                <img src="/runner_illustration.png" alt="Runner Illustration" className="runner-illustration-img" />
-                            </div>
-                        </div>
+                        <span className="card-title" style={{ fontSize: '18px', fontWeight: '800' }}>Log Today's Workout</span>
+                        <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '8px', fontWeight: '600' }}>Click here to add a new session</span>
                     </div>
 
                     {/* CARD 4: Last 7 Days - Spans 2 Columns */}
