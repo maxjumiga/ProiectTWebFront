@@ -27,17 +27,17 @@ const navItems = [
         icon: faTableCells,
     },
     {
-        to: '/users',
+        to: '/admin/users',
         label: 'Users',
         icon: faUsers,
     },
     {
-        to: '/food',
+        to: '/admin/food',
         label: 'Food Management',
         icon: faBasketShopping,
     },
     {
-        to: '/exercises',
+        to: '/admin/exercises',
         label: 'Exercises Management',
         icon: faDumbbell,
     },

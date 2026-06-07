@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faUsers,
@@ -12,6 +13,7 @@ import { getAdminUsers } from '../../services/adminApi';
 import './AdminDashboard.css';
 
 export default function AdminDashboard() {
+    const navigate = useNavigate();
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [requestError, setRequestError] = useState('');
@@ -43,7 +45,9 @@ export default function AdminDashboard() {
     }, [users]);
 
     const recentUsers = useMemo(
-        () => [...users].sort((a, b) => b.id - a.id).slice(0, 5),
+        () => [...users]
+            .sort((a, b) => b.id - a.id)
+            .slice(0, 5),
         [users]
     );
 
@@ -86,8 +90,11 @@ export default function AdminDashboard() {
                 <div className="section-header">
                     <div>
                         <h2 className="section-title">Latest Users</h2>
-                        <p className="section-sub">Most recent users returned by the API</p>
+                        <p className="section-sub">The 5 most recently registered accounts</p>
                     </div>
+                    <button className="btn-link" onClick={() => navigate('/admin/users')}>
+                        View all →
+                    </button>
                 </div>
 
                 <div className="table-wrap">

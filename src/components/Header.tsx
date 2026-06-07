@@ -13,9 +13,9 @@ import './Header.css';
 // Map intre caile URL si titlurile corespunzatoare afisate in header
 const routeTitles: Record<string, { title: string; subtitle: string }> = {
     '/admin': { title: 'Main Panel', subtitle: 'Welcome back, Administrator' },
-    '/users': { title: 'User Management', subtitle: 'Manage user accounts' },
-    '/food': { title: 'Food Management', subtitle: 'Manage the food database' },
-    '/exercises': { title: 'Exercises Management', subtitle: 'Manage the exercises database' },
+    '/admin/users': { title: 'User Management', subtitle: 'Manage user accounts' },
+    '/admin/food': { title: 'Food Management', subtitle: 'Manage the food database' },
+    '/admin/exercises': { title: 'Exercises Management', subtitle: 'Manage the exercises database' },
 };
 
 export default function Header() {

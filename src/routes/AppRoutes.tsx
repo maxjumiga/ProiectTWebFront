@@ -74,12 +74,12 @@ export default function AppRoutes() {
                     <Route path="/calendar" element={<Calendar />} />
                 </Route>
 
-                {/* Admin Panel Routes — protejate de AdminAuthRoute (isAdminAuthenticated) */}
+                {/* Admin Panel Routes — protejate de AdminAuthRoute */}
                 <Route element={<AdminAuthRoute />}>
                     <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
-                    <Route path="/users" element={<AdminLayout><UserManagement /></AdminLayout>} />
-                    <Route path="/food" element={<AdminLayout><FoodManagement /></AdminLayout>} />
-                    <Route path="/exercises" element={<AdminLayout><ExercisesManagement /></AdminLayout>} />
+                    <Route path="/admin/users" element={<AdminLayout><UserManagement /></AdminLayout>} />
+                    <Route path="/admin/food" element={<AdminLayout><FoodManagement /></AdminLayout>} />
+                    <Route path="/admin/exercises" element={<AdminLayout><ExercisesManagement /></AdminLayout>} />
                 </Route>
 
                 {/* Fallback — orice ruta necunoscuta → Landing */}
