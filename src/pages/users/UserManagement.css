@@ -12,3 +12,119 @@
     gap: 18px;
     /* Spatiu intre toolbar, contor si tabel */
 }
+
+/* Interactivitate pentru selectarea rolului utilizatorilor direct in tabel (Custom Dropdown) */
+.role-dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.role-dropdown-trigger {
+    border: 1.5px solid transparent;
+    outline: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 4px 6px 4px 12px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    transition: all 0.2s ease;
+    font-family: var(--font-admin);
+}
+
+.role-dropdown-trigger.admin {
+    background-color: var(--accent-soft);
+    color: var(--accent);
+}
+
+.role-dropdown-trigger.user {
+    background-color: var(--purple-soft);
+    color: var(--purple);
+}
+
+.role-dropdown-trigger:hover {
+    border-color: var(--border-light);
+    transform: translateY(-0.5px);
+}
+
+.role-dropdown-trigger:active {
+    transform: translateY(0.5px);
+}
+
+.role-dropdown-trigger .arrow-icon {
+    transition: transform 0.2s ease;
+}
+
+.role-dropdown-container:focus-within .arrow-icon {
+    transform: rotate(180deg);
+}
+
+.role-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 90px;
+    background-color: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: 4px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    animation: dropdownFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.95) translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) scale(1) translateY(0);
+    }
+}
+
+.role-dropdown-item {
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    padding: 6px 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    text-align: left;
+    transition: all 0.15s ease;
+    font-family: var(--font-admin);
+}
+
+.role-dropdown-item:hover {
+    background-color: var(--accent-soft);
+    color: var(--accent);
+}
+
+.role-dropdown-item .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.role-dropdown-item .dot.admin {
+    background-color: var(--accent);
+}
+
+.role-dropdown-item .dot.user {
+    background-color: var(--purple);
+}

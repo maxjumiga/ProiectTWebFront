@@ -83,6 +83,11 @@ export async function deleteAdminUser(id: number) {
     await request(`/User/DeleteUser/${id}`, { method: 'DELETE' });
 }
 
+export async function updateUserRole(id: number, role: 'admin' | 'user') {
+    const roleParam = role === 'admin' ? 'Admin' : 'User';
+    await request(`/User/SetRole/${id}?role=${roleParam}`, { method: 'PUT' });
+}
+
 export async function getAdminFoods(): Promise<Aliment[]> {
     const data = await request<Array<{
         id: number;

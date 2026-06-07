@@ -4,7 +4,7 @@ import SearchBar from '../../components/SearchBar';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 import CustomSelect from '../../components/CustomSelect';
 import UsersTable from '../../features/users/UsersTable';
-import { deleteAdminUser, getAdminUsers } from '../../services/adminApi';
+import { deleteAdminUser, getAdminUsers, updateUserRole } from '../../services/adminApi';
 import './UserManagement.css';
 
 const roleFilterOptions = [
@@ -69,6 +69,16 @@ export default function UserManagement() {
         }
     }
 
+    async function handleRoleChange(id: number, newRole: 'admin' | 'user') {
+        try {
+            setRequestError('');
+            await updateUserRole(id, newRole);
+            await loadUsers();
+        } catch (error) {
+            setRequestError(error instanceof Error ? error.message : 'Failed to update user role.');
+        }
+    }
+
     return (
         <div className="um">
             <div className="um-toolbar">
@@ -93,6 +103,7 @@ export default function UserManagement() {
                 <UsersTable
                     filtered={filtered}
                     onDelete={setDeleteId}
+                    onRoleChange={handleRoleChange}
                 />
             )}
 

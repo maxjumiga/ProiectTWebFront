@@ -1,13 +1,15 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 import type { User } from '../../types';
+import RoleDropdown from './RoleDropdown';
 
 interface UsersTableProps {
     filtered: User[];
     onDelete: (id: number) => void;
+    onRoleChange: (id: number, newRole: 'admin' | 'user') => void;
 }
 
-export default function UsersTable({ filtered, onDelete }: UsersTableProps) {
+export default function UsersTable({ filtered, onDelete, onRoleChange }: UsersTableProps) {
     return (
         <div className="um-card">
             <div className="table-wrap">
@@ -42,7 +44,10 @@ export default function UsersTable({ filtered, onDelete }: UsersTableProps) {
                                         </div>
                                     </td>
                                     <td>
-                                        <span className={`badge ${u.role}`}>{u.role === 'admin' ? 'Admin' : 'User'}</span>
+                                        <RoleDropdown
+                                            value={u.role}
+                                            onChange={(newRole) => onRoleChange(u.id, newRole)}
+                                        />
                                     </td>
                                     <td>
                                         <span className={`badge ${u.onboardingCompleted ? 'activ' : 'inactiv'}`}>
