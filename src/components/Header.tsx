@@ -32,11 +32,9 @@ export default function Header() {
         day: 'numeric',
     });
 
-    // Sterge datele de autentificare admin si redirectioneaza la /login
+    // Sterge token-ul JWT si redirectioneaza la /login
     const handleLogout = () => {
         localStorage.removeItem('token');
-        sessionStorage.removeItem('isAdminAuthenticated');
-        sessionStorage.removeItem('isAuthenticated');
         navigate('/login', { replace: true });
     };
 

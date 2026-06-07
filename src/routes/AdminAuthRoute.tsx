@@ -1,14 +1,11 @@
 // ============================================================
 // routes/AdminAuthRoute.tsx — Protectia rutelor de admin
-// Verifica daca utilizatorul este autentificat ca administrator.
-// Daca nu, redirectioneaza automat la /admin/login.
-// Autentificarea admin e stocata separat de auth-ul utilizatorilor
-// normali, in sessionStorage cu cheia 'isAdminAuthenticated'.
+// Verifica daca utilizatorul are un JWT valid cu role = "Admin".
+// Daca nu, redirectioneaza automat la /login.
 // ============================================================
 
 import { Navigate, Outlet } from 'react-router-dom';
 
-// Functie helper pentru decodarea JWT (aceeasi ca in Authentication.tsx)
 function parseJwt(token: string) {
     try {
         const base64Url = token.split('.')[1];
@@ -24,7 +21,7 @@ function parseJwt(token: string) {
 
 export default function AdminAuthRoute() {
     const token = localStorage.getItem('token');
-    
+
     let isAdminAuthenticated = false;
 
     if (token) {
@@ -36,7 +33,6 @@ export default function AdminAuthRoute() {
     }
 
     if (!isAdminAuthenticated) {
-        // Necautentificat ca admin → redirect la pagina de login comuna (/login)
         return <Navigate to="/login" replace />;
     }
 
