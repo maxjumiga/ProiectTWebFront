@@ -115,7 +115,7 @@ const ProfilePage: React.FC = () => {
     const fetchWeightHistory = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch("http://localhost:5004/api/WeightLog/history?limit=5", {
+            const response = await fetch("http://localhost:5004/api/WeightLog/history", {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (response.ok) {
@@ -204,7 +204,6 @@ const ProfilePage: React.FC = () => {
     // Salvăm trăsăturile fizice în DB
     const handleSaveTraits = async () => {
         try {
-            // Updateăm gender, age, height
             const response = await fetch("http://localhost:5004/api/user/me", {
                 method: "PATCH",
                 headers: {
@@ -224,20 +223,17 @@ const ProfilePage: React.FC = () => {
                 return;
             }
 
-            // Dacă greutatea s-a schimbat, logăm și în WeightLog
-            if (editedWeight !== user?.weight) {
-                await fetch("http://localhost:5004/api/WeightLog", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ weight: editedWeight, loggedAt: new Date().toISOString() })
-                });
-                // Refresh weight history
-                fetchWeightHistory();
-            }
+            const weightChanged = user?.weight !== editedWeight;
 
+            setUser((prev: any) => prev ? {
+                ...prev,
+                gender: editedGender,
+                age: editedAge,
+                height: editedHeight,
+                weight: editedWeight
+            } : prev);
+
+            await fetchWeightHistory();
             await fetchUser();
             setIsEditingTraits(false);
         } catch (err) {
@@ -464,8 +460,13 @@ const ProfilePage: React.FC = () => {
 
     if (loading) {
         return (
-            <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', background: '#f0f2f8', fontSize: '18px', fontWeight: 'bold', fontFamily: 'Sora' }}>
-                Se încarcă profilul...
+            <div className="db-root" style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', padding: '2rem' }}>
+                    <div style={{ maxWidth: '420px', width: '100%', padding: '2rem 2.2rem', borderRadius: '24px', background: '#fff', boxShadow: '0 20px 50px rgba(15,23,42,0.08)', textAlign: 'center' }}>
+                        <div style={{ fontSize: '18px', fontWeight: 700, marginBottom: '0.75rem' }}>Se încarcă profilul...</div>
+                        <div style={{ color: '#6b7280' }}>Așteaptă câteva momente pentru actualizarea datelor tale.</div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -764,19 +765,19 @@ const ProfilePage: React.FC = () => {
                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                                     <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Current Weight</span>
                                     <span style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                                        {weightHistory.length > 0 ? weightHistory[0].weight : (user?.weight || '--')} <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 'normal' }}>kg</span>
+                                        {weightHistory.length > 0 ? weightHistory[weightHistory.length - 1].weight : (user?.weight || '--')} <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 'normal' }}>kg</span>
                                     </span>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                                     <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Starting Weight</span>
                                     <span style={{ fontSize: '18px', color: 'var(--text-primary)', fontWeight: '500' }}>
-                                        {weightHistory.length > 0 ? weightHistory[weightHistory.length - 1].weight : (user?.weight || '--')} <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 'normal' }}>kg</span>
+                                        {weightHistory.length > 0 ? weightHistory[0].weight : (user?.weight || '--')} <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 'normal' }}>kg</span>
                                     </span>
                                 </div>
                             </div>
 
                             <div className="weight-history-list" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                {weightHistory.slice(0, 4).map((log, i) => (
+                                {[...weightHistory].slice(-4).reverse().map((log, i) => (
                                     <div key={log.id || i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', borderLeft: '2px solid #10b981' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-secondary)', fontSize: '13px' }}>
                                             <FontAwesomeIcon icon={faCalendarDay} style={{ color: '#10b981', opacity: 0.8 }} />
