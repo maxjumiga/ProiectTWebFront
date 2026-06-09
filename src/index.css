@@ -137,21 +137,24 @@ svg {
 
 /* ── Scrollbar personalizat (numai Chrome/Edge/Safari) ───────── */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-light);
-  border-radius: 99px;
+  background: rgba(107, 114, 128, 0.30);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: rgba(107, 114, 128, 0.45);
 }
 
 /* ── Layout principal al panoului admin ─────────────────────── */

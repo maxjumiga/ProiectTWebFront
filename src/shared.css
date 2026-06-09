@@ -245,6 +245,8 @@
 
 /* Cutia modala — cardular alb care apare centrat pe overlay */
 .modal {
+    display: flex;
+    flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
@@ -254,6 +256,7 @@
     box-shadow: var(--shadow-lg);
     animation: slideUp 0.2s ease;
     /* Apare cu o miscare usoara de jos in sus */
+    overflow: hidden;
 }
 
 /* Varianta mica — pentru modals simple (ex: confirmare stergere) */
@@ -321,6 +324,9 @@
     flex-direction: column;
     gap: 14px;
     /* Spatiu intre campurile de formular */
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 /* Footer-ul modala: zona cu butoanele de actiune */

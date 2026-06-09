@@ -1,10 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDumbbell, faUtensils, faBullseye, faUserPlus, faClipboardCheck, faChartLine, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
-import workoutUserImg from '../../assets/workout_app_user.png';
-import nutritionUserImg from '../../assets/nutrition_app_user.png';
+import { faDumbbell, faUtensils, faBullseye, faUserPlus, faClipboardCheck, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import './Landing.css';
 
 const s = {
@@ -21,6 +19,15 @@ const s = {
 } as const;
 
 
+interface ExercisePreview {
+    id: number;
+    name: string;
+    primaryMuscleGroup: string;
+    secondaryMuscleGroup?: string;
+    difficulty?: string;
+    description?: string;
+}
+
 const fadeInUp = {
     initial: { opacity: 0, y: 30 },
     animate: { opacity: 1, y: 0 },
@@ -31,6 +38,48 @@ const stagger = { animate: { transition: { staggerChildren: 0.15 } } };
 export default function Landing() {
     const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const [exercises, setExercises] = useState<ExercisePreview[]>([]);
+    const [selectedGroup, setSelectedGroup] = useState('All');
+    const [isLoadingExercises, setIsLoadingExercises] = useState(true);
+    const [exerciseError, setExerciseError] = useState<string | null>(null);
+
+    useEffect(() => {
+        let mounted = true;
+
+        async function loadExercises() {
+            try {
+                const response = await fetch('http://localhost:5004/api/exercise/list');
+                if (!response.ok) {
+                    throw new Error(`Unable to load exercises (${response.status})`);
+                }
+                const data = await response.json();
+                if (!mounted) return;
+                setExercises(data ?? []);
+            } catch (error) {
+                if (!mounted) return;
+                setExerciseError(error instanceof Error ? error.message : 'Failed to load exercises.');
+            } finally {
+                if (!mounted) return;
+                setIsLoadingExercises(false);
+            }
+        }
+
+        loadExercises();
+        return () => { mounted = false; };
+    }, []);
+
+    const muscleGroups = useMemo(() => {
+        const groups = Array.from(new Set(exercises.map(ex => ex.primaryMuscleGroup || 'Other'))).sort();
+        return ['All', ...groups];
+    }, [exercises]);
+
+    const filteredExercises = selectedGroup === 'All'
+        ? exercises
+        : exercises.filter(ex => ex.primaryMuscleGroup === selectedGroup);
+
+    const handleGroupSelect = (group: string) => {
+        setSelectedGroup(group);
+    };
 
     const scrollToFeatures = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -192,6 +241,67 @@ export default function Landing() {
                 </div>
             </section>
 
+            {/* ── Exercise Demo ── */}
+            <section className="demo-section">
+                <div className="section-container">
+                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} style={s.header}>
+                        <span className="section-badge">✦ Exercise Demo</span>
+                        <h2 style={s.title}>Preview Our Exercise Library</h2>
+                        <p style={s.subtitle}>Browse sample movements across muscle groups, then register to save your favorites and unlock the full tracking experience.</p>
+                    </motion.div>
+
+                    <div className="demo-actions-row">
+                        <div className="demo-summary">
+                            <span className="demo-summary-label">Showing</span>
+                            <strong>{filteredExercises.length} Exercises</strong>
+                            <span className="demo-summary-note">Use the filter buttons to preview related movements.</span>
+                        </div>
+                        <div className="demo-filter-row">
+                            {muscleGroups.map((group) => (
+                                <button
+                                    key={group}
+                                    type="button"
+                                    className={`demo-filter-button ${selectedGroup === group ? 'active' : ''}`}
+                                    onClick={() => handleGroupSelect(group)}
+                                >
+                                    {group}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {isLoadingExercises ? (
+                        <div className="demo-state-message">Loading sample exercises...</div>
+                    ) : exerciseError ? (
+                        <div className="demo-state-message demo-state-error">{exerciseError}</div>
+                    ) : (
+                        <div className="demo-grid">
+                            {filteredExercises.length > 0 ? filteredExercises.slice(0, 8).map((exercise) => (
+                                <div key={exercise.id} className="demo-card">
+                                    <h3>{exercise.name}</h3>
+                                    <p className="demo-card-meta">
+                                        <strong>Target:</strong> {exercise.primaryMuscleGroup}{exercise.secondaryMuscleGroup ? ` • ${exercise.secondaryMuscleGroup}` : ''}
+                                    </p>
+                                    <div className="demo-card-footer">
+                                        <span>{exercise.difficulty ? exercise.difficulty : 'Beginner'}</span>
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className="demo-state-message">No exercises found for this muscle group.</div>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="demo-cta-panel">
+                        <div>
+                            <h3>Want the full experience?</h3>
+                            <p>Register now to unlock workout logging, personalized routines, and a saved exercise library.</p>
+                        </div>
+                        <Link to="/register" className="btn-primary">Create your free account</Link>
+                    </div>
+                </div>
+            </section>
+
             {/* ── Process ── */}
             <section 
                 ref={sectionRef}
@@ -270,7 +380,7 @@ export default function Landing() {
             </section>
 
             {/* ── CTA ── */}
-            <section className="cta-section">
+            <section id="register-cta" className="cta-section">
                 <div className="cta-container">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}

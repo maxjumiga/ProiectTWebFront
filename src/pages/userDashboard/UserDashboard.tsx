@@ -696,15 +696,6 @@ const UserDashboard: React.FC = () => {
                     <div className="db-grid-card card-weekly-progress span-2">
                         <div className="weekly-header-row">
                             <span className="weekly-card-title">Last 7 Days</span>
-                            <div className="weekly-actions">
-                                <div className="weekly-tabs">
-                                    <button className="weekly-tab active">Daily Goals</button>
-                                    <button className="weekly-tab">Daily Weight</button>
-                                </div>
-                                <button className="help-circle-btn">
-                                    <FontAwesomeIcon icon={faQuestion} />
-                                </button>
-                            </div>
                         </div>
 
                         <div className="weekly-legends-row">
