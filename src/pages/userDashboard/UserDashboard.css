@@ -1902,6 +1902,14 @@
     box-shadow: 0 -8px 24px rgba(0,0,0,0.08);
 }
 
+.exercise-dropdown.exercise-dropdown-down {
+    top: calc(100% + 6px);
+    bottom: auto;
+    left: 0;
+    right: 0;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
 .ex-drop-item {
     padding: 10px 14px;
     cursor: pointer;
@@ -2867,6 +2875,14 @@
     margin-bottom: 8px;
 }
 
+.wk-ex-edit-card { position: relative; padding: 14px; border-radius: 12px; background: rgba(99,102,241,0.04); border: 1px solid rgba(99,102,241,0.12); display:flex; flex-direction:column; gap:10px; }
+.wk-ex-edit-top { display:flex; gap:10px; align-items:center; }
+.wk-ex-edit-bottom { display:flex; gap:10px; }
+.wk-ex-edit .db-input, .wk-ex-edit-card .db-input { background: transparent; border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 12px; }
+.wk-simple-header-right { display:flex; gap:8px; align-items:center; }
+.wk-simple-header-right button { min-width: 96px; height: 36px; display:flex; align-items:center; justify-content:center; gap:8px; }
+.wk-simple-header-right .db-modal-close { width:36px; height:36px; padding:0; }
+
 .wk-ex-row {
     display: flex;
     align-items: center;
@@ -2960,6 +2976,22 @@
     border-color: #10b981 !important;
 }
 
+/* Local modal helpers */
+.status-message.success { margin-bottom: 14px; color: #10b981; font-weight: 600; }
+.status-message.error { margin-bottom: 14px; color: #ef4444; font-weight: 600; }
+.flex-1 { flex: 1; }
+.wk-ex-row-header { margin-bottom: 14px; display: flex; gap: 12px; align-items: center; }
+.wk-ex-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+
+.wk-inline-adder {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    max-width: 420px;
+}
+
 /* Dark mode */
 .dark-theme .wk-simple-modal {
     background: #1a1d27;
@@ -2993,4 +3025,4 @@
 .dark-theme .wk-simple-footer {
     border-top-color: #2a2d3a;
 }
-
+

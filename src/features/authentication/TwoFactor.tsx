@@ -166,7 +166,7 @@ export default function TwoFactorPage() {
             </button>
 
             <div className="login-wrapper">
-                <div className="login-card 2fa-card">
+                <div className="login-card twofa-card">
                     <div className="login-header">
                         <div className="shield-icon-container">
                             <FontAwesomeIcon icon={faShield} className="shield-hero-icon" />

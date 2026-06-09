@@ -18,33 +18,26 @@ interface ConfirmDeleteModalProps {
 
 export default function ConfirmDeleteModal({ itemName, onConfirm, onCancel }: ConfirmDeleteModalProps) {
     return (
-        // Overlay-ul acopera toata pagina; click pe el inchide modalul
         <div className="modal-overlay" onClick={onCancel}>
+            <div className="modal-card s-modal-card--danger" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
 
-            {/* Cutia modala — stopPropagation previne inchiderea accidentala la click interior */}
-            <div className="modal modal--sm" onClick={e => e.stopPropagation()}>
-
-                {/* Header-ul modala cu titlu si buton inchidere */}
-                <div className="modal-header">
-                    <h3>Confirm deletion</h3>
+                <div className="modal-header s-modal-header--danger">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <h3 style={{ margin: 0, color: 'var(--text-muted)', fontWeight: 700 }}>Confirm deletion</h3>
+                    </div>
                     <button className="modal-close" onClick={onCancel}>
                         <FontAwesomeIcon icon={faXmark} style={{ width: 16, height: 16 }} />
                     </button>
                 </div>
 
-                {/* Corpul modala cu mesajul de avertizare */}
                 <div className="modal-body">
-                    <p className="confirm-text">
-                        Are you sure you want to delete <strong>{itemName}</strong>?{' '}
-                        This action cannot be undone.
+                    <p className="confirm-text" style={{ color: 'var(--text-secondary)', margin: 0 }}>
+                        Are you sure you want to delete <strong style={{ color: 'var(--text-primary)' }}>{itemName}</strong>? This action cannot be undone.
                     </p>
                 </div>
 
-                {/* Footer-ul with butoanele de actiune */}
                 <div className="modal-footer">
-                    {/* Buton anulare — inchide modalul fara sa stearga nimic */}
                     <button className="btn-ghost" onClick={onCancel}>Cancel</button>
-                    {/* Buton confirmare stergere — apeleaza onConfirm */}
                     <button className="btn-danger" onClick={onConfirm}>Delete</button>
                 </div>
             </div>

@@ -38,6 +38,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import "./Settings.css";
 import "../UserDashboard.css";
+import ConfirmDeleteModal from "../../../components/ConfirmDeleteModal";
 
 // ─── Toggle component ─────────────────────────────────────────────────────────
 const Toggle = ({ checked, onChange }: { checked: boolean; onChange: () => void }) => (
@@ -162,10 +163,13 @@ const SettingsPage: React.FC = () => {
     };
 
     const handleResetData = async () => {
-        if (!window.confirm("Are you sure you want to reset all your data? This is irreversible and all your logs will be deleted!")) {
-            return;
-        }
+        setShowResetConfirm(true);
+    };
 
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+    const confirmResetData = async () => {
+        setShowResetConfirm(false);
         try {
             const token = localStorage.getItem("token");
             const response = await fetch("http://localhost:5004/api/User/reset-data", {
@@ -455,7 +459,8 @@ const SettingsPage: React.FC = () => {
     ];
 
     return (
-        <div className="db-root">
+        <>
+            <div className="db-root">
 
             {/* ── SIDEBAR ── */}
             <aside className="db-sidebar">
@@ -1102,7 +1107,15 @@ const SettingsPage: React.FC = () => {
                 </div>
             )}
 
-        </div>
+            </div>
+            {showResetConfirm && (
+            <ConfirmDeleteModal
+                itemName={"all your data"}
+                onConfirm={confirmResetData}
+                onCancel={() => setShowResetConfirm(false)}
+            />
+            )}
+        </>
     );
 };
 

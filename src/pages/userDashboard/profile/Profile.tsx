@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import "./Profile.css";
 import "../UserDashboard.css";
 import WorkoutDetailsModal from "../modals/WorkoutDetailsModal";
+import ConfirmDeleteModal from "../../../components/ConfirmDeleteModal";
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -66,6 +67,10 @@ const ProfilePage: React.FC = () => {
 
     // Workout details modal
     const [viewingWorkout, setViewingWorkout] = useState<any>(null);
+
+    // Reusable confirm delete modal (for weight logs / workouts)
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleteTarget, setDeleteTarget] = useState<{ type: 'weight' | 'workout' | 'other', id: number, name?: string } | null>(null);
 
     // Modal ștergere cont
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -132,7 +137,7 @@ const ProfilePage: React.FC = () => {
                 const data = await response.json();
                 // Sortează după dată descrescător
                 data.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
-                setRecentWorkouts(data.slice(0, 3));
+                setRecentWorkouts(data);
             }
         } catch (err) {
             console.error("Error fetching recent workouts:", err);
@@ -140,39 +145,42 @@ const ProfilePage: React.FC = () => {
     };
 
     const handleDeleteWeight = async (id: number) => {
-        if (!window.confirm("Are you sure you want to delete this weight log?")) return;
-        try {
-            const token = localStorage.getItem("token");
-            const res = await fetch(`http://localhost:5004/api/WeightLog/${id}`, {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.ok) {
-                fetchWeightHistory();
-                fetchUser(); // to update current weight maybe, though not strictly required
-            } else {
-                alert("Could not delete weight log.");
-            }
-        } catch (err) {
-            console.error(err);
-        }
+        setDeleteTarget({ type: 'weight', id, name: 'weight log' });
+        setShowDeleteConfirm(true);
     };
 
     const handleDeleteWorkout = async (id: number) => {
-        if (!window.confirm("Are you sure you want to delete this workout?")) return;
+        setDeleteTarget({ type: 'workout', id, name: 'workout' });
+        setShowDeleteConfirm(true);
+    };
+
+    const confirmDeleteTarget = async () => {
+        if (!deleteTarget) return;
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch(`http://localhost:5004/api/workout/delete/${id}`, {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.ok) {
-                fetchRecentWorkouts();
-            } else {
-                alert("Could not delete workout.");
+            const token = localStorage.getItem('token');
+            if (deleteTarget.type === 'weight') {
+                const res = await fetch(`http://localhost:5004/api/WeightLog/${deleteTarget.id}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    fetchWeightHistory();
+                    fetchUser();
+                }
+            } else if (deleteTarget.type === 'workout') {
+                const res = await fetch(`http://localhost:5004/api/workout/delete/${deleteTarget.id}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    fetchRecentWorkouts();
+                }
             }
         } catch (err) {
             console.error(err);
+        } finally {
+            setShowDeleteConfirm(false);
+            setDeleteTarget(null);
         }
     };
 
@@ -798,7 +806,7 @@ const ProfilePage: React.FC = () => {
                     <div className="p-card recent-workouts-card">
                         <div className="p-card-label">Recent Workouts</div>
                         <div className="recent-workouts-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '1rem' }}>
-                            {recentWorkouts.map((w, idx) => (
+                            {recentWorkouts.slice(0, 5).map((w, idx) => (
                                 <div className="recent-workout-item" key={w.id || idx} onClick={() => setViewingWorkout(w)} style={{ cursor: "pointer", display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', borderLeft: '3px solid #6366f1' }}>
                                     <div className="workout-icon-box" style={{ background: `${w.type === 'Strength' || w.type === 1 ? '#dc2626' : w.type === 'Cardio' || w.type === 0 ? '#059669' : '#9333ea'}20`, color: w.type === 'Strength' || w.type === 1 ? '#dc2626' : w.type === 'Cardio' || w.type === 0 ? '#059669' : '#9333ea', padding: '10px', borderRadius: '8px' }}>
                                         <FontAwesomeIcon icon={w.type === 'Strength' || w.type === 1 ? faDumbbell : w.type === 'Cardio' || w.type === 0 ? faHeartPulse : faPersonWalking} />
@@ -971,6 +979,19 @@ const ProfilePage: React.FC = () => {
                     workout={viewingWorkout}
                     user={user}
                     onClose={() => setViewingWorkout(null)}
+                    onSaved={fetchRecentWorkouts}
+                    onDeleted={() => {
+                        setViewingWorkout(null);
+                        fetchRecentWorkouts();
+                    }}
+                />
+            )}
+
+            {showDeleteConfirm && deleteTarget && (
+                <ConfirmDeleteModal
+                    itemName={deleteTarget.name || 'item'}
+                    onConfirm={confirmDeleteTarget}
+                    onCancel={() => { setShowDeleteConfirm(false); setDeleteTarget(null); }}
                 />
             )}
 
