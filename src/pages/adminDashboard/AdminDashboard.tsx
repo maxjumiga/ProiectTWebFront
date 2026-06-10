@@ -103,6 +103,7 @@ export default function AdminDashboard() {
                             <tr>
                                 <th>User</th>
                                 <th>Role</th>
+                                <th>Registered</th>
                                 <th>Onboarding</th>
                                 <th>2FA</th>
                             </tr>
@@ -110,7 +111,7 @@ export default function AdminDashboard() {
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={4} className="um-empty">Loading dashboard data...</td>
+                                    <td colSpan={5} className="um-empty">Loading dashboard data...</td>
                                 </tr>
                             ) : (
                                 recentUsers.map(u => (
@@ -125,6 +126,11 @@ export default function AdminDashboard() {
                                             </div>
                                         </td>
                                         <td><span className={`badge ${u.role}`}>{u.role === 'admin' ? 'Admin' : 'User'}</span></td>
+                                        <td>
+                                            {u.registeredOn
+                                                ? new Date(u.registeredOn).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                                                : '—'}
+                                        </td>
                                         <td><span className={`badge ${u.onboardingCompleted ? 'activ' : 'inactiv'}`}>{u.onboardingCompleted ? 'Completed' : 'Pending'}</span></td>
                                         <td><span className={`badge ${u.twoFactorEnabled ? 'activ' : 'inactiv'}`}>{u.twoFactorEnabled ? 'Enabled' : 'Disabled'}</span></td>
                                     </tr>

@@ -73,6 +73,7 @@ export async function getAdminUsers(): Promise<User[]> {
         role: string;
         onboardingCompleted: boolean;
         twoFactorEnabled: boolean;
+        registeredOn?: string;
     }>>('/User/GetAllUsers');
 
     return data.map(user => ({
@@ -82,6 +83,7 @@ export async function getAdminUsers(): Promise<User[]> {
         role: normalizeRole(user.role),
         onboardingCompleted: user.onboardingCompleted,
         twoFactorEnabled: user.twoFactorEnabled,
+        registeredOn: user.registeredOn,
     }));
 }
 

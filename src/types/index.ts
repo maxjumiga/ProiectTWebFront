@@ -31,6 +31,7 @@ export interface User {
     role: Role;
     onboardingCompleted: boolean;
     twoFactorEnabled: boolean;
+    registeredOn?: string;
 }
 
 export interface Aliment {
