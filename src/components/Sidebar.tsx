@@ -15,9 +15,42 @@ import {
     faUsers,           // Iconita utilizatori
     faBasketShopping,  // Iconita alimente
     faDumbbell,        // Iconita exercitii
-    faHeartPulse,      // Iconita logo aplicatie
 } from '@fortawesome/free-solid-svg-icons';
 import './Sidebar.css';
+
+// ── Citeste si decodifica JWT-ul din localStorage ────────────
+function getAdminInfoFromToken(): { name: string; role: string } {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) return { name: 'Administrator', role: 'Admin' };
+
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(
+            decodeURIComponent(
+                window.atob(base64).split('').map(c =>
+                    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                ).join('')
+            )
+        );
+
+        // ASP.NET Core pune numele in ClaimTypes.Name
+        const name =
+            payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ||
+            payload['name'] ||
+            payload['unique_name'] ||
+            'Administrator';
+
+        const role =
+            payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
+            payload['role'] ||
+            'Admin';
+
+        return { name, role };
+    } catch {
+        return { name: 'Administrator', role: 'Admin' };
+    }
+}
 
 // Lista de elemente de navigare — fiecare are o cale URL, eticheta si iconita
 const navItems = [
@@ -44,6 +77,10 @@ const navItems = [
 ];
 
 export default function Sidebar() {
+    const { name, role } = getAdminInfoFromToken();
+    // Initiala avatarului — prima litera a numelui, cu majuscula
+    const initial = name.charAt(0).toUpperCase();
+
     return (
         <aside className="sidebar">
 
@@ -80,14 +117,14 @@ export default function Sidebar() {
                 ))}
             </nav>
 
-            {/* Footer sidebar — informatii despre administratorul logat */}
+            {/* Footer sidebar — informatii despre administratorul logat (citite din JWT) */}
             <div className="sidebar-footer">
                 <div className="admin-chip">
-                    {/* Avatar cu initiala numelui */}
-                    <div className="admin-avatar">A</div>
+                    {/* Avatar cu initiala numelui real din token */}
+                    <div className="admin-avatar">{initial}</div>
                     <div className="admin-info">
-                        <span className="admin-name">Administrator</span>
-                        <span className="admin-role">Super Admin</span>
+                        <span className="admin-name" title={name}>{name}</span>
+                        <span className="admin-role">{role}</span>
                     </div>
                 </div>
             </div>

@@ -28,6 +28,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     });
 
     if (!response.ok) {
+        // Token expirat sau invalid — sterge sesiunea si redirectioneaza la login
+        if (response.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            throw new Error('Session expired. Please login again.');
+        }
         const message = await response.text();
         throw new Error(message || 'Request failed.');
     }
