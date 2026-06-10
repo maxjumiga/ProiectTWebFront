@@ -102,6 +102,7 @@ export default function Sidebar() {
                     <NavLink
                         key={item.to}
                         to={item.to}
+                        end={item.to === '/admin'}
                         // Functie care returneaza clasa CSS — adauga "nav-link--active" pe link-ul curent
                         className={({ isActive }) =>
                             'nav-link' + (isActive ? ' nav-link--active' : '')
